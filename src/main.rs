@@ -1,3 +1,5 @@
+mod kitchen;
+
 use bevy::prelude::*;
 
 
@@ -9,6 +11,7 @@ use bevy::{
     pbr::{FogVolume, VolumetricFog, VolumetricLight},
     prelude::*,
 };
+use crate::kitchen::setup_kitchen;
 
 const DIRECTIONAL_LIGHT_MOVEMENT_SPEED: f32 = 0.02;
 
@@ -49,7 +52,8 @@ fn main() {
         })))
         .insert_resource(AmbientLight::NONE)
         .init_resource::<AppSettings>()
-        .add_systems(Startup, setup)
+        .add_systems(Startup, setup_light)
+        .add_systems(Startup, setup_kitchen)
         .add_systems(Update, tweak_scene)
         .add_systems(Update, (move_directional_light, move_point_light))
         .add_systems(Update, adjust_app_settings)
@@ -57,7 +61,7 @@ fn main() {
 }
 
 /// Initializes the scene.
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>, app_settings: Res<AppSettings>) {
+fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_settings: Res<AppSettings>) {
     // Spawn the glTF scene.
     commands.spawn(SceneRoot(asset_server.load(
         GltfAssetLabel::Scene(0).from_asset("models/VolumetricFogExample/VolumetricFogExample.glb"),
