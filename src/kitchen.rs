@@ -30,7 +30,6 @@ const COUNTERTOP_Y: f32 = BOTTOM_CABINET_HEIGHT + BOTTOM_CABINET_FEET_HEIGHT;
 pub(crate) fn setup_kitchen(
   mut commands: Commands,
   mut meshes: ResMut<Assets<Mesh>>,
-  mut images: ResMut<Assets<Image>>,
   mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
   // NCS S 1505-y40R

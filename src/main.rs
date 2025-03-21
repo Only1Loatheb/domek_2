@@ -90,7 +90,8 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     })
     .insert(VolumetricFog {
       // This value is explicitly set to 0 since we have no environment map light
-      ambient_intensity: 0.0,
+      // ambient_intensity: 0.0, fixme update light and remove ambient
+      ambient_intensity: 1000.0,
       ..default()
     });
 

@@ -1,7 +1,7 @@
 use bevy::ecs::query::QuerySingleError;
 use bevy::prelude::*;
 
-const SPEED: f32 = 5.0;
+const SPEED: f32 = 10.0;
 
 pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera_transform: Query<&mut Transform, With<Camera3d>>) {
   let mut movement = Vec3::ZERO;
