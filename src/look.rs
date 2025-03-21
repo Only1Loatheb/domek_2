@@ -22,7 +22,7 @@ impl Default for CameraSensitivity {
             // We use a component for them so that we can make them user-configurable at runtime
             // for accessibility reasons.
             // It also allows you to inspect them in an editor if you `Reflect` the component.
-            Vec2::new(0.003, 0.002),
+            Vec2::new(0.006, 0.004),
         )
     }
 }

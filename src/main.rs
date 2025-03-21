@@ -78,7 +78,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     .spawn((
       Camera3d::default(),
       Camera { hdr: true, ..default() },
-      Transform::from_xyz(-1.7, 1.5, 4.5).looking_at(vec3(-1.5, 1.7, 3.5), Vec3::Y),
+      Transform::from_xyz(-1.7, 17.5, 4.5).looking_at(vec3(-1.5, 17.5, 3.5), Vec3::Y),
       Tonemapping::TonyMcMapface,
       Bloom::default(),
       CameraSensitivity::default(),
