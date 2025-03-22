@@ -55,7 +55,7 @@ fn main() {
       blue: 0.02,
       alpha: 1.0,
     })))
-    .insert_resource(AmbientLight::NONE)
+    // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
     .add_systems(Startup, setup_light)
     .add_systems(Startup, setup_kitchen)
@@ -88,47 +88,47 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
       brightness: 1000.0,
       ..default()
     })
-    .insert(VolumetricFog {
-      // This value is explicitly set to 0 since we have no environment map light
-      // ambient_intensity: 0.0, fixme update light and remove ambient
-      ambient_intensity: 1000.0,
-      ..default()
-    });
+    // .insert(VolumetricFog {
+    //   // This value is explicitly set to 0 since we have no environment map light
+    //   ambient_intensity: 0.0,
+    //   ..default()
+    // })
+  ;
 
-  // Add the point light
-  commands.spawn((
-    Transform::from_xyz(-0.4, 1.9, 1.0),
-    PointLight {
-      shadows_enabled: true,
-      range: 150.0,
-      color: RED.into(),
-      intensity: 1000.0,
-      ..default()
-    },
-    VolumetricLight,
-    MoveBackAndForthHorizontally {
-      min_x: -1.93,
-      max_x: -0.4,
-      speed: -0.2,
-    },
-  ));
-
-  // Add the spot light
-  commands.spawn((
-    Transform::from_xyz(-1.8, 3.9, -2.7).looking_at(Vec3::ZERO, Vec3::Y),
-    SpotLight {
-      intensity: 5000.0, // lumens
-      color: Color::WHITE,
-      shadows_enabled: true,
-      inner_angle: 0.76,
-      outer_angle: 0.94,
-      ..default()
-    },
-    VolumetricLight,
-  ));
-
-  // Add the fog volume.
-  commands.spawn((FogVolume::default(), Transform::from_scale(Vec3::splat(35.0))));
+  // // Add the point light
+  // commands.spawn((
+  //   Transform::from_xyz(-0.4, 1.9, 1.0),
+  //   PointLight {
+  //     shadows_enabled: true,
+  //     range: 150.0,
+  //     color: RED.into(),
+  //     intensity: 1000.0,
+  //     ..default()
+  //   },
+  //   VolumetricLight,
+  //   MoveBackAndForthHorizontally {
+  //     min_x: -1.93,
+  //     max_x: -0.4,
+  //     speed: -0.2,
+  //   },
+  // ));
+  // 
+  // // Add the spot light
+  // commands.spawn((
+  //   Transform::from_xyz(-1.8, 3.9, -2.7).looking_at(Vec3::ZERO, Vec3::Y),
+  //   SpotLight {
+  //     intensity: 5000.0, // lumens
+  //     color: Color::WHITE,
+  //     shadows_enabled: true,
+  //     inner_angle: 0.76,
+  //     outer_angle: 0.94,
+  //     ..default()
+  //   },
+  //   VolumetricLight,
+  // ));
+  // 
+  // // Add the fog volume.
+  // commands.spawn((FogVolume::default(), Transform::from_scale(Vec3::splat(35.0))));
 
   // Add the help text.
   commands.spawn((
