@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::common::FLAT_HEIGHT;
 use bevy::math::vec3;
 use bevy::pbr::wireframe::{WireframeConfig, WireframePlugin};
 use bevy::{
@@ -11,13 +12,10 @@ use bevy::{
   },
 };
 use std::f32::consts::PI;
-
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
 struct KitchenCabinet;
-
-const KITCHEN_HEIGHT: f32 = 26.8;
 
 const BOTTOM_CABINET_Y: f32 = 1.00; // legs
 const BOTTOM_CABINET_HEIGHT: f32 = 7.20;
@@ -35,9 +33,17 @@ const MIDDLE_CABINET_HEIGHT: f32 = BOTTOM_CABINET_HEIGHT;
 const TOP_CABINET_Y: f32 = MIDDLE_CABINET_Y + MIDDLE_CABINET_HEIGHT;
 const TOP_CABINET_DEPTH: f32 = BOTTOM_CABINET_DEPTH;
 const TOP_CABINET_HEIGHT: f32 = 5.74 + 0.18;
-
-pub(crate) fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
-  let kitchen_origin: Vec3 = Vec3::ZERO;
+ 
+fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
+  let kitchen_origin: Vec3 = vec3(0., BOTTOM_CABINET_Y, -50.);
+  let parent = commands
+    .spawn((
+      Transform::from_translation(kitchen_origin).with_rotation(Quat::IDENTITY),
+      // rotation
+      GlobalTransform::default(),
+      InheritedVisibility::default(),
+    ))
+    .id();
 
   // NCS S 1505-y40R
   // https://www.w3schools.com/colors/colors_converter.asp?color=ncs(1505-y40R)
@@ -57,13 +63,15 @@ pub(crate) fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Me
   {
     let mut x_acc: f32 = 0.0;
     for bottom_cabinet in bottom_cabinets.into_iter() {
-      let translation = kitchen_origin + bottom_cabinet.half_size + vec3(x_acc, BOTTOM_CABINET_Y, 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(bottom_cabinet)),
-        MeshMaterial3d(material.clone()),
-        Transform::from_translation(translation),
-        KitchenCabinet,
-      ));
+      let translation = bottom_cabinet.half_size + vec3(x_acc, BOTTOM_CABINET_Y, 0.);
+      commands
+        .spawn((
+          Mesh3d(meshes.add(bottom_cabinet)),
+          MeshMaterial3d(material.clone()),
+          Transform::from_translation(translation),
+          KitchenCabinet,
+        ))
+        .set_parent(parent);
       x_acc += bottom_cabinet.size().x;
     }
   }
@@ -81,13 +89,15 @@ pub(crate) fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Me
   {
     let mut x_acc: f32 = 0.0;
     for middle_cabinet in middle_cabinets.into_iter() {
-      let translation = kitchen_origin + middle_cabinet.half_size + vec3(x_acc, MIDDLE_CABINET_Y, 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(middle_cabinet)),
-        MeshMaterial3d(material.clone()),
-        Transform::from_translation(translation),
-        KitchenCabinet,
-      ));
+      let translation = middle_cabinet.half_size + vec3(x_acc, MIDDLE_CABINET_Y, 0.);
+      commands
+        .spawn((
+          Mesh3d(meshes.add(middle_cabinet)),
+          MeshMaterial3d(material.clone()),
+          Transform::from_translation(translation),
+          KitchenCabinet,
+        ))
+        .set_parent(parent);
       x_acc += middle_cabinet.size().x;
     }
   }
@@ -104,21 +114,33 @@ pub(crate) fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Me
 
   let mut x_acc: f32 = 0.0;
   for top_cabinet in top_cabinets.into_iter() {
-    let translation = kitchen_origin + top_cabinet.half_size + vec3(x_acc, TOP_CABINET_Y, 0.);
-    commands.spawn((
-      Mesh3d(meshes.add(top_cabinet)),
+    let translation = top_cabinet.half_size + vec3(x_acc, TOP_CABINET_Y, 0.);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(top_cabinet)),
+        MeshMaterial3d(material.clone()),
+        Transform::from_translation(translation),
+        KitchenCabinet,
+      ))
+      .set_parent(parent);
+    x_acc += top_cabinet.size().x;
+  }
+  let owen_and_stuff = Cuboid::new(CABINET_WIDTH, FLAT_HEIGHT - BOTTOM_CABINET_Y, BOTTOM_CABINET_DEPTH);
+  let translation = owen_and_stuff.half_size + vec3(x_acc, BOTTOM_CABINET_Y, 0.);
+  commands
+    .spawn((
+      Mesh3d(meshes.add(owen_and_stuff)),
       MeshMaterial3d(material.clone()),
       Transform::from_translation(translation),
       KitchenCabinet,
-    ));
-    x_acc += top_cabinet.size().x;
-  }
-  let owen_and_stuff = Cuboid::new(CABINET_WIDTH, KITCHEN_HEIGHT - BOTTOM_CABINET_Y, BOTTOM_CABINET_DEPTH);
-  let translation = kitchen_origin + owen_and_stuff.half_size + vec3(x_acc, BOTTOM_CABINET_Y, 0.);
-  commands.spawn((
-    Mesh3d(meshes.add(owen_and_stuff)),
-    MeshMaterial3d(material.clone()),
-    Transform::from_translation(translation),
-    KitchenCabinet,
-  ));
+    ))
+    .set_parent(parent);
+}
+
+pub(crate) struct KitchenPlugin;
+
+impl Plugin for KitchenPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, setup_kitchen); 
+    }
 }

@@ -1,12 +1,14 @@
+mod common;
 mod movement;
 mod kitchen;
 mod look;
+mod bathroom;
 
 use bevy::prelude::*;
 
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::movement::movement;
-use crate::kitchen::setup_kitchen;
+use crate::kitchen::KitchenPlugin;
 use bevy::{
   color::palettes::css::RED,
   core_pipeline::{bloom::Bloom, tonemapping::Tonemapping, Skybox},
@@ -14,6 +16,7 @@ use bevy::{
   pbr::{FogVolume, VolumetricFog, VolumetricLight},
   prelude::*,
 };
+use crate::bathroom::BathroomPlugin;
 use crate::look::{look, CameraSensitivity};
 
 const DIRECTIONAL_LIGHT_MOVEMENT_SPEED: f32 = 0.02;
@@ -58,7 +61,8 @@ fn main() {
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
     .add_systems(Startup, setup_light)
-    .add_systems(Startup, setup_kitchen)
+    .add_plugins(KitchenPlugin)
+    .add_plugins(BathroomPlugin)
     .add_systems(Update, tweak_scene)
     .add_systems(Update, (move_directional_light, move_point_light))
     .add_systems(Update, adjust_app_settings)
@@ -78,7 +82,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     .spawn((
       Camera3d::default(),
       Camera { hdr: true, ..default() },
-      Transform::from_xyz(-1.7, 17.5, 4.5).looking_at(vec3(-1.5, 17.5, 3.5), Vec3::Y),
+      Transform::from_xyz(15.7, 17.5, -24.5).looking_at(vec3(15.5, 17.5, 3.5), Vec3::Y),
       Tonemapping::TonyMcMapface,
       Bloom::default(),
       CameraSensitivity::default(),
@@ -112,7 +116,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   //     speed: -0.2,
   //   },
   // ));
-  // 
+  //
   // // Add the spot light
   // commands.spawn((
   //   Transform::from_xyz(-1.8, 3.9, -2.7).looking_at(Vec3::ZERO, Vec3::Y),
@@ -126,7 +130,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   //   },
   //   VolumetricLight,
   // ));
-  // 
+  //
   // // Add the fog volume.
   // commands.spawn((FogVolume::default(), Transform::from_scale(Vec3::splat(35.0))));
 
