@@ -10,11 +10,9 @@ use bevy::prelude::*;
 use crate::movement::movement;
 use crate::kitchen::KitchenPlugin;
 use bevy::{
-  color::palettes::css::RED,
   core_pipeline::{bloom::Bloom, tonemapping::Tonemapping, Skybox},
   math::vec3,
-  pbr::{FogVolume, VolumetricFog, VolumetricLight},
-  prelude::*,
+  pbr::VolumetricLight,
 };
 use crate::bathroom::BathroomPlugin;
 use crate::look::{look, CameraSensitivity};
@@ -82,7 +80,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     .spawn((
       Camera3d::default(),
       Camera { hdr: true, ..default() },
-      Transform::from_xyz(15.7, 17.5, -24.5).looking_at(vec3(15.5, 17.5, 3.5), Vec3::Y),
+      Transform::from_xyz(15.7, 17.5, -4.5).looking_at(vec3(15.5, 17.5, 3.5), Vec3::Y),
       Tonemapping::TonyMcMapface,
       Bloom::default(),
       CameraSensitivity::default(),
@@ -134,16 +132,16 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   // // Add the fog volume.
   // commands.spawn((FogVolume::default(), Transform::from_scale(Vec3::splat(35.0))));
 
-  // Add the help text.
-  commands.spawn((
-    create_text(&app_settings),
-    Node {
-      position_type: PositionType::Absolute,
-      top: Val::Px(12.0),
-      left: Val::Px(12.0),
-      ..default()
-    },
-  ));
+  // // Add the help text.
+  // commands.spawn((
+  //   create_text(&app_settings),
+  //   Node {
+  //     position_type: PositionType::Absolute,
+  //     top: Val::Px(12.0),
+  //     left: Val::Px(12.0),
+  //     ..default()
+  //   },
+  // ));
 }
 
 fn create_text(app_settings: &AppSettings) -> Text {

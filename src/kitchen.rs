@@ -2,16 +2,6 @@ use bevy::prelude::*;
 
 use crate::common::FLAT_HEIGHT;
 use bevy::math::vec3;
-use bevy::pbr::wireframe::{WireframeConfig, WireframePlugin};
-use bevy::{
-  color::palettes::basic::SILVER,
-  prelude::*,
-  render::{
-    render_asset::RenderAssetUsages,
-    render_resource::{Extent3d, TextureDimension, TextureFormat},
-  },
-};
-use std::f32::consts::PI;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
@@ -33,7 +23,7 @@ const MIDDLE_CABINET_HEIGHT: f32 = BOTTOM_CABINET_HEIGHT;
 const TOP_CABINET_Y: f32 = MIDDLE_CABINET_Y + MIDDLE_CABINET_HEIGHT;
 const TOP_CABINET_DEPTH: f32 = BOTTOM_CABINET_DEPTH;
 const TOP_CABINET_HEIGHT: f32 = 5.74 + 0.18;
- 
+
 fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
   let kitchen_origin: Vec3 = vec3(0., BOTTOM_CABINET_Y, -50.);
   let parent = commands
