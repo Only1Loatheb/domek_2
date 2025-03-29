@@ -1,21 +1,24 @@
+mod bathroom;
 mod common;
-mod movement;
+mod floor;
 mod kitchen;
 mod look;
-mod bathroom;
+mod movement;
 
 use bevy::prelude::*;
 
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
-use crate::movement::movement;
+use crate::bathroom::BathroomPlugin;
+use crate::common::{BATHROOM_X, HALL_X, HALL_Z, LIVING_ROOM_Z};
+use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
+use crate::look::{look, CameraSensitivity};
+use crate::movement::movement;
 use bevy::{
   core_pipeline::{bloom::Bloom, tonemapping::Tonemapping, Skybox},
   math::vec3,
   pbr::VolumetricLight,
 };
-use crate::bathroom::BathroomPlugin;
-use crate::look::{look, CameraSensitivity};
 
 const DIRECTIONAL_LIGHT_MOVEMENT_SPEED: f32 = 0.02;
 
@@ -59,8 +62,7 @@ fn main() {
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
     .add_systems(Startup, setup_light)
-    .add_plugins(KitchenPlugin)
-    .add_plugins(BathroomPlugin)
+    .add_plugins((FloorPlugin, KitchenPlugin, BathroomPlugin))
     .add_systems(Update, tweak_scene)
     .add_systems(Update, (move_directional_light, move_point_light))
     .add_systems(Update, adjust_app_settings)
@@ -80,7 +82,8 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     .spawn((
       Camera3d::default(),
       Camera { hdr: true, ..default() },
-      Transform::from_xyz(15.7, 17.5, -4.5).looking_at(vec3(15.5, 17.5, 3.5), Vec3::Y),
+      Transform::from_xyz(-BATHROOM_X- HALL_X, 17.5, LIVING_ROOM_Z + 0.5 * HALL_Z)
+        .looking_at(vec3(0., 17.5, LIVING_ROOM_Z + 0.5 * HALL_Z), Vec3::Y),
       Tonemapping::TonyMcMapface,
       Bloom::default(),
       CameraSensitivity::default(),
@@ -175,7 +178,7 @@ fn tweak_scene(mut commands: Commands, mut lights: Query<(Entity, &mut Direction
 /// Processes user requests to move the directional light.
 fn move_directional_light(input: Res<ButtonInput<KeyCode>>, mut directional_lights: Query<&mut Transform, With<DirectionalLight>>) {
   let mut delta_theta = Vec2::ZERO;
-  if  input.pressed(KeyCode::ArrowUp) {
+  if input.pressed(KeyCode::ArrowUp) {
     delta_theta.y += DIRECTIONAL_LIGHT_MOVEMENT_SPEED;
   }
   if input.pressed(KeyCode::ArrowDown) {
@@ -184,7 +187,7 @@ fn move_directional_light(input: Res<ButtonInput<KeyCode>>, mut directional_ligh
   if input.pressed(KeyCode::ArrowLeft) {
     delta_theta.x += DIRECTIONAL_LIGHT_MOVEMENT_SPEED;
   }
-  if  input.pressed(KeyCode::ArrowRight) {
+  if input.pressed(KeyCode::ArrowRight) {
     delta_theta.x -= DIRECTIONAL_LIGHT_MOVEMENT_SPEED;
   }
 

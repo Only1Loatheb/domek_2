@@ -1,6 +1,7 @@
 use bevy::prelude::*;
+use std::f32::consts::FRAC_PI_2;
 
-use crate::common::FLAT_HEIGHT;
+use crate::common::{FLAT_HEIGHT, LIVING_ROOM_X};
 use bevy::math::vec3;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
@@ -23,13 +24,15 @@ const MIDDLE_CABINET_HEIGHT: f32 = BOTTOM_CABINET_HEIGHT;
 const TOP_CABINET_Y: f32 = MIDDLE_CABINET_Y + MIDDLE_CABINET_HEIGHT;
 const TOP_CABINET_DEPTH: f32 = BOTTOM_CABINET_DEPTH;
 const TOP_CABINET_HEIGHT: f32 = 5.74 + 0.18;
+const KITCHEN_WIDTH: f32 = 42.35;
 
 fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
-  let kitchen_origin: Vec3 = vec3(0., BOTTOM_CABINET_Y, -50.);
+  let kitchen_origin: Vec3 = vec3(-LIVING_ROOM_X + TOP_CABINET_DEPTH, BOTTOM_CABINET_Y, KITCHEN_WIDTH);
   let parent = commands
     .spawn((
-      Transform::from_translation(kitchen_origin).with_rotation(Quat::IDENTITY),
-      // rotation
+      Transform::from_translation(kitchen_origin)
+        .with_scale(vec3(-1., 1., 1.))              
+        .with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
       GlobalTransform::default(),
       InheritedVisibility::default(),
     ))
@@ -130,7 +133,7 @@ fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut m
 pub(crate) struct KitchenPlugin;
 
 impl Plugin for KitchenPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_kitchen); 
-    }
+  fn build(&self, app: &mut App) {
+    app.add_systems(Startup, setup_kitchen);
+  }
 }
