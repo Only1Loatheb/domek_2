@@ -39,7 +39,7 @@ pub(crate) fn repeat_texture<'a>(
   image_scale: Vec2,
 ) -> Handle<StandardMaterial> {
   // https://bevyengine.org/examples/assets/repeated-texture/
-  let ambient_light = asset_server.load_with_settings(path, |s: &mut _| {
+  let texture = asset_server.load_with_settings(path, |s: &mut _| {
     *s = ImageLoaderSettings {
       sampler: ImageSampler::Descriptor(ImageSamplerDescriptor {
         // rewriting mode to repeat image,
@@ -51,8 +51,8 @@ pub(crate) fn repeat_texture<'a>(
     }
   });
   let material_handle = materials.add(StandardMaterial {
-    base_color_texture: Some(ambient_light),
-    perceptual_roughness: 1.0,
+    base_color_texture: Some(texture),
+    metallic: 0.9,
     uv_transform: Affine2::from_scale(Vec2::new(
       image_scale.x * object_size.x,
       image_scale.y * object_size.y,

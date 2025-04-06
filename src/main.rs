@@ -6,7 +6,7 @@ mod look;
 mod movement;
 
 use bevy::prelude::*;
-use std::f32::consts::FRAC_PI_2;
+use std::f32::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_8, PI};
 
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
@@ -64,7 +64,7 @@ fn main() {
     })))
     .insert_resource(AmbientLight {
       color: Color::WHITE,
-      brightness: 100.,
+      brightness: 800.,
     })
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
@@ -98,7 +98,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     ))
     .insert(Skybox {
       image: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
-      brightness: 1000.0,
+      brightness: 1500.0,
       ..default()
     }).id()
     // .insert(VolumetricFog {
@@ -153,28 +153,53 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   //     ..default()
   //   },
   // ));
-
+  let mirror_parent = commands
+    .spawn((
+      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 0.01, 16.0, 15.7))
+        .with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
+      GlobalTransform::default(),
+      InheritedVisibility::default(),
+    ))
+    .id();
   {
     use bevy_basic_portals::*;
-    let mirror_width = 7.5;
-    let mirror_mesh = meshes.add(Rectangle::new(mirror_width, 8.));
-    let mirror_transform =
-      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 0.01, 16.0, 0.5 * 
-        mirror_width + 12.))
-        .with_rotation(Quat::from_rotation_y(-FRAC_PI_2));
-    commands.spawn((
-      CreatePortal {
-        main_camera: Some(camera),
-        destination: CreateMirror,
-        debug: None,
-        // Uncomment the following two lines to have a double-sided mirror
-        //cull_mode: None,
-        //portal_mode: PortalMode::MaskedImageHalfSpaceFrustum((None, true)),
-        ..default()
-      },
-      Mesh3d(mirror_mesh),
-      mirror_transform,
-    ));
+    let mirror_mesh = meshes.add(Ellipse::new(2., 5.));
+    let mirror_transform = Transform::from_rotation(Quat::from_rotation_z(FRAC_PI_8));
+    commands
+      .spawn((
+        CreatePortal {
+          main_camera: Some(camera),
+          destination: CreateMirror,
+          debug: None,
+          // Uncomment the following two lines to have a double-sided mirror
+          //cull_mode: None,
+          //portal_mode: PortalMode::MaskedImageHalfSpaceFrustum((None, true)),
+          ..default()
+        },
+        Mesh3d(mirror_mesh),
+        mirror_transform,
+      ))
+      .set_parent(mirror_parent);
+  }
+  {
+    use bevy_basic_portals::*;
+    let mirror_mesh = meshes.add(Capsule2d::new(3., 2.));
+    let mirror_transform = Transform::from_rotation(Quat::from_rotation_z(-FRAC_PI_3));
+    commands
+      .spawn((
+        CreatePortal {
+          main_camera: Some(camera),
+          destination: CreateMirror,
+          debug: None,
+          // Uncomment the following two lines to have a double-sided mirror
+          //cull_mode: None,
+          //portal_mode: PortalMode::MaskedImageHalfSpaceFrustum((None, true)),
+          ..default()
+        },
+        Mesh3d(mirror_mesh),
+        mirror_transform,
+      ))
+      .set_parent(mirror_parent);
   }
 }
 
