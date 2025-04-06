@@ -142,7 +142,7 @@ fn setup_kitchen(
     let material_handle = repeat_texture(
       "kitchen/ambient_light.jpg",
       &mut materials,
-      asset_server,
+      &asset_server,
       Vec2{x: counter_top_width, y: counter_top_depth},
       Vec2{x: 0.05, y: 0.1},
     );

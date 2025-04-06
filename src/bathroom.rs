@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, DOOR_Y, FLAT_HEIGHT, LIVING_ROOM_Z};
+use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, DOOR_Y, FLAT_HEIGHT, LIVING_ROOM_Z};
 use bevy::math::vec3;
 use bevy::transform;
 use std::f32::consts::{FRAC_PI_2, PI, TAU};
@@ -15,10 +15,10 @@ struct BathroomWall;
 #[derive(Resource)]
 struct BathroomCommon {
   parent: Entity,
-  wall_material: Handle<StandardMaterial>,
+  wall_material: [Handle<StandardMaterial>; 4],
 }
 
-fn setup_bathroom_common(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>) {
+fn setup_bathroom_common(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>, asset_server: Res<AssetServer>) {
   let bathroom_origin: Vec3 = vec3(-BATHROOM_X + BATHROOM_WALL_THICKNESS, 0., LIVING_ROOM_Z + BATHROOM_WALL_THICKNESS);
   let parent = commands
     .spawn((
@@ -28,10 +28,15 @@ fn setup_bathroom_common(mut commands: Commands, mut materials: ResMut<Assets<St
       InheritedVisibility::default(),
     ))
     .id();
-  // NCS S 1505-y40R
-  // https://www.w3schools.com/colors/colors_converter.asp?color=ncs(1505-y40R)
-  let color = Color::hsl(30.0, 0.29, 0.85);
-  let wall_material: Handle<StandardMaterial> = materials.add(color);
+  let wall_material = [1, 2, 3, 4].map(|x| {
+    repeat_texture(
+      format!("massa/PP-Massa-1198x2398-{}.jpg", x),
+      &mut materials,
+      &asset_server,
+      Vec2 { x: 10., y: 10. },
+      Vec2 { x: 0.1, y: 0.1 },
+    )
+  });
   commands.insert_resource(BathroomCommon { parent, wall_material });
 }
 
@@ -51,7 +56,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     commands
       .spawn((
         Mesh3d(meshes.add(left_door_wall)),
-        MeshMaterial3d(wall_material.clone()),
+        MeshMaterial3d(wall_material[0].clone()),
         Transform::from_translation(translation),
         Bathroom,
         BathroomWall,
@@ -59,12 +64,16 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
       .set_parent(common.parent);
   }
   {
-    let right_door_wall = Cuboid::new(RIGHT_DOOR_WALL_LENGTH + BATHROOM_WALL_THICKNESS, FLAT_HEIGHT, BATHROOM_WALL_THICKNESS);
+    let right_door_wall = Cuboid::new(
+      RIGHT_DOOR_WALL_LENGTH + BATHROOM_WALL_THICKNESS,
+      FLAT_HEIGHT,
+      BATHROOM_WALL_THICKNESS,
+    );
     let translation = right_door_wall.half_size + vec3(LEFT_DOOR_WALL_LENGTH + DOOR_WIDTH, 0., 0.);
     commands
       .spawn((
         Mesh3d(meshes.add(right_door_wall)),
-        MeshMaterial3d(wall_material.clone()),
+        MeshMaterial3d(wall_material[1].clone()),
         Transform::from_translation(translation),
         Bathroom,
         BathroomWall,
@@ -77,7 +86,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     commands
       .spawn((
         Mesh3d(meshes.add(over_door_wall)),
-        MeshMaterial3d(wall_material.clone()),
+        MeshMaterial3d(wall_material[2].clone()),
         Transform::from_translation(translation),
         Bathroom,
         BathroomWall,
@@ -90,7 +99,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     commands
       .spawn((
         Mesh3d(meshes.add(left_wall)),
-        MeshMaterial3d(wall_material.clone()),
+        MeshMaterial3d(wall_material[3].clone()),
         Transform::from_translation(translation),
         Bathroom,
         BathroomWall,
@@ -103,7 +112,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     commands
       .spawn((
         Mesh3d(meshes.add(right_wall)),
-        MeshMaterial3d(wall_material.clone()),
+        MeshMaterial3d(wall_material[0].clone()),
         Transform::from_translation(translation),
         Bathroom,
         BathroomWall,
@@ -116,7 +125,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     commands
       .spawn((
         Mesh3d(meshes.add(back_wall)),
-        MeshMaterial3d(wall_material.clone()),
+        MeshMaterial3d(wall_material[1].clone()),
         Transform::from_translation(translation),
         Bathroom,
         BathroomWall,
@@ -130,7 +139,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     commands
       .spawn((
         Mesh3d(meshes.add(vent)),
-        MeshMaterial3d(wall_material.clone()),
+        MeshMaterial3d(wall_material[2].clone()),
         Transform::from_translation(translation),
         Bathroom,
         BathroomWall,
@@ -144,6 +153,7 @@ const SHELF_SPACE_DEPTH: f32 = 1.5;
 const SHELF_SPACE_WIDTH: f32 = 2.2;
 const SHELF_SPACE_HEIGHT: f32 = 3.0;
 const SHELF_EXTENDS_INTO_SHOWER_TO_SUPPORT_SHOWER_STALL: f32 = 0.4;
+const EPSILON: f32 = 0.0002;
 const SHELF_WIDTH: f32 = SHELF_SPACE_WIDTH + SHELF_WALL_THICKNESS;
 
 const SHELF_DEPTH: f32 = SHELF_SPACE_DEPTH + SHELF_WALL_THICKNESS;
@@ -159,19 +169,19 @@ fn spawn_shower_shelf(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, 
     commands
       .spawn((
         Mesh3d(meshes.add(shelf_back_wall)),
-        MeshMaterial3d(common.wall_material.clone()),
+        MeshMaterial3d(common.wall_material[3].clone()),
         Transform::from_translation(translation),
         Bathroom,
       ))
       .set_parent(common.parent);
   }
   {
-    let shelf_side_wall = Cuboid::new(SHELF_SPACE_DEPTH, FLAT_HEIGHT, SHELF_WALL_THICKNESS);
-    let translation = shelf_side_wall.half_size + vec3(SHELF_X, 0., SHELF_SPACE_WIDTH - BATHROOM_DEPTH);
+    let shelf_side_wall = Cuboid::new(SHELF_SPACE_DEPTH + EPSILON, FLAT_HEIGHT, SHELF_WALL_THICKNESS +  EPSILON);
+    let translation = shelf_side_wall.half_size + vec3(SHELF_X - EPSILON, 0., SHELF_SPACE_WIDTH - BATHROOM_DEPTH);
     commands
       .spawn((
         Mesh3d(meshes.add(shelf_side_wall)),
-        MeshMaterial3d(common.wall_material.clone()),
+        MeshMaterial3d(common.wall_material[0].clone()),
         Transform::from_translation(translation),
         Bathroom,
       ))
@@ -183,7 +193,7 @@ fn spawn_shower_shelf(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, 
     commands
       .spawn((
         Mesh3d(meshes.add(bottom_shelf)),
-        MeshMaterial3d(common.wall_material.clone()),
+        MeshMaterial3d(common.wall_material[1].clone()),
         Transform::from_translation(translation),
         Bathroom,
       ))
@@ -195,7 +205,7 @@ fn spawn_shower_shelf(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, 
     commands
       .spawn((
         Mesh3d(meshes.add(middle_shelf)),
-        MeshMaterial3d(common.wall_material.clone()),
+        MeshMaterial3d(common.wall_material[2].clone()),
         Transform::from_translation(translation),
         Bathroom,
       ))
@@ -207,7 +217,7 @@ fn spawn_shower_shelf(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, 
     commands
       .spawn((
         Mesh3d(meshes.add(top_shelf)),
-        MeshMaterial3d(common.wall_material.clone()),
+        MeshMaterial3d(common.wall_material[3].clone()),
         Transform::from_translation(translation),
         Bathroom,
       ))
@@ -219,7 +229,7 @@ fn spawn_shower_shelf(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, 
     commands
       .spawn((
         Mesh3d(meshes.add(shelves_overhang)),
-        MeshMaterial3d(common.wall_material.clone()),
+        MeshMaterial3d(common.wall_material[0].clone()),
         Transform::from_translation(translation),
         Bathroom,
       ))
@@ -347,7 +357,7 @@ fn spawn_toilet(mut commands: Commands, asset_server: Res<AssetServer>, mut mesh
     commands
       .spawn((
         Mesh3d(meshes.add(toilet_flush)),
-        MeshMaterial3d(common.wall_material.clone()),
+        MeshMaterial3d(common.wall_material[1].clone()),
         Transform::from_translation(translation),
         Bathroom,
       ))

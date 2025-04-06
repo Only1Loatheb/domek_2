@@ -1,10 +1,20 @@
+use crate::look::CameraSensitivity;
 use bevy::prelude::*;
 
-const SPEED: f32 = 15.0;
+#[derive(Component)]
+pub(crate) struct CameraMovement {
+  speed: f32,
+}
 
-pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera_transform: Query<&mut Transform, With<Camera3d>>) {
+impl Default for CameraMovement {
+  fn default() -> Self {
+    Self { speed: 15.0 }
+  }
+}
+
+pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera: Query<(&mut Transform, &CameraMovement)>) {
   let mut movement = Vec3::ZERO;
-  let mut transform = camera_transform.single_mut();
+  let (mut transform, camara_movement) = camera.single_mut();
   let forward = transform.forward().as_vec3();
   let right = transform.right().as_vec3();
   if input.pressed(KeyCode::KeyW) {
@@ -19,8 +29,8 @@ pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera_t
   if input.pressed(KeyCode::KeyD) {
     movement += right;
   }
-  
-  movement.y = 0.0;
-  movement = SPEED * timer.delta_secs() * movement.normalize_or_zero();
+
+  // movement.y = 0.0;
+  movement = camara_movement.speed * timer.delta_secs() * movement.normalize_or_zero();
   transform.translation += movement;
 }

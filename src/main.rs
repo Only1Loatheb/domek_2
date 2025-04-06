@@ -13,7 +13,7 @@ use crate::common::{BATHROOM_X, HALL_X, HALL_Z, LIVING_ROOM_Z};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look, CameraSensitivity};
-use crate::movement::movement;
+use crate::movement::{movement, CameraMovement};
 use bevy::{
   core_pipeline::{bloom::Bloom, tonemapping::Tonemapping, Skybox},
   math::vec3,
@@ -61,7 +61,7 @@ fn main() {
     })))
     .insert_resource(AmbientLight {
             color: Color::WHITE,
-            brightness: 500.,
+            brightness: 100.,
         })
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
@@ -91,6 +91,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
       Tonemapping::TonyMcMapface,
       Bloom::default(),
       CameraSensitivity::default(),
+      CameraMovement::default(),
     ))
     .insert(Skybox {
       image: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),

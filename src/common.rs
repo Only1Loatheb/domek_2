@@ -1,4 +1,4 @@
-use bevy::asset::{AssetServer, Assets, Handle};
+use bevy::asset::{AssetPath, AssetServer, Assets, Handle};
 use bevy::image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor};
 use bevy::math::{Affine2, Vec2};
 use bevy::pbr::StandardMaterial;
@@ -31,10 +31,10 @@ pub const SMALL_HALL_Z: f32 = 13.78;
 
 // const OFFICE_BEDROOM_Z_OFFSET: f32 = 11.65;
 
-pub(crate) fn repeat_texture(
-  path: &str,
+pub(crate) fn repeat_texture<'a>(
+  path: impl Into<AssetPath<'a>>,
   materials: &mut ResMut<Assets<StandardMaterial>>,
-  asset_server: Res<AssetServer>,
+  asset_server: &Res<AssetServer>,
   object_size: Vec2,
   image_scale: Vec2,
 ) -> Handle<StandardMaterial> {
