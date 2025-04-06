@@ -443,6 +443,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_basic_portals"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5b6342e7d18cbe6ae01a6f642768aa635bd75aef579464913b1ac66d82475c2"
+dependencies = [
+ "bevy_app",
+ "bevy_asset",
+ "bevy_color",
+ "bevy_core_pipeline",
+ "bevy_ecs",
+ "bevy_hierarchy",
+ "bevy_image",
+ "bevy_math",
+ "bevy_pbr",
+ "bevy_picking",
+ "bevy_reflect",
+ "bevy_render",
+ "bevy_transform",
+ "bevy_window",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
 name = "bevy_color"
 version = "0.15.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2434,6 +2458,7 @@ name = "jutrzenka"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_basic_portals",
 ]
 
 [[package]]

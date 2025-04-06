@@ -6,10 +6,11 @@ mod look;
 mod movement;
 
 use bevy::prelude::*;
+use std::f32::consts::FRAC_PI_2;
 
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
-use crate::bathroom::BathroomPlugin;
-use crate::common::{BATHROOM_X, HALL_X, HALL_Z, LIVING_ROOM_Z};
+use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
+use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, HALL_X, HALL_Z, LIVING_ROOM_Z};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look, CameraSensitivity};
@@ -19,6 +20,8 @@ use bevy::{
   math::vec3,
   pbr::VolumetricLight,
 };
+use bevy_basic_portals::PortalDestinationSource::CreateMirror;
+use bevy_basic_portals::PortalsPlugin;
 
 const DIRECTIONAL_LIGHT_MOVEMENT_SPEED: f32 = 0.02;
 
@@ -52,7 +55,7 @@ struct MoveBackAndForthHorizontally {
 
 fn main() {
   App::new()
-    .add_plugins(DefaultPlugins)
+    .add_plugins((DefaultPlugins, PortalsPlugin::MINIMAL))
     .insert_resource(ClearColor(Color::Srgba(Srgba {
       red: 0.02,
       green: 0.02,
@@ -60,9 +63,9 @@ fn main() {
       alpha: 1.0,
     })))
     .insert_resource(AmbientLight {
-            color: Color::WHITE,
-            brightness: 100.,
-        })
+      color: Color::WHITE,
+      brightness: 100.,
+    })
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
     .add_systems(Startup, setup_light)
@@ -75,14 +78,14 @@ fn main() {
 }
 
 /// Initializes the scene.
-fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_settings: Res<AppSettings>) {
+fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_settings: Res<AppSettings>, mut meshes: ResMut<Assets<Mesh>>) {
   // Spawn the glTF scene.
   // commands.spawn(SceneRoot(asset_server.load(
   //   GltfAssetLabel::Scene(0).from_asset("models/VolumetricFogExample/VolumetricFogExample.glb"),
   // )));
 
   // Spawn the camera.
-  commands
+  let camera = commands
     .spawn((
       Camera3d::default(),
       Camera { hdr: true, ..default() },
@@ -97,7 +100,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
       image: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
       brightness: 1000.0,
       ..default()
-    })
+    }).id()
     // .insert(VolumetricFog {
     //   // This value is explicitly set to 0 since we have no environment map light
     //   ambient_intensity: 0.0,
@@ -150,6 +153,29 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   //     ..default()
   //   },
   // ));
+
+  {
+    use bevy_basic_portals::*;
+    let mirror_width = 7.5;
+    let mirror_mesh = meshes.add(Rectangle::new(mirror_width, 8.));
+    let mirror_transform =
+      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 0.01, 16.0, 0.5 * 
+        mirror_width + 12.))
+        .with_rotation(Quat::from_rotation_y(-FRAC_PI_2));
+    commands.spawn((
+      CreatePortal {
+        main_camera: Some(camera),
+        destination: CreateMirror,
+        debug: None,
+        // Uncomment the following two lines to have a double-sided mirror
+        //cull_mode: None,
+        //portal_mode: PortalMode::MaskedImageHalfSpaceFrustum((None, true)),
+        ..default()
+      },
+      Mesh3d(mirror_mesh),
+      mirror_transform,
+    ));
+  }
 }
 
 fn create_text(app_settings: &AppSettings) -> Text {

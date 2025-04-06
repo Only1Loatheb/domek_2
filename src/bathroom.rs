@@ -2,8 +2,7 @@ use bevy::prelude::*;
 
 use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, DOOR_Y, FLAT_HEIGHT, LIVING_ROOM_Z};
 use bevy::math::vec3;
-use bevy::transform;
-use std::f32::consts::{FRAC_PI_2, PI, TAU};
+use std::f32::consts::{FRAC_PI_2, PI};
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
@@ -18,12 +17,13 @@ struct BathroomCommon {
   wall_material: [Handle<StandardMaterial>; 4],
 }
 
+pub(crate) const BATHROOM_ORIGIN: Vec3 = vec3(-BATHROOM_X + BATHROOM_WALL_THICKNESS, 0., LIVING_ROOM_Z + 
+BATHROOM_WALL_THICKNESS);
+
 fn setup_bathroom_common(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>, asset_server: Res<AssetServer>) {
-  let bathroom_origin: Vec3 = vec3(-BATHROOM_X + BATHROOM_WALL_THICKNESS, 0., LIVING_ROOM_Z + BATHROOM_WALL_THICKNESS);
   let parent = commands
     .spawn((
-      Transform::from_translation(bathroom_origin).with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
-      // rotation
+      Transform::from_translation(BATHROOM_ORIGIN).with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
       GlobalTransform::default(),
       InheritedVisibility::default(),
     ))
