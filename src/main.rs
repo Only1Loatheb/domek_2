@@ -59,6 +59,10 @@ fn main() {
       blue: 0.02,
       alpha: 1.0,
     })))
+    .insert_resource(AmbientLight {
+            color: Color::WHITE,
+            brightness: 500.,
+        })
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
     .add_systems(Startup, setup_light)

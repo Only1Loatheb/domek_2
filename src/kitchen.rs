@@ -1,8 +1,8 @@
+use crate::common::{repeat_texture, FLAT_HEIGHT, LIVING_ROOM_X};
+use bevy::image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor};
+use bevy::math::{vec3, Affine2};
 use bevy::prelude::*;
 use std::f32::consts::FRAC_PI_2;
-
-use crate::common::{FLAT_HEIGHT, LIVING_ROOM_X};
-use bevy::math::vec3;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
@@ -26,12 +26,17 @@ const TOP_CABINET_DEPTH: f32 = BOTTOM_CABINET_DEPTH;
 const TOP_CABINET_HEIGHT: f32 = 5.74 + 0.18;
 const KITCHEN_WIDTH: f32 = 42.35;
 
-fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
-  let kitchen_origin: Vec3 = vec3(-LIVING_ROOM_X + TOP_CABINET_DEPTH, BOTTOM_CABINET_Y, KITCHEN_WIDTH);
+fn setup_kitchen(
+  mut commands: Commands,
+  mut meshes: ResMut<Assets<Mesh>>,
+  mut materials: ResMut<Assets<StandardMaterial>>,
+  asset_server: Res<AssetServer>,
+) {
+  let kitchen_origin: Vec3 = vec3(-LIVING_ROOM_X, BOTTOM_CABINET_Y, KITCHEN_WIDTH);
   let parent = commands
     .spawn((
       Transform::from_translation(kitchen_origin)
-        .with_scale(vec3(-1., 1., 1.))              
+        .with_scale(vec3(-1., 1., -1.))
         .with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
       GlobalTransform::default(),
       InheritedVisibility::default(),
@@ -128,6 +133,28 @@ fn setup_kitchen(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut m
       KitchenCabinet,
     ))
     .set_parent(parent);
+
+  {
+    let counter_top_width = 36.;
+    let counter_top_depth = 6.;
+    let countertop = Cuboid::new(counter_top_width, 0.2, counter_top_depth);
+    let translation = countertop.half_size + vec3(0.0, COUNTERTOP_Y, 0.);
+    let material_handle = repeat_texture(
+      "kitchen/ambient_light.jpg",
+      &mut materials,
+      asset_server,
+      Vec2{x: counter_top_width, y: counter_top_depth},
+      Vec2{x: 0.05, y: 0.1},
+    );
+    commands
+      .spawn((
+        Mesh3d(meshes.add(countertop)),
+        MeshMaterial3d(material_handle),
+        Transform::from_translation(translation),
+        KitchenCabinet,
+      ))
+      .set_parent(parent);
+  }
 }
 
 pub(crate) struct KitchenPlugin;
