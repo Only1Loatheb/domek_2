@@ -1,4 +1,5 @@
 use bevy::asset::{AssetPath, AssetServer, Assets, Handle};
+use bevy::color::Color;
 use bevy::image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor};
 use bevy::math::{Affine2, Vec2};
 use bevy::pbr::StandardMaterial;
@@ -29,9 +30,13 @@ pub const HALL_Z: f32 = 14.3;
 pub const SMALL_HALL_X: f32 = 10.8;
 pub const SMALL_HALL_Z: f32 = 13.78;
 
-// const OFFICE_BEDROOM_Z_OFFSET: f32 = 11.65;
+pub const PLANK_THICKNESS: f32 = 0.18;
 
-pub(crate) fn repeat_texture<'a>(
+// NCS S 1505-y40R
+// https://www.w3schools.com/colors/colors_converter.asp?color=ncs(1505-y40R)
+pub const BEIGE: Color = Color::hsl(30.0, 0.29, 0.85);
+
+pub fn repeat_texture<'a>(
   path: impl Into<AssetPath<'a>>,
   materials: &mut ResMut<Assets<StandardMaterial>>,
   asset_server: &Res<AssetServer>,

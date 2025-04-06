@@ -95,6 +95,13 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
       Bloom::default(),
       CameraSensitivity::default(),
       CameraMovement::default(),
+      // Projection::from(OrthographicProjection {
+      //   // 6 world units per pixel of window height.
+      //   scaling_mode: bevy::render::camera::ScalingMode::FixedVertical {
+      //     viewport_height: 20.0,     // more -> see more
+      //   },
+      //   ..OrthographicProjection::default_3d()
+      // }),
     ))
     .insert(Skybox {
       image: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),

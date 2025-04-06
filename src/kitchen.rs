@@ -1,4 +1,4 @@
-use crate::common::{repeat_texture, FLAT_HEIGHT, LIVING_ROOM_X};
+use crate::common::{repeat_texture, BEIGE, FLAT_HEIGHT, LIVING_ROOM_X};
 use bevy::image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor};
 use bevy::math::{vec3, Affine2};
 use bevy::prelude::*;
@@ -42,11 +42,8 @@ fn setup_kitchen(
       InheritedVisibility::default(),
     ))
     .id();
-
-  // NCS S 1505-y40R
-  // https://www.w3schools.com/colors/colors_converter.asp?color=ncs(1505-y40R)
-  let color = Color::hsl(30.0, 0.29, 0.85);
-  let material = materials.add(color);
+  
+  let material = materials.add(BEIGE);
 
   let bottom_cabinets = [
     Cuboid::new(CABINET_WIDTH / 2.0, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),

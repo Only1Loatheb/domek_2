@@ -1,9 +1,11 @@
 use bevy::prelude::*;
 
-use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, DOOR_Y, FLAT_HEIGHT, LIVING_ROOM_Z};
+use crate::common::{
+  repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, DOOR_Y, FLAT_HEIGHT, LIVING_ROOM_Z, PLANK_THICKNESS,
+};
+use bevy::asset::AssetContainer;
 use bevy::math::vec3;
 use std::f32::consts::{FRAC_PI_2, PI};
-use bevy::asset::AssetContainer;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
@@ -17,6 +19,7 @@ struct BathroomCommon {
   parent: Entity,
   massa_tail: [Handle<StandardMaterial>; 4],
   honey_wood_tail: [Handle<StandardMaterial>; 3],
+  beige: Handle<StandardMaterial>,
 }
 
 pub(crate) const BATHROOM_ORIGIN: Vec3 = vec3(-BATHROOM_X + BATHROOM_WALL_THICKNESS, 0., LIVING_ROOM_Z + BATHROOM_WALL_THICKNESS);
@@ -51,6 +54,7 @@ fn setup_bathroom_common(mut commands: Commands, mut materials: ResMut<Assets<St
     parent,
     massa_tail,
     honey_wood_tail,
+    beige: materials.add(BEIGE),
   });
 }
 
@@ -125,7 +129,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     commands
       .spawn((
         Mesh3d(meshes.add(right_wall)),
-        MeshMaterial3d(common.massa_tail[0].clone()),
+        MeshMaterial3d(common.honey_wood_tail[2].clone()),
         Transform::from_translation(translation),
         Bathroom,
         BathroomWall,
@@ -325,19 +329,13 @@ fn spawn_shower_stall(
 const CABINET_WIDTH: f32 = 6.;
 const CABINET_DEPTH: f32 = 4.;
 
-fn spawn_cabinet(
-  mut commands: Commands,
-  mut meshes: ResMut<Assets<Mesh>>,
-  common: Res<BathroomCommon>,
-  mut materials: ResMut<Assets<StandardMaterial>>,
-) {
-  let material = materials.add(Color::WHITE);
+fn spawn_cabinet(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common: Res<BathroomCommon>) {
   let cabinet = Cuboid::new(CABINET_DEPTH, FLAT_HEIGHT, CABINET_WIDTH);
   let translation = cabinet.half_size + vec3(BATHROOM_WALL_THICKNESS, 0., -CABINET_WIDTH);
   commands
     .spawn((
       Mesh3d(meshes.add(cabinet)),
-      MeshMaterial3d(material),
+      MeshMaterial3d(common.beige.clone()),
       Transform::from_translation(translation),
       Bathroom,
     ))
@@ -367,7 +365,7 @@ fn spawn_toilet(mut commands: Commands, asset_server: Res<AssetServer>, mut mesh
     commands
       .spawn((
         Mesh3d(meshes.add(toilet_flush)),
-        MeshMaterial3d(common.honey_wood_tail[1].clone()),
+        MeshMaterial3d(common.massa_tail[1].clone()),
         Transform::from_translation(translation),
         Bathroom,
       ))
@@ -378,31 +376,73 @@ fn spawn_toilet(mut commands: Commands, asset_server: Res<AssetServer>, mut mesh
 const WASHING_MACHINE_HALF_WIDTH: f32 = 3.;
 const WASHING_MACHINE_HEIGHT: f32 = 8.5;
 
-fn spawn_washing_machine(mut commands: Commands, asset_server: Res<AssetServer>, common: Res<BathroomCommon>) {
+fn spawn_washing_machine(
+  mut commands: Commands,
+  asset_server: Res<AssetServer>,
+  common: Res<BathroomCommon>,
+  mut meshes: ResMut<Assets<Mesh>>,
+) {
   let model_handle = asset_server.load("bathroom/washing_machine.glb#Scene0");
   let transform = Transform::from_scale(Vec3::splat(10.0)).with_rotation(Quat::from_rotation_y(-FRAC_PI_2));
+  let a = 3. * PLANK_THICKNESS;
   commands
-    .spawn(SceneBundle {
-      scene: SceneRoot(model_handle.clone()),
-      transform: transform.with_translation(vec3(
+    .spawn((
+      SceneRoot(model_handle.clone()),
+      transform.with_translation(vec3(
         BATHROOM_WIDTH - WASHING_MACHINE_HALF_WIDTH,
         WASHING_MACHINE_HEIGHT / 2.0,
-        -WASHING_MACHINE_HALF_WIDTH,
+        -WASHING_MACHINE_HALF_WIDTH - a,
       )),
-      ..default()
-    })
+    ))
     .set_parent(common.parent);
   commands
-    .spawn(SceneBundle {
-      scene: SceneRoot(model_handle),
-      transform: transform.with_translation(vec3(
+    .spawn((
+      SceneRoot(model_handle),
+      transform.with_translation(vec3(
         BATHROOM_WIDTH - WASHING_MACHINE_HALF_WIDTH,
         1.5 * WASHING_MACHINE_HEIGHT,
-        -WASHING_MACHINE_HALF_WIDTH,
+        -WASHING_MACHINE_HALF_WIDTH - a,
       )),
-      ..default()
-    })
+    ))
     .set_parent(common.parent);
+
+  let washing_machine_width = 2. * WASHING_MACHINE_HALF_WIDTH;
+  {
+    let plank_cube = Cuboid::new(washing_machine_width, BATHROOM_Z, PLANK_THICKNESS);
+    let plank = meshes.add(plank_cube);
+    commands
+      .spawn((
+        Mesh3d(plank.clone()),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_translation(plank_cube.half_size + vec3(BATHROOM_WIDTH - washing_machine_width, 0., -washing_machine_width - 2. * a)),
+        Bathroom,
+      ))
+      .set_parent(common.parent);
+
+    commands
+      .spawn((
+        Mesh3d(plank),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_translation(plank_cube.half_size + vec3(BATHROOM_WIDTH - washing_machine_width, 0., -PLANK_THICKNESS)),
+        Bathroom,
+      ))
+      .set_parent(common.parent);
+  }
+
+  {
+    let h = 2. * WASHING_MACHINE_HEIGHT + 2.* PLANK_THICKNESS;
+    let plank_cube = Cuboid::new(PLANK_THICKNESS, BATHROOM_Z- h, washing_machine_width + 2. * a);
+    let plank = meshes.add(plank_cube);
+    commands
+      .spawn((
+        Mesh3d(plank),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_translation(plank_cube.half_size + vec3(BATHROOM_WIDTH - washing_machine_width, h,
+                                                                -washing_machine_width - 2. * a)),
+        Bathroom,
+      ))
+      .set_parent(common.parent);
+  }
 }
 
 pub(crate) struct BathroomPlugin;
