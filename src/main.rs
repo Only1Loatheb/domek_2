@@ -64,7 +64,7 @@ fn main() {
     })))
     .insert_resource(AmbientLight {
       color: Color::WHITE,
-      brightness: 800.,
+      brightness: 600.,
     })
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
