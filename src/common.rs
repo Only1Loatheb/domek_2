@@ -9,7 +9,7 @@ pub const FLAT_HEIGHT: f32 = 26.8;
 pub const OFFICE_WALL_THICKNESS: f32 = 0.8;
 pub const BATHROOM_WALL_THICKNESS: f32 = 1.;
 pub const DOOR_Y: f32 = 20.;
-
+pub const TILE_PLUS_GLUE: f32 = 0.08 + 0.07;
 
 pub const BATHROOM_X: f32 = 18.1 + BATHROOM_WALL_THICKNESS;
 pub const BATHROOM_Z: f32 = 25. + 2. * BATHROOM_WALL_THICKNESS;
@@ -26,6 +26,8 @@ pub const OFFICE_Z: f32 = 33.8 + OFFICE_WALL_THICKNESS;
 
 pub const HALL_X: f32 = 41.9;
 pub const HALL_Z: f32 = 14.3;
+
+pub const TM_WALL_X: f32 = BATHROOM_X + HALL_X - LIVING_ROOM_X;
 
 pub const SMALL_HALL_X: f32 = 10.8;
 pub const SMALL_HALL_Z: f32 = 13.78;

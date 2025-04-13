@@ -10,7 +10,7 @@ use std::f32::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_8, PI};
 
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
-use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, HALL_X, HALL_Z, LIVING_ROOM_Z};
+use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, HALL_X, HALL_Z, LIVING_ROOM_Z, TILE_PLUS_GLUE};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look, CameraSensitivity};
@@ -162,7 +162,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   // ));
   let mirror_parent = commands
     .spawn((
-      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 0.01, 16.0, 15.7))
+      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 0.02 - TILE_PLUS_GLUE, 16.0, 15.7))
         .with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
       GlobalTransform::default(),
       InheritedVisibility::default(),

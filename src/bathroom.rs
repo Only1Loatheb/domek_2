@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::{
-  repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, DOOR_Y, FLAT_HEIGHT, LIVING_ROOM_Z, PLANK_THICKNESS,
-};
+use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, DOOR_Y, FLAT_HEIGHT, LIVING_ROOM_Z, PLANK_THICKNESS, TILE_PLUS_GLUE};
 use bevy::asset::AssetContainer;
 use bevy::math::vec3;
 use std::f32::consts::{FRAC_PI_2, PI};
@@ -186,7 +184,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
   }
   {
     let back_wall = Cuboid::new(BATHROOM_WIDTH + BATHROOM_WALL_THICKNESS, FLAT_HEIGHT, BATHROOM_WALL_THICKNESS);
-    let translation = back_wall.half_size + vec3(0., 0., -BATHROOM_DEPTH - BATHROOM_WALL_THICKNESS);
+    let translation = back_wall.half_size + vec3(0., 0., -BATHROOM_DEPTH - BATHROOM_WALL_THICKNESS + TILE_PLUS_GLUE);
     commands
       .spawn((
         Mesh3d(meshes.add(back_wall)),
@@ -333,7 +331,7 @@ fn spawn_sink(mut commands: Commands, asset_server: Res<AssetServer>, common: Re
     commands
       .spawn((
         SceneRoot(tap),
-        sink_transform.with_translation(sink_transform.translation + vec3(1., 9.5, -0.4)),
+        sink_transform.with_translation(sink_transform.translation + vec3(1., 9.5, -0.4 + TILE_PLUS_GLUE)),
         Bathroom,
       ))
       .set_parent(common.parent);
@@ -388,7 +386,7 @@ fn spawn_shower_stall(
     commands
       .spawn((
         SceneRoot(tap),
-        Transform::from_translation(translation + vec3(4.5, 9.5, 0.)),
+        Transform::from_translation(translation + vec3(4.5, 9.5, 0. + TILE_PLUS_GLUE)),
         Bathroom,
       ))
       .set_parent(common.parent);
