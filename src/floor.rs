@@ -63,6 +63,42 @@ fn spawn_floors(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut ma
       ))
       .set_parent(parent);
   }
+  {
+    let office_floor = Cuboid::new(OFFICE_X, FLOOR_DEPTH, OFFICE_Z);
+    let translation = office_floor.half_size + vec3(BATHROOM_X + SMALL_HALL_X, 0., LIVING_ROOM_Z + HALL_Z);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(office_floor)),
+        MeshMaterial3d(floor_material.clone()),
+        Transform::from_translation(translation),
+        Floor,
+      ))
+      .set_parent(parent);
+  }
+  {
+    let small_hall_floor = Cuboid::new(SMALL_HALL_X, FLOOR_DEPTH, SMALL_HALL_Z);
+    let translation = small_hall_floor.half_size + vec3(BATHROOM_X, 0., LIVING_ROOM_Z + HALL_Z);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(small_hall_floor)),
+        MeshMaterial3d(floor_material.clone()),
+        Transform::from_translation(translation),
+        Floor,
+      ))
+      .set_parent(parent);
+  }
+  {
+    let bedroom_floor = Cuboid::new(BEDROOM_X, FLOOR_DEPTH, BEDROOM_Z);
+    let translation = bedroom_floor.half_size + vec3(0., 0., LIVING_ROOM_Z + BATHROOM_Z);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(bedroom_floor)),
+        MeshMaterial3d(floor_material.clone()),
+        Transform::from_translation(translation),
+        Floor,
+      ))
+      .set_parent(parent);
+  }
 }
 
 pub(crate) struct FloorPlugin;
