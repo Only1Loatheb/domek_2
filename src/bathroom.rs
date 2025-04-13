@@ -65,11 +65,13 @@ const BATHROOM_DEPTH: f32 = BATHROOM_X - BATHROOM_WALL_THICKNESS;
 const BATHROOM_WIDTH: f32 = BATHROOM_Z - 2. * BATHROOM_WALL_THICKNESS;
 const VENT_DEPTH: f32 = 4.;
 const VENT_WIDTH: f32 = 5.5;
+const EPSILON: f32 = 0.0002;
 
 fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common: Res<BathroomCommon>) {
   {
-    let left_door_wall = Cuboid::new(LEFT_DOOR_WALL_LENGTH, FLAT_HEIGHT, BATHROOM_WALL_THICKNESS);
-    let translation = left_door_wall.half_size + vec3(0., 0., 0.);
+    let left_door_wall_size = vec3(LEFT_DOOR_WALL_LENGTH, FLAT_HEIGHT, BATHROOM_WALL_THICKNESS);
+    let left_door_wall = Cuboid::from_size(left_door_wall_size.clone());
+    let translation = left_door_wall.half_size;
     commands
       .spawn((
         Mesh3d(meshes.add(left_door_wall)),
@@ -79,19 +81,38 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
         BathroomWall,
       ))
       .set_parent(common.parent);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(Cuboid::from_size(left_door_wall_size + vec3(4. * EPSILON, 0., 0.)))),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_translation(translation + vec3(-EPSILON, 0., EPSILON)),
+        Bathroom,
+        BathroomWall,
+      ))
+      .set_parent(common.parent);
   }
   {
-    let right_door_wall = Cuboid::new(
+    let right_door_wall_size = vec3(
       RIGHT_DOOR_WALL_LENGTH + BATHROOM_WALL_THICKNESS,
       FLAT_HEIGHT,
       BATHROOM_WALL_THICKNESS,
     );
+    let right_door_wall = Cuboid::from_size(right_door_wall_size);
     let translation = right_door_wall.half_size + vec3(LEFT_DOOR_WALL_LENGTH + DOOR_WIDTH, 0., 0.);
     commands
       .spawn((
         Mesh3d(meshes.add(right_door_wall)),
         MeshMaterial3d(common.massa_tail[1].clone()),
         Transform::from_translation(translation),
+        Bathroom,
+        BathroomWall,
+      ))
+      .set_parent(common.parent);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(Cuboid::from_size(right_door_wall_size + vec3(4. * EPSILON, 0., 0.)))),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_translation(translation + vec3(-EPSILON, 0., EPSILON)),
         Bathroom,
         BathroomWall,
       ))
@@ -109,6 +130,15 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
         BathroomWall,
       ))
       .set_parent(common.parent);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(over_door_wall)),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_translation(translation + vec3(0., -EPSILON, EPSILON)),
+        Bathroom,
+        BathroomWall,
+      ))
+      .set_parent(common.parent);
   }
   {
     let left_wall = Cuboid::new(BATHROOM_WALL_THICKNESS, FLAT_HEIGHT, BATHROOM_X);
@@ -122,6 +152,15 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
         BathroomWall,
       ))
       .set_parent(common.parent);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(left_wall)),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_translation(translation + vec3(-EPSILON, 0., 0.)),
+        Bathroom,
+        BathroomWall,
+      ))
+      .set_parent(common.parent);
   }
   {
     let right_wall = Cuboid::new(BATHROOM_WALL_THICKNESS, FLAT_HEIGHT, BATHROOM_X);
@@ -131,6 +170,15 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
         Mesh3d(meshes.add(right_wall)),
         MeshMaterial3d(common.honey_wood_tail[2].clone()),
         Transform::from_translation(translation),
+        Bathroom,
+        BathroomWall,
+      ))
+      .set_parent(common.parent);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(right_wall)),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_translation(translation + vec3(EPSILON, 0., 0.)),
         Bathroom,
         BathroomWall,
       ))
@@ -170,7 +218,6 @@ const SHELF_SPACE_DEPTH: f32 = 1.5;
 const SHELF_SPACE_WIDTH: f32 = 2.2;
 const SHELF_SPACE_HEIGHT: f32 = 3.0;
 const SHELF_EXTENDS_INTO_SHOWER_TO_SUPPORT_SHOWER_STALL: f32 = 0.4;
-const EPSILON: f32 = 0.0002;
 const SHELF_WIDTH: f32 = SHELF_SPACE_WIDTH + SHELF_WALL_THICKNESS;
 
 const SHELF_DEPTH: f32 = SHELF_SPACE_DEPTH + SHELF_WALL_THICKNESS;
@@ -272,12 +319,21 @@ fn spawn_sink(mut commands: Commands, asset_server: Res<AssetServer>, common: Re
       .set_parent(common.parent);
   }
   {
-    // MeshMaterial3d(common.honey_wood_tail[2].clone())
     let sink_cabinet_model = asset_server.load("bathroom/500.353.00.1_P.glb#Scene0");
     commands
       .spawn((
         SceneRoot(sink_cabinet_model),
         sink_transform.with_translation(sink_transform.translation.with_y(1.5)),
+        Bathroom,
+      ))
+      .set_parent(common.parent);
+  }
+  {
+    let tap = asset_server.load("bathroom/delta-pi-bateria-umywalkowa-podtynkowa-miedziany-szczotkowany.glb#Scene0");
+    commands
+      .spawn((
+        SceneRoot(tap),
+        sink_transform.with_translation(sink_transform.translation + vec3(1., 9.5, -0.4)),
         Bathroom,
       ))
       .set_parent(common.parent);
@@ -325,6 +381,18 @@ fn spawn_shower_stall(
       ))
       .set_parent(common.parent);
   }
+  {
+    let tap = asset_server.load(
+      "bathroom/pi-zestaw-prysznicowo-wannowy-podtynkowy-2-funkcyjny-z-deszczownica-25-cm-miedziany-szczotkowany.glb#Scene0",
+    );
+    commands
+      .spawn((
+        SceneRoot(tap),
+        Transform::from_translation(translation + vec3(4.5, 9.5, 0.)),
+        Bathroom,
+      ))
+      .set_parent(common.parent);
+  }
 }
 const CABINET_WIDTH: f32 = 6.;
 const CABINET_DEPTH: f32 = 4.;
@@ -342,7 +410,7 @@ fn spawn_cabinet(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, commo
     .set_parent(common.parent);
 }
 
-const FLUSH_DEPTH: f32 = 2.;
+const FLUSH_DEPTH: f32 = 2.5;
 const FLUSH_HEIGHT: f32 = 12.;
 const FLUSH_WIDTH: f32 = 7.;
 
@@ -414,7 +482,9 @@ fn spawn_washing_machine(
       .spawn((
         Mesh3d(plank.clone()),
         MeshMaterial3d(common.beige.clone()),
-        Transform::from_translation(plank_cube.half_size + vec3(BATHROOM_WIDTH - washing_machine_width, 0., -washing_machine_width - 2. * a)),
+        Transform::from_translation(
+          plank_cube.half_size + vec3(BATHROOM_WIDTH - washing_machine_width, 0., -washing_machine_width - 2. * a),
+        ),
         Bathroom,
       ))
       .set_parent(common.parent);
@@ -430,15 +500,16 @@ fn spawn_washing_machine(
   }
 
   {
-    let h = 2. * WASHING_MACHINE_HEIGHT + 2.* PLANK_THICKNESS;
-    let plank_cube = Cuboid::new(PLANK_THICKNESS, BATHROOM_Z- h, washing_machine_width + 2. * a);
+    let h = 2. * WASHING_MACHINE_HEIGHT + 2. * PLANK_THICKNESS;
+    let plank_cube = Cuboid::new(PLANK_THICKNESS, BATHROOM_Z - h, washing_machine_width + 2. * a);
     let plank = meshes.add(plank_cube);
     commands
       .spawn((
         Mesh3d(plank),
         MeshMaterial3d(common.beige.clone()),
-        Transform::from_translation(plank_cube.half_size + vec3(BATHROOM_WIDTH - washing_machine_width, h,
-                                                                -washing_machine_width - 2. * a)),
+        Transform::from_translation(
+          plank_cube.half_size + vec3(BATHROOM_WIDTH - washing_machine_width, h, -washing_machine_width - 2. * a),
+        ),
         Bathroom,
       ))
       .set_parent(common.parent);
