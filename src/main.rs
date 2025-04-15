@@ -170,8 +170,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     .id();
   {
     use bevy_basic_portals::*;
-    let mirror_mesh = meshes.add(Ellipse::new(2., 5.));
-    let mirror_transform = Transform::from_rotation(Quat::from_rotation_z(FRAC_PI_8));
+    let mirror_mesh = meshes.add(Circle::new(4.));
     commands
       .spawn((
         CreatePortal {
@@ -184,27 +183,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
           ..default()
         },
         Mesh3d(mirror_mesh),
-        mirror_transform,
-      ))
-      .set_parent(mirror_parent);
-  }
-  {
-    use bevy_basic_portals::*;
-    let mirror_mesh = meshes.add(Capsule2d::new(3., 2.));
-    let mirror_transform = Transform::from_rotation(Quat::from_rotation_z(-FRAC_PI_3));
-    commands
-      .spawn((
-        CreatePortal {
-          main_camera: Some(camera),
-          destination: CreateMirror,
-          debug: None,
-          // Uncomment the following two lines to have a double-sided mirror
-          //cull_mode: None,
-          //portal_mode: PortalMode::MaskedImageHalfSpaceFrustum((None, true)),
-          ..default()
-        },
-        Mesh3d(mirror_mesh),
-        mirror_transform,
+        Transform::from_translation(vec3(1., 0.,0.)),
       ))
       .set_parent(mirror_parent);
   }
