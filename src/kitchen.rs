@@ -1,6 +1,5 @@
-use crate::common::{repeat_texture, BEIGE, FLAT_HEIGHT, LIVING_ROOM_X};
-use bevy::image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor};
-use bevy::math::{vec3, Affine2};
+use crate::common::*;
+use bevy::math::{vec3};
 use bevy::prelude::*;
 use std::f32::consts::FRAC_PI_2;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
@@ -26,12 +25,13 @@ const TOP_CABINET_DEPTH: f32 = BOTTOM_CABINET_DEPTH;
 const TOP_CABINET_HEIGHT: f32 = 5.74 + 0.18;
 const KITCHEN_WIDTH: f32 = 42.35;
 
-fn setup_kitchen(
-  mut commands: Commands,
-  mut meshes: ResMut<Assets<Mesh>>,
-  mut materials: ResMut<Assets<StandardMaterial>>,
-  asset_server: Res<AssetServer>,
-) {
+#[derive(Resource)]
+struct KitchenCommon {
+  parent: Entity,
+  cabinets_colour: Handle<StandardMaterial>,
+}
+
+fn setup_kitchen_common(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>) {
   let kitchen_origin: Vec3 = vec3(-LIVING_ROOM_X, BOTTOM_CABINET_Y, KITCHEN_WIDTH);
   let parent = commands
     .spawn((
@@ -42,9 +42,19 @@ fn setup_kitchen(
       InheritedVisibility::default(),
     ))
     .id();
-  
-  let material = materials.add(BEIGE);
+  commands.insert_resource(KitchenCommon {
+    parent,
+    cabinets_colour: materials.add(BEIGE),
+  });
+}
 
+fn setup_kitchen(
+  mut commands: Commands,
+  mut meshes: ResMut<Assets<Mesh>>,
+  asset_server: Res<AssetServer>,
+  common: Res<KitchenCommon>,
+  mut materials: ResMut<Assets<StandardMaterial>>,
+) {
   let bottom_cabinets = [
     Cuboid::new(CABINET_WIDTH / 2.0, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
     Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
@@ -62,11 +72,11 @@ fn setup_kitchen(
       commands
         .spawn((
           Mesh3d(meshes.add(bottom_cabinet)),
-          MeshMaterial3d(material.clone()),
+          MeshMaterial3d(common.cabinets_colour.clone()),
           Transform::from_translation(translation),
           KitchenCabinet,
         ))
-        .set_parent(parent);
+        .set_parent(common.parent);
       x_acc += bottom_cabinet.size().x;
     }
   }
@@ -82,17 +92,24 @@ fn setup_kitchen(
   ];
 
   {
+    let middle_cabinet_material = repeat_texture(
+      "kitchen/dab_vicenza.jpg",
+      &mut materials,
+      &asset_server,
+      Vec2 { x: 1., y: 1. },
+      Vec2 { x: 0.5, y: 0.77 },
+    );
     let mut x_acc: f32 = 0.0;
     for middle_cabinet in middle_cabinets.into_iter() {
       let translation = middle_cabinet.half_size + vec3(x_acc, MIDDLE_CABINET_Y, 0.);
       commands
         .spawn((
           Mesh3d(meshes.add(middle_cabinet)),
-          MeshMaterial3d(material.clone()),
+          MeshMaterial3d(middle_cabinet_material.clone()),
           Transform::from_translation(translation),
           KitchenCabinet,
         ))
-        .set_parent(parent);
+        .set_parent(common.parent);
       x_acc += middle_cabinet.size().x;
     }
   }
@@ -113,11 +130,11 @@ fn setup_kitchen(
     commands
       .spawn((
         Mesh3d(meshes.add(top_cabinet)),
-        MeshMaterial3d(material.clone()),
+        MeshMaterial3d(common.cabinets_colour.clone()),
         Transform::from_translation(translation),
         KitchenCabinet,
       ))
-      .set_parent(parent);
+      .set_parent(common.parent);
     x_acc += top_cabinet.size().x;
   }
   let owen_and_stuff = Cuboid::new(CABINET_WIDTH, FLAT_HEIGHT - BOTTOM_CABINET_Y, BOTTOM_CABINET_DEPTH);
@@ -125,11 +142,11 @@ fn setup_kitchen(
   commands
     .spawn((
       Mesh3d(meshes.add(owen_and_stuff)),
-      MeshMaterial3d(material.clone()),
+      MeshMaterial3d(common.cabinets_colour.clone()),
       Transform::from_translation(translation),
       KitchenCabinet,
     ))
-    .set_parent(parent);
+    .set_parent(common.parent);
 
   {
     let counter_top_width = 36.;
@@ -140,8 +157,11 @@ fn setup_kitchen(
       "kitchen/ambient_light.jpg",
       &mut materials,
       &asset_server,
-      Vec2{x: counter_top_width, y: counter_top_depth},
-      Vec2{x: 0.05, y: 0.1},
+      Vec2 {
+        x: counter_top_width,
+        y: counter_top_depth,
+      },
+      Vec2 { x: 0.05, y: 0.1 },
     );
     commands
       .spawn((
@@ -150,7 +170,7 @@ fn setup_kitchen(
         Transform::from_translation(translation),
         KitchenCabinet,
       ))
-      .set_parent(parent);
+      .set_parent(common.parent);
   }
 }
 
@@ -158,6 +178,8 @@ pub(crate) struct KitchenPlugin;
 
 impl Plugin for KitchenPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(Startup, setup_kitchen);
+    app
+      .add_systems(Startup, setup_kitchen_common)
+      .add_systems(Startup, setup_kitchen.after(setup_kitchen_common));
   }
 }

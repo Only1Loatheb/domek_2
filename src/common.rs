@@ -3,7 +3,7 @@ use bevy::color::Color;
 use bevy::image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor};
 use bevy::math::{Affine2, Vec2};
 use bevy::pbr::StandardMaterial;
-use bevy::prelude::{default, Res, ResMut};
+use bevy::prelude::{default, Component, Res, ResMut};
 
 pub const FLAT_HEIGHT: f32 = 26.8;
 pub const OFFICE_WALL_THICKNESS: f32 = 0.8;
@@ -60,10 +60,7 @@ pub fn repeat_texture<'a>(
   let material_handle = materials.add(StandardMaterial {
     base_color_texture: Some(texture),
     metallic: 0.9,
-    uv_transform: Affine2::from_scale(Vec2::new(
-      image_scale.x * object_size.x,
-      image_scale.y * object_size.y,
-    )),
+    uv_transform: Affine2::from_scale(Vec2::new(image_scale.x * object_size.x, image_scale.y * object_size.y)),
     ..default()
   });
   material_handle

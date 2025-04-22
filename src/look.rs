@@ -56,7 +56,7 @@ pub fn look(
         // so the direction picked will for all intents and purposes be arbitrary.
         // Another issue is that for mathematical reasons, the yaw will effectively be flipped when the pitch is at the extremes.
         // To not run into these issues, we clamp the pitch to a safe range.
-        const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
+        const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.001;
         let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
 
         transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);

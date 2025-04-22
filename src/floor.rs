@@ -12,21 +12,32 @@ struct Floor;
 #[derive(Component)]
 struct LoadBearingWall;
 
-const FLOOR_SCALA: Vec3 = vec3(-1., 1., 1.);
+#[derive(Resource)]
+struct FloorCommon {
+  parent: Entity,
+}
 
-fn spawn_floors(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
-  let floor_depth: f32 = 1.;
-  let floor_origin: Vec3 = vec3(0., -floor_depth, 0.);
+const LOAD_BEARING_WALL_THICKNESS: f32 = 1.;
+
+fn setup_floor_common(mut commands: Commands) {
   let parent = commands
     .spawn((
-      Transform::from_translation(floor_origin).with_scale(FLOOR_SCALA),
+      Transform::from_scale(vec3(-1., 1., 1.)),
       GlobalTransform::default(),
       InheritedVisibility::default(),
     ))
     .id();
-  let color = Color::hsl(0., 0., 1.);
-  let floor_material: Handle<StandardMaterial> = materials.add(color);
+  commands.insert_resource(FloorCommon { parent })
+}
 
+fn spawn_floors(
+  mut commands: Commands,
+  mut meshes: ResMut<Assets<Mesh>>,
+  mut materials: ResMut<Assets<StandardMaterial>>,
+  common: Res<FloorCommon>,
+) {
+  let floor_depth: f32 = 1.;
+  let floor_material: Handle<StandardMaterial> = materials.add(Color::hsl(0., 0., 1.));
   {
     let living_room_floor = Cuboid::new(LIVING_ROOM_X, floor_depth, LIVING_ROOM_Z);
     let translation = living_room_floor.half_size;
@@ -37,7 +48,7 @@ fn spawn_floors(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut ma
         Transform::from_translation(translation),
         Floor,
       ))
-      .set_parent(parent);
+      .set_parent(common.parent);
   }
   {
     let hall_floor = Cuboid::new(HALL_X, floor_depth, HALL_Z);
@@ -49,7 +60,7 @@ fn spawn_floors(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut ma
         Transform::from_translation(translation),
         Floor,
       ))
-      .set_parent(parent);
+      .set_parent(common.parent);
   }
   {
     let bathroom_floor = Cuboid::new(BATHROOM_X, floor_depth, BATHROOM_Z);
@@ -61,7 +72,7 @@ fn spawn_floors(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut ma
         Transform::from_translation(translation),
         Floor,
       ))
-      .set_parent(parent);
+      .set_parent(common.parent);
   }
   {
     let office_floor = Cuboid::new(OFFICE_X, floor_depth, OFFICE_Z);
@@ -73,7 +84,7 @@ fn spawn_floors(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut ma
         Transform::from_translation(translation),
         Floor,
       ))
-      .set_parent(parent);
+      .set_parent(common.parent);
   }
   {
     let small_hall_floor = Cuboid::new(SMALL_HALL_X, floor_depth, SMALL_HALL_Z);
@@ -85,7 +96,7 @@ fn spawn_floors(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut ma
         Transform::from_translation(translation),
         Floor,
       ))
-      .set_parent(parent);
+      .set_parent(common.parent);
   }
   {
     let bedroom_floor = Cuboid::new(BEDROOM_X, floor_depth, BEDROOM_Z);
@@ -97,69 +108,67 @@ fn spawn_floors(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut ma
         Transform::from_translation(translation),
         Floor,
       ))
-      .set_parent(parent);
+      .set_parent(common.parent);
   }
 }
 
-const LOAD_BEARING_WALL_THICKNESS: f32 = 1.;
-
-fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
-  let parent = commands
-    .spawn((
-      Transform::from_scale(FLOOR_SCALA),
-      GlobalTransform::default(),
-      InheritedVisibility::default(),
-    ))
-    .id();
-  let color = Color::hsl(0., 0., 1.);
-  let wall_material: Handle<StandardMaterial> = materials.add(color);
+fn spawn_walls(
+  mut commands: Commands,
+  mut meshes: ResMut<Assets<Mesh>>,
+  common: Res<FloorCommon>,
+  mut materials: ResMut<Assets<StandardMaterial>>,
+) {
   {
-    let living_room_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_Z);
-    let translation = living_room_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, 0., 0.);
-    commands
-      .spawn((
-        Mesh3d(meshes.add(living_room_wall)),
-        MeshMaterial3d(wall_material.clone()),
-        Transform::from_translation(translation),
-        LoadBearingWall,
-      ))
-      .set_parent(parent);
+    let kithen_wall_colour = materials.add(BEIGE);
+    {
+      let living_room_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_Z);
+      let translation = living_room_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, 0., 0.);
+      commands
+        .spawn((
+          Mesh3d(meshes.add(living_room_wall)),
+          MeshMaterial3d(kithen_wall_colour.clone()),
+          Transform::from_translation(translation),
+          LoadBearingWall,
+        ))
+        .set_parent(common.parent);
+    }
+    {
+      let kitchen_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_Z);
+      let translation = kitchen_wall.half_size + vec3(LIVING_ROOM_X, 0., 0.);
+      commands
+        .spawn((
+          Mesh3d(meshes.add(kitchen_wall)),
+          MeshMaterial3d(kithen_wall_colour.clone()),
+          Transform::from_translation(translation),
+          LoadBearingWall,
+        ))
+        .set_parent(common.parent);
+    }
+    {
+      let hall_wall = Cuboid::new(TM_WALL_X, FLAT_HEIGHT, LOAD_BEARING_WALL_THICKNESS);
+      let translation = hall_wall.half_size + vec3(LIVING_ROOM_X, 0., LIVING_ROOM_Z - LOAD_BEARING_WALL_THICKNESS);
+      commands
+        .spawn((
+          Mesh3d(meshes.add(hall_wall)),
+          MeshMaterial3d(kithen_wall_colour.clone()),
+          Transform::from_translation(translation),
+          LoadBearingWall,
+        ))
+        .set_parent(common.parent);
+    }
   }
   {
+    let bedroom_wall_colour = materials.add(Color::hsl(0., 0., 1.));
     let bedroom_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, BEDROOM_Z);
     let translation = bedroom_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, 0., LIVING_ROOM_Z + BATHROOM_Z);
     commands
       .spawn((
         Mesh3d(meshes.add(bedroom_wall)),
-        MeshMaterial3d(wall_material.clone()),
+        MeshMaterial3d(bedroom_wall_colour.clone()),
         Transform::from_translation(translation),
         LoadBearingWall,
       ))
-      .set_parent(parent);
-  }
-  {
-    let kitchen_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_Z);
-    let translation = kitchen_wall.half_size + vec3(LIVING_ROOM_X, 0., 0.);
-    commands
-      .spawn((
-        Mesh3d(meshes.add(kitchen_wall)),
-        MeshMaterial3d(wall_material.clone()),
-        Transform::from_translation(translation),
-        LoadBearingWall,
-      ))
-      .set_parent(parent);
-  }
-  {
-    let hall_wall = Cuboid::new(TM_WALL_X, FLAT_HEIGHT, LOAD_BEARING_WALL_THICKNESS);
-    let translation = hall_wall.half_size + vec3(LIVING_ROOM_X, 0., LIVING_ROOM_Z - LOAD_BEARING_WALL_THICKNESS);
-    commands
-      .spawn((
-        Mesh3d(meshes.add(hall_wall)),
-        MeshMaterial3d(wall_material.clone()),
-        Transform::from_translation(translation),
-        LoadBearingWall,
-      ))
-      .set_parent(parent);
+      .set_parent(common.parent);
   }
 }
 
@@ -167,6 +176,8 @@ pub(crate) struct FloorPlugin;
 
 impl Plugin for FloorPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(Startup, (spawn_floors, spawn_walls));
+    app
+      .add_systems(Startup, setup_floor_common)
+      .add_systems(Startup, (spawn_floors, spawn_walls).after(setup_floor_common));
   }
 }
