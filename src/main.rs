@@ -6,11 +6,11 @@ mod look;
 mod movement;
 
 use bevy::prelude::*;
-use std::f32::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_8, PI};
-
+use std::f32::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_4, FRAC_PI_8, PI};
+use std::ops::Add;
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
-use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, HALL_X, HALL_Z, LIVING_ROOM_Z, TILE_PLUS_GLUE};
+use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, TILE_PLUS_GLUE};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look, CameraSensitivity};
@@ -89,8 +89,8 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     .spawn((
       Camera3d::default(),
       Camera { hdr: true, ..default() },
-      Transform::from_xyz(-BATHROOM_X- HALL_X, 17.5, LIVING_ROOM_Z + 0.5 * HALL_Z)
-        .looking_at(vec3(0., 17.5, LIVING_ROOM_Z + 0.5 * HALL_Z), Vec3::Y),
+      Transform::from_xyz(-BATHROOM_X- HALL_X, 17.5, LIVING_ROOM_TO_BATHROOM_Z + 0.5 * HALL_Z)
+        .looking_at(vec3(0., 17.5, LIVING_ROOM_TO_BATHROOM_Z + 0.5 * HALL_Z), Vec3::Y),
       Tonemapping::TonyMcMapface,
       Bloom::default(),
       CameraSensitivity::default(),
@@ -162,15 +162,15 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   // ));
   let mirror_parent = commands
     .spawn((
-      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 0.02 - TILE_PLUS_GLUE, 16.0, 15.7))
-        .with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
+      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 2. * TILE_PLUS_GLUE, 14.0, 16.7))
+        .with_rotation(Quat::from_euler(EulerRot::YXZ, 3. * FRAC_PI_2, 0., FRAC_PI_2)),
       GlobalTransform::default(),
       InheritedVisibility::default(),
     ))
     .id();
   {
     use bevy_basic_portals::*;
-    let mirror_mesh = meshes.add(Circle::new(4.));
+    let mirror_mesh = meshes.add(CircularSegment::new(4., 2.2));
     commands
       .spawn((
         CreatePortal {
@@ -183,7 +183,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
           ..default()
         },
         Mesh3d(mirror_mesh),
-        Transform::from_translation(vec3(1., 0.,0.)),
+        Transform::from_translation(vec3(1., 0., 0.)),
       ))
       .set_parent(mirror_parent);
   }

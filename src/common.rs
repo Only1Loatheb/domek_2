@@ -15,7 +15,8 @@ pub const BATHROOM_X: f32 = 18.1 + BATHROOM_WALL_THICKNESS;
 pub const BATHROOM_Z: f32 = 25. + 2. * BATHROOM_WALL_THICKNESS;
 
 pub const LIVING_ROOM_X: f32 = 52.55;
-pub const LIVING_ROOM_Z: f32 = 57.3;
+pub const LIVING_ROOM_TO_BATHROOM_Z: f32 = 57.3;
+pub const LIVING_ROOM_TO_HALL_Z: f32 =  56.163;
 pub const LIVING_ROOM_X_HALL_OFFSET: f32 = BATHROOM_X;
 
 pub const BEDROOM_X: f32 = 30.;

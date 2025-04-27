@@ -39,7 +39,7 @@ fn spawn_floors(
   let floor_depth: f32 = 1.;
   let floor_material: Handle<StandardMaterial> = materials.add(Color::hsl(0., 0., 1.));
   {
-    let living_room_floor = Cuboid::new(LIVING_ROOM_X, floor_depth, LIVING_ROOM_Z);
+    let living_room_floor = Cuboid::new(LIVING_ROOM_X, floor_depth, LIVING_ROOM_TO_BATHROOM_Z);
     let translation = living_room_floor.half_size;
     commands
       .spawn((
@@ -52,7 +52,7 @@ fn spawn_floors(
   }
   {
     let hall_floor = Cuboid::new(HALL_X, floor_depth, HALL_Z);
-    let translation = hall_floor.half_size + vec3(LIVING_ROOM_X_HALL_OFFSET, 0., LIVING_ROOM_Z);
+    let translation = hall_floor.half_size + vec3(LIVING_ROOM_X_HALL_OFFSET, 0., LIVING_ROOM_TO_HALL_Z);
     commands
       .spawn((
         Mesh3d(meshes.add(hall_floor)),
@@ -64,7 +64,7 @@ fn spawn_floors(
   }
   {
     let bathroom_floor = Cuboid::new(BATHROOM_X, floor_depth, BATHROOM_Z);
-    let translation = bathroom_floor.half_size + vec3(0., 0., LIVING_ROOM_Z);
+    let translation = bathroom_floor.half_size + vec3(0., 0., LIVING_ROOM_TO_BATHROOM_Z);
     commands
       .spawn((
         Mesh3d(meshes.add(bathroom_floor)),
@@ -76,7 +76,7 @@ fn spawn_floors(
   }
   {
     let office_floor = Cuboid::new(OFFICE_X, floor_depth, OFFICE_Z);
-    let translation = office_floor.half_size + vec3(BATHROOM_X + SMALL_HALL_X, 0., LIVING_ROOM_Z + HALL_Z);
+    let translation = office_floor.half_size + vec3(BATHROOM_X + SMALL_HALL_X, 0., LIVING_ROOM_TO_HALL_Z + HALL_Z);
     commands
       .spawn((
         Mesh3d(meshes.add(office_floor)),
@@ -88,7 +88,7 @@ fn spawn_floors(
   }
   {
     let small_hall_floor = Cuboid::new(SMALL_HALL_X, floor_depth, SMALL_HALL_Z);
-    let translation = small_hall_floor.half_size + vec3(BATHROOM_X, 0., LIVING_ROOM_Z + HALL_Z);
+    let translation = small_hall_floor.half_size + vec3(BATHROOM_X, 0., LIVING_ROOM_TO_HALL_Z + HALL_Z);
     commands
       .spawn((
         Mesh3d(meshes.add(small_hall_floor)),
@@ -100,7 +100,7 @@ fn spawn_floors(
   }
   {
     let bedroom_floor = Cuboid::new(BEDROOM_X, floor_depth, BEDROOM_Z);
-    let translation = bedroom_floor.half_size + vec3(0., 0., LIVING_ROOM_Z + BATHROOM_Z);
+    let translation = bedroom_floor.half_size + vec3(0., 0., LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z);
     commands
       .spawn((
         Mesh3d(meshes.add(bedroom_floor)),
@@ -121,7 +121,7 @@ fn spawn_walls(
   {
     let kithen_wall_colour = materials.add(BEIGE);
     {
-      let living_room_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_Z);
+      let living_room_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z);
       let translation = living_room_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, 0., 0.);
       commands
         .spawn((
@@ -133,7 +133,7 @@ fn spawn_walls(
         .set_parent(common.parent);
     }
     {
-      let kitchen_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_Z);
+      let kitchen_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_HALL_Z);
       let translation = kitchen_wall.half_size + vec3(LIVING_ROOM_X, 0., 0.);
       commands
         .spawn((
@@ -146,7 +146,7 @@ fn spawn_walls(
     }
     {
       let hall_wall = Cuboid::new(TM_WALL_X, FLAT_HEIGHT, LOAD_BEARING_WALL_THICKNESS);
-      let translation = hall_wall.half_size + vec3(LIVING_ROOM_X, 0., LIVING_ROOM_Z - LOAD_BEARING_WALL_THICKNESS);
+      let translation = hall_wall.half_size + vec3(LIVING_ROOM_X, 0., LIVING_ROOM_TO_HALL_Z - LOAD_BEARING_WALL_THICKNESS);
       commands
         .spawn((
           Mesh3d(meshes.add(hall_wall)),
@@ -160,7 +160,7 @@ fn spawn_walls(
   {
     let bedroom_wall_colour = materials.add(Color::hsl(0., 0., 1.));
     let bedroom_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, BEDROOM_Z);
-    let translation = bedroom_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, 0., LIVING_ROOM_Z + BATHROOM_Z);
+    let translation = bedroom_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, 0., LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z);
     commands
       .spawn((
         Mesh3d(meshes.add(bedroom_wall)),
