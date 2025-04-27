@@ -1,4 +1,5 @@
 use crate::look::CameraSensitivity;
+use crate::DIRECTIONAL_LIGHT_MOVEMENT_SPEED;
 use bevy::prelude::*;
 
 #[derive(Component)]
@@ -32,5 +33,8 @@ pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera: 
 
   // movement.y = 0.0;
   movement = camara_movement.speed * timer.delta_secs() * movement.normalize_or_zero();
+  if input.pressed(KeyCode::ShiftLeft) {
+    movement *= 2.;
+  }
   transform.translation += movement;
 }

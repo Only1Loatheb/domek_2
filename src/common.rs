@@ -5,9 +5,12 @@ use bevy::math::{Affine2, Vec2};
 use bevy::pbr::StandardMaterial;
 use bevy::prelude::{default, Component, Res, ResMut};
 
+pub const EPSILON: f32 = 0.0002;
+
 pub const FLAT_HEIGHT: f32 = 26.8;
 pub const OFFICE_WALL_THICKNESS: f32 = 0.8;
 pub const BATHROOM_WALL_THICKNESS: f32 = 1.;
+pub const KITCHEN_WALL_THICKNESS: f32 = 1.;
 pub const DOOR_Y: f32 = 20.;
 pub const TILE_PLUS_GLUE: f32 = 0.08 + 0.07;
 
@@ -38,6 +41,7 @@ pub const PLANK_THICKNESS: f32 = 0.18;
 // NCS S 1505-y40R
 // https://www.w3schools.com/colors/colors_converter.asp?color=ncs(1505-y40R)
 pub const BEIGE: Color = Color::hsl(30.0, 0.29, 0.85);
+pub const NOT_BEIGE: Color = Color::hsl(30.0, 0.29, 0.085);
 
 pub fn repeat_texture<'a>(
   path: impl Into<AssetPath<'a>>,

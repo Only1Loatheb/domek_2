@@ -90,7 +90,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
       Camera3d::default(),
       Camera { hdr: true, ..default() },
       Transform::from_xyz(-BATHROOM_X- HALL_X, 17.5, LIVING_ROOM_TO_BATHROOM_Z + 0.5 * HALL_Z)
-        .looking_at(vec3(0., 17.5, LIVING_ROOM_TO_BATHROOM_Z + 0.5 * HALL_Z), Vec3::Y),
+        .looking_at(vec3(- 10., 17.5, 0.), Vec3::Y),
       Tonemapping::TonyMcMapface,
       Bloom::default(),
       CameraSensitivity::default(),
@@ -162,7 +162,8 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   // ));
   let mirror_parent = commands
     .spawn((
-      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 2. * TILE_PLUS_GLUE, 14.0, 16.7))
+      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 2. * TILE_PLUS_GLUE,
+                                                         15.0, 17.))
         .with_rotation(Quat::from_euler(EulerRot::YXZ, 3. * FRAC_PI_2, 0., FRAC_PI_2)),
       GlobalTransform::default(),
       InheritedVisibility::default(),
@@ -170,7 +171,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     .id();
   {
     use bevy_basic_portals::*;
-    let mirror_mesh = meshes.add(CircularSegment::new(4., 2.2));
+    let mirror_mesh = meshes.add(CircularSegment::new(4.5, 2.4));
     commands
       .spawn((
         CreatePortal {
