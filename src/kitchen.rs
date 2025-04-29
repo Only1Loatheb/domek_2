@@ -221,6 +221,7 @@ const SHOES_DRAWER_TOP_Y: f32 = 5.0;
 const SHOES_DRAWER_MIDDLE_Y: f32 = 2.5;
 const HANGER_SPACE_W: f32 = CLOSET_WIDTH - 3. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH - DRAWERS_WIDTH;
 const BROOM_X: f32 = CLOSET_WIDTH - 2. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH;
+const MAX_DRAWER_Y: f32 = 16.;
 
 fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>, mut meshes: ResMut<Assets<Mesh>>) {
   let parent = commands
@@ -345,6 +346,38 @@ fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<Standa
           Mesh3d(meshes.add(drawers_and_hanging_space_divider_plank)),
           MeshMaterial3d(closet_colour.clone()),
           Transform::from_translation(drawers_and_hanging_space_divider),
+        ))
+        .set_parent(parent);
+    }
+  }
+  {
+    let drawer_spacing_y = 0.05;
+    let drawer_spacing_x = 0.05;
+    let drawer_x = HANGER_SPACE_W + PLANK_THICKNESS + drawer_spacing_x;
+    let start_y = SHOES_DRAWER_TOP_Y + PLANK_THICKNESS + drawer_spacing_y;
+    let num_drawers = 5;
+    let drawer_height = (MAX_DRAWER_Y - start_y) / num_drawers as f32 - drawer_spacing_y;
+    let drawer_depth = MIDDLE_PLANK_DEPTH;
+    
+    let drawer = Cuboid::new(DRAWERS_WIDTH - 2. * drawer_spacing_x, drawer_height, drawer_depth);
+    for i in 0..num_drawers {
+      let y = start_y + i as f32 * (drawer_height + drawer_spacing_y);
+      commands
+        .spawn((
+          Mesh3d(meshes.add(drawer)),
+          MeshMaterial3d(closet_colour.clone()),
+          Transform::from_translation(drawer.half_size + Vec3::new(drawer_x, y, 0.0)),
+        ))
+        .set_parent(parent);
+    }
+    if MAX_DRAWER_Y + PLANK_THICKNESS < MIDDLE_HORIZONTAL_PLANK_Y {
+      let shoes_drawer_top_plank = Cuboid::new(DRAWERS_WIDTH, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
+      let like_in_our_hall_drawer = shoes_drawer_top_plank.half_size + vec3(HANGER_SPACE_W + PLANK_THICKNESS, MAX_DRAWER_Y, 0.);
+      commands
+        .spawn((
+          Mesh3d(meshes.add(shoes_drawer_top_plank)),
+          MeshMaterial3d(closet_colour.clone()),
+          Transform::from_translation(like_in_our_hall_drawer),
         ))
         .set_parent(parent);
     }
