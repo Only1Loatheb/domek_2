@@ -15,7 +15,7 @@ impl Default for CameraMovement {
 
 pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera: Query<(&mut Transform, &CameraMovement)>) {
   let mut movement = Vec3::ZERO;
-  let (mut transform, camara_movement) = camera.single_mut();
+  let (mut transform, camara_movement) = camera.single_mut().unwrap();
   let forward = transform.forward().as_vec3();
   let right = transform.right().as_vec3();
   if input.pressed(KeyCode::KeyW) {

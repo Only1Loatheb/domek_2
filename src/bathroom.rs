@@ -368,17 +368,16 @@ fn spawn_shower_stall(
   let model_handle = asset_server.load("bathroom/furo-sl-kdd__blend.glb#Scene0");
   let translation = vec3(BATHROOM_WALL_THICKNESS + TILE_PLUS_GLUE, 0., -BATHROOM_DEPTH);
   commands
-    .spawn(SceneBundle {
-      scene: SceneRoot(model_handle),
-      transform: Transform {
+    .spawn((
+      SceneRoot(model_handle),
+      Transform {
         // translation: translation.with_z(translation.z + SHELF_WIDTH),
         translation: translation.with_z(translation.z + SHELF_WIDTH) + vec3(-0.4, -0.4, -0.4),
         rotation: Quat::from_rotation_y(PI / 2.0),
         // scale: Vec3::new(-10.0 * (SHOWER_WIDTH - SHELF_WIDTH) / SHOWER_WIDTH, 10., 10. * SHOWER_DEPTH / 8.),
         scale: Vec3::new(-9.25, 10., 9.25),
       },
-      ..default()
-    })
+    ))
     .set_parent(common.parent);
   {
     // just to be sure that measurements are right
@@ -414,15 +413,14 @@ fn spawn_toilet(mut commands: Commands, asset_server: Res<AssetServer>, mut mesh
   let model_handle = asset_server.load("bathroom/muszla.glb#Scene0");
   let toilet_transform = vec3(RIGHT_WALL_X - FLUSH_DEPTH, 0., VENT_DEPTH - BATHROOM_DEPTH);
   commands
-    .spawn(SceneBundle {
-      scene: SceneRoot(model_handle),
-      transform: Transform {
+    .spawn((
+      SceneRoot(model_handle),
+      Transform {
         translation: toilet_transform + vec3(0., 0., 0.5 * FLUSH_WIDTH),
         rotation: Quat::from_rotation_y(-PI / 2.0),
         scale: Vec3::new(10.0, 10., 10.),
       },
-      ..default()
-    })
+    ))
     .set_parent(common.parent);
   {
     let toilet_flush = Cuboid::new(FLUSH_DEPTH, FLUSH_HEIGHT, FLUSH_WIDTH);
