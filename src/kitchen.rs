@@ -1,7 +1,8 @@
 use crate::common::*;
 use bevy::math::vec3;
 use bevy::prelude::*;
-use std::f32::consts::FRAC_PI_2;
+use std::f32::consts::{FRAC_PI_2, PI};
+use std::ops::Add;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
@@ -358,7 +359,7 @@ fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<Standa
     let num_drawers = 5;
     let drawer_height = (MAX_DRAWER_Y - start_y) / num_drawers as f32 - drawer_spacing_y;
     let drawer_depth = MIDDLE_PLANK_DEPTH;
-    
+
     let drawer = Cuboid::new(DRAWERS_WIDTH - 2. * drawer_spacing_x, drawer_height, drawer_depth);
     for i in 0..num_drawers {
       let y = start_y + i as f32 * (drawer_height + drawer_spacing_y);
@@ -384,13 +385,30 @@ fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<Standa
   }
 }
 
+fn spawn_fridge(mut commands: Commands, asset_server: Res<AssetServer>, common: Res<KitchenCommon>) {
+  let transform = Transform {
+    translation: vec3(VENT_WIDTH, 0., VENT_WIDTH), //+ 0.5 * vec3(3. + 6., 0., 6.),
+    rotation: Quat::from_rotation_x(-PI / 2.0)
+      .normalize()
+      .mul_quat(Quat::from_rotation_z(-PI / 2.0))
+      .normalize(),
+    scale: Vec3::splat(0.01),
+  };
+  commands
+    .spawn((
+      Mesh3d(asset_server.load("stl/szafa_przedpokoj.stl")),
+      MeshMaterial3d(common.cabinets_colour.clone()),
+      transform,
+    ))
+    .set_parent(common.parent);
+}
 pub(crate) struct KitchenPlugin;
 
 impl Plugin for KitchenPlugin {
   fn build(&self, app: &mut App) {
     app
       .add_systems(Startup, setup_kitchen_common)
-      .add_systems(Startup, (setup_kitchen, spawn_walls).after(setup_kitchen_common))
+      .add_systems(Startup, (setup_kitchen, spawn_walls, spawn_fridge).after(setup_kitchen_common))
       .add_systems(Startup, spawn_hall_closet);
   }
 }

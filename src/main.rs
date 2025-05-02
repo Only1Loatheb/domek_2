@@ -22,6 +22,7 @@ use bevy::{
 };
 use bevy_basic_portals::PortalDestinationSource::CreateMirror;
 use bevy_basic_portals::PortalsPlugin;
+use bevy_stl::StlPlugin;
 
 const DIRECTIONAL_LIGHT_MOVEMENT_SPEED: f32 = 0.02;
 
@@ -55,7 +56,7 @@ struct MoveBackAndForthHorizontally {
 
 fn main() {
   App::new()
-    .add_plugins((DefaultPlugins, PortalsPlugin::MINIMAL))
+    .add_plugins((DefaultPlugins, PortalsPlugin::MINIMAL, StlPlugin))
     .insert_resource(ClearColor(Color::Srgba(Srgba {
       red: 0.02,
       green: 0.02,
