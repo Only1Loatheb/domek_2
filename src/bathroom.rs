@@ -518,24 +518,19 @@ fn spawn_washing_machine(
 
 const CLOSET_HEIGHT: f32 = FLAT_HEIGHT;
 const CLOSED_DEPTH: f32 = 4.;
-const CLOSET_WIDTH: f32 = 6.;
-const BROOM_COMPARTMENT_WIDTH: f32 = 1.5;
-const DRAWERS_WIDTH: f32 = 5.;
-const DOORS_DEPTH: f32 = PLANK_THICKNESS;
-const MIDDLE_PLANK_DEPTH: f32 = CLOSED_DEPTH - DOORS_DEPTH;
+const CLOSET_WIDTH: f32 = 6. - TILE_PLUS_GLUE;
+const MIDDLE_PLANK_DEPTH: f32 = CLOSED_DEPTH;
 const MIDDLE_VERTICAL_PLANK_HEIGHT: f32 = CLOSET_HEIGHT - PLANK_THICKNESS;
 const MIDDLE_HORIZONTAL_PLANK_Y: f32 = 20.0;
 const TOP_HORIZONTAL_DIVIDER_PLANK_Y: f32 = MIDDLE_HORIZONTAL_PLANK_Y + 0.5 * (CLOSET_HEIGHT - MIDDLE_HORIZONTAL_PLANK_Y);
-const HANGER_ROD_Y: f32 = 19.0;
-const SHOES_DRAWER_TOP_Y: f32 = 5.0;
-const SHOES_DRAWER_MIDDLE_Y: f32 = 2.5;
-const HANGER_SPACE_W: f32 = CLOSET_WIDTH - 3. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH - DRAWERS_WIDTH;
-const BROOM_X: f32 = CLOSET_WIDTH - 2. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH;
+const LAUNDRY_BASKET_TOP_Y: f32 = 5.0;
+const VERTICAL_MIDDLE_PLANK_X: f32 = 0.5 * (CLOSET_WIDTH);
+const HORIZONTAL_MIDDLE_PLANK_X: f32 = 12.0;
 
 fn spawn_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>, mut meshes: ResMut<Assets<Mesh>>) {
   let parent = commands
     .spawn((
-      Transform::from_translation(BATHROOM_ORIGIN + Vec3::ZERO.with_x(TILE_PLUS_GLUE)),
+      Transform::from_translation(BATHROOM_ORIGIN + vec3(TILE_PLUS_GLUE, 0., BATHROOM_WALL_THICKNESS)),
       GlobalTransform::default(),
       InheritedVisibility::default(),
     ))
@@ -556,11 +551,11 @@ fn spawn_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMat
     }
     {
       {
-        let middle_horizontal_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-        let over_the_hanger_rod = middle_horizontal_plank.half_size + vec3(PLANK_THICKNESS, MIDDLE_HORIZONTAL_PLANK_Y, 0.);
+        let top_horizontal_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
+        let over_the_hanger_rod = top_horizontal_plank.half_size + vec3(PLANK_THICKNESS, MIDDLE_HORIZONTAL_PLANK_Y, 0.);
         commands
           .spawn((
-            Mesh3d(meshes.add(middle_horizontal_plank)),
+            Mesh3d(meshes.add(top_horizontal_plank)),
             MeshMaterial3d(closet_colour.clone()),
             Transform::from_translation(over_the_hanger_rod),
           ))
@@ -579,38 +574,27 @@ fn spawn_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMat
       }
     }
     {
-      let hanger_rod = Cuboid::new(HANGER_SPACE_W, PLANK_THICKNESS, PLANK_THICKNESS);
-      let like_in_our_closet = hanger_rod.half_size + vec3(PLANK_THICKNESS, HANGER_ROD_Y, 0.5 * CLOSED_DEPTH);
+      let laundry_basket_top_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
+      let like_in_our_hall_drawer = laundry_basket_top_plank.half_size + vec3(PLANK_THICKNESS, LAUNDRY_BASKET_TOP_Y, 0.);
       commands
         .spawn((
-          Mesh3d(meshes.add(hanger_rod)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(like_in_our_closet),
-        ))
-        .set_parent(parent);
-    }
-    {
-      let shoes_drawer_top_plank = Cuboid::new(BROOM_X, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-      let like_in_our_hall_drawer = shoes_drawer_top_plank.half_size + vec3(PLANK_THICKNESS, SHOES_DRAWER_TOP_Y, 0.);
-      commands
-        .spawn((
-          Mesh3d(meshes.add(shoes_drawer_top_plank)),
+          Mesh3d(meshes.add(laundry_basket_top_plank)),
           MeshMaterial3d(closet_colour.clone()),
           Transform::from_translation(like_in_our_hall_drawer),
         ))
         .set_parent(parent);
     }
-    {
-      let shoes_drawer_top_plank = Cuboid::new(BROOM_X, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-      let like_in_our_hall_drawer = shoes_drawer_top_plank.half_size + vec3(PLANK_THICKNESS, SHOES_DRAWER_MIDDLE_Y, 0.);
-      commands
-        .spawn((
-          Mesh3d(meshes.add(shoes_drawer_top_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(like_in_our_hall_drawer),
-        ))
-        .set_parent(parent);
-    }
+  }
+  {
+    let middle_horizontal_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
+    let like_in_our_hall_drawer = middle_horizontal_plank.half_size + vec3(PLANK_THICKNESS, HORIZONTAL_MIDDLE_PLANK_X, 0.);
+    commands
+      .spawn((
+        Mesh3d(meshes.add(middle_horizontal_plank)),
+        MeshMaterial3d(closet_colour.clone()),
+        Transform::from_translation(like_in_our_hall_drawer),
+      ))
+      .set_parent(parent);
   }
   {
     let side_plank = Cuboid::new(PLANK_THICKNESS, CLOSET_HEIGHT, CLOSED_DEPTH);
@@ -625,12 +609,12 @@ fn spawn_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMat
         .set_parent(parent);
     }
     {
-      let bathroom_side_plank = side_plank.half_size + vec3(CLOSET_WIDTH - PLANK_THICKNESS, 0., 0.);
+      let shower_side_plank = side_plank.half_size + vec3(CLOSET_WIDTH - PLANK_THICKNESS, 0., 0.);
       commands
         .spawn((
           Mesh3d(meshes.add(side_plank)),
           MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(bathroom_side_plank),
+          Transform::from_translation(shower_side_plank),
         ))
         .set_parent(parent);
     }
@@ -638,23 +622,13 @@ fn spawn_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMat
   {
     {
       let broom_compartment_and_drawers_divider_plank = Cuboid::new(PLANK_THICKNESS, MIDDLE_HORIZONTAL_PLANK_Y, MIDDLE_PLANK_DEPTH);
-      let broom_compartment_and_drawers_divider = broom_compartment_and_drawers_divider_plank.half_size + vec3(BROOM_X, 0., 0.);
+      let broom_compartment_and_drawers_divider =
+        broom_compartment_and_drawers_divider_plank.half_size + vec3(VERTICAL_MIDDLE_PLANK_X, 0., 0.);
       commands
         .spawn((
           Mesh3d(meshes.add(broom_compartment_and_drawers_divider_plank)),
           MeshMaterial3d(closet_colour.clone()),
           Transform::from_translation(broom_compartment_and_drawers_divider),
-        ))
-        .set_parent(parent);
-    }
-    {
-      let drawers_and_hanging_space_divider_plank = Cuboid::new(PLANK_THICKNESS, MIDDLE_VERTICAL_PLANK_HEIGHT, MIDDLE_PLANK_DEPTH);
-      let drawers_and_hanging_space_divider = drawers_and_hanging_space_divider_plank.half_size + vec3(HANGER_SPACE_W, 0., 0.);
-      commands
-        .spawn((
-          Mesh3d(meshes.add(drawers_and_hanging_space_divider_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(drawers_and_hanging_space_divider),
         ))
         .set_parent(parent);
     }
@@ -665,19 +639,17 @@ pub(crate) struct BathroomPlugin;
 
 impl Plugin for BathroomPlugin {
   fn build(&self, app: &mut App) {
-    app
-      .add_systems(Startup, (setup_bathroom_common, spawn_closet))
-      .add_systems(
-        Startup,
-        (
-          spawn_walls,
-          spawn_washing_machine,
-          spawn_shower_stall,
-          spawn_toilet,
-          spawn_sink,
-          spawn_shower_shelf,
-        )
-          .after(setup_bathroom_common),
-      );
+    app.add_systems(Startup, (setup_bathroom_common, spawn_closet)).add_systems(
+      Startup,
+      (
+        spawn_walls,
+        spawn_washing_machine,
+        spawn_shower_stall,
+        spawn_toilet,
+        spawn_sink,
+        spawn_shower_shelf,
+      )
+        .after(setup_bathroom_common),
+    );
   }
 }
