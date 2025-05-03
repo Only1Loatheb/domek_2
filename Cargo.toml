@@ -35,6 +35,6 @@ rustflags = [
 ]
 
 [dependencies]
-bevy = { version = "0.16.0", features = ["dynamic_linking", "jpeg"] } # Disabling bevy/dynamic_linking may improve Mold's performance.
+bevy = { version = "0.16.0", features = ["dynamic_linking", "jpeg", "wayland"] } # Disabling bevy/dynamic_linking may improve Mold's performance.
 bevy_basic_portals = "0.8"
 bevy_stl = "0.16.0"
