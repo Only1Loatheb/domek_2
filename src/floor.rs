@@ -76,7 +76,7 @@ fn spawn_floors(
   }
   {
     let office_floor = Cuboid::new(OFFICE_X, FLOOR_DEPTH, OFFICE_Z);
-    let translation = office_floor.half_size + vec3(BATHROOM_X + SMALL_HALL_X, -FLOOR_DEPTH, LIVING_ROOM_TO_HALL_Z + HALL_Z);
+    let translation = office_floor.half_size + vec3(BATHROOM_X + SMALL_HALL_X, -FLOOR_DEPTH, OFFICE_Z_POS);
     commands
       .spawn((
         Mesh3d(meshes.add(office_floor)),
@@ -88,7 +88,7 @@ fn spawn_floors(
   }
   {
     let small_hall_floor = Cuboid::new(SMALL_HALL_X, FLOOR_DEPTH, SMALL_HALL_Z);
-    let translation = small_hall_floor.half_size + vec3(BATHROOM_X, -FLOOR_DEPTH, LIVING_ROOM_TO_HALL_Z + HALL_Z);
+    let translation = small_hall_floor.half_size + vec3(BATHROOM_X, -FLOOR_DEPTH, OFFICE_Z_POS);
     commands
       .spawn((
         Mesh3d(meshes.add(small_hall_floor)),
@@ -117,12 +117,13 @@ fn spawn_walls(
   mut meshes: ResMut<Assets<Mesh>>,
   common: Res<FloorCommon>,
   mut materials: ResMut<Assets<StandardMaterial>>,
+  asset_server: Res<AssetServer>,
 ) {
   {
     let kithen_wall_colour = materials.add(BEIGE);
     {
-      let living_room_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z- EPSILON);
-      let translation = living_room_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, -FLOOR_DEPTH, 0.);
+      let living_room_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z - EPSILON);
+      let translation = living_room_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, 0., 0.);
       commands
         .spawn((
           Mesh3d(meshes.add(living_room_wall)),
@@ -133,12 +134,19 @@ fn spawn_walls(
         .set_parent(common.parent);
     }
     {
-      let kitchen_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_HALL_Z);
-      let translation = kitchen_wall.half_size + vec3(LIVING_ROOM_X, -FLOOR_DEPTH, 0.);
+      let massa = repeat_texture(
+        "massa/PP-Massa-1198x2398-1.jpg",
+        &mut materials,
+        &asset_server,
+        Vec2 { x: 20., y: 20. },
+        Vec2 { x: 0.1, y: 0.1 },
+      );
+      let kitchen_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_HALL_Z - LOAD_BEARING_WALL_THICKNESS);
+      let translation = kitchen_wall.half_size + vec3(LIVING_ROOM_X, 0., 0.);
       commands
         .spawn((
           Mesh3d(meshes.add(kitchen_wall)),
-          MeshMaterial3d(kithen_wall_colour.clone()),
+          MeshMaterial3d(massa),
           Transform::from_translation(translation),
           LoadBearingWall,
         ))
@@ -146,7 +154,7 @@ fn spawn_walls(
     }
     {
       let hall_wall = Cuboid::new(TM_WALL_X, FLAT_HEIGHT, LOAD_BEARING_WALL_THICKNESS);
-      let translation = hall_wall.half_size + vec3(LIVING_ROOM_X, -FLOOR_DEPTH, LIVING_ROOM_TO_HALL_Z - LOAD_BEARING_WALL_THICKNESS);
+      let translation = hall_wall.half_size + vec3(LIVING_ROOM_X, 0., LIVING_ROOM_TO_HALL_Z - LOAD_BEARING_WALL_THICKNESS);
       commands
         .spawn((
           Mesh3d(meshes.add(hall_wall)),
@@ -156,16 +164,63 @@ fn spawn_walls(
         ))
         .set_parent(common.parent);
     }
+    {
+      let small_wall = 1.5;
+      {
+        let office_wall_small = Cuboid::new(small_wall, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
+        let translation = office_wall_small.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
+        commands
+          .spawn((
+            Mesh3d(meshes.add(office_wall_small)),
+            MeshMaterial3d(kithen_wall_colour.clone()),
+            Transform::from_translation(translation),
+            LoadBearingWall,
+          ))
+          .set_parent(common.parent);
+      }
+      {
+        let door_plus_small_wall = small_wall + DOOR_WIDTH;
+        let office_wall_entrance = Cuboid::new(OFFICE_X - door_plus_small_wall, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
+        let translation = office_wall_entrance.half_size + vec3(OFFICE_X_POS + door_plus_small_wall, 0., OFFICE_Z_POS);
+        commands
+          .spawn((
+            Mesh3d(meshes.add(office_wall_entrance)),
+            MeshMaterial3d(kithen_wall_colour.clone()),
+            Transform::from_translation(translation),
+            LoadBearingWall,
+          ))
+          .set_parent(common.parent);
+      }
+      {
+        let office_wall_over_the_door = Cuboid::new(DOOR_WIDTH, FLAT_HEIGHT - DOOR_Y, OFFICE_WALL_THICKNESS);
+        let translation = office_wall_over_the_door.half_size + vec3(OFFICE_X_POS + small_wall, DOOR_Y, OFFICE_Z_POS);
+        commands
+          .spawn((
+            Mesh3d(meshes.add(office_wall_over_the_door)),
+            MeshMaterial3d(kithen_wall_colour.clone()),
+            Transform::from_translation(translation),
+            LoadBearingWall,
+          ))
+          .set_parent(common.parent);
+      }
+      {
+        let bedroom_office_wall = Cuboid::new(OFFICE_WALL_THICKNESS, FLAT_HEIGHT, OFFICE_Z);
+        let translation = bedroom_office_wall.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
+        commands
+          .spawn((
+            Mesh3d(meshes.add(bedroom_office_wall)),
+            MeshMaterial3d(kithen_wall_colour.clone()),
+            Transform::from_translation(translation),
+            LoadBearingWall,
+          ))
+          .set_parent(common.parent);
+      }
+    }
   }
   {
     let bedroom_wall_colour = materials.add(Color::hsl(0., 0., 1.));
     let bedroom_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, BEDROOM_Z);
-    let translation = bedroom_wall.half_size
-      + vec3(
-        -LOAD_BEARING_WALL_THICKNESS,
-        -FLOOR_DEPTH,
-        LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + EPSILON,
-      );
+    let translation = bedroom_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, 0., LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + EPSILON);
     commands
       .spawn((
         Mesh3d(meshes.add(bedroom_wall)),

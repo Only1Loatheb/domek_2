@@ -12,6 +12,7 @@ pub const OFFICE_WALL_THICKNESS: f32 = 0.8;
 pub const BATHROOM_WALL_THICKNESS: f32 = 1.;
 pub const KITCHEN_WALL_THICKNESS: f32 = 1.;
 pub const DOOR_Y: f32 = 20.;
+pub const DOOR_WIDTH: f32 = 9.2;
 pub const TILE_PLUS_GLUE: f32 = 0.08 + 0.07;
 
 pub const BATHROOM_X: f32 = 18.1 + BATHROOM_WALL_THICKNESS;
@@ -27,6 +28,8 @@ pub const BEDROOM_Z: f32 = 32.4;
 
 pub const OFFICE_X: f32 = 30.3 + OFFICE_WALL_THICKNESS;
 pub const OFFICE_Z: f32 = 33.8 + OFFICE_WALL_THICKNESS;
+pub const OFFICE_Z_POS: f32 = LIVING_ROOM_TO_HALL_Z + HALL_Z;
+pub const OFFICE_X_POS: f32 = BATHROOM_X + HALL_X - OFFICE_X;
 
 pub const HALL_X: f32 = 41.9;
 pub const HALL_Z: f32 = 14.3;

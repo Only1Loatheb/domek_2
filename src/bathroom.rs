@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::{
-  repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, DOOR_Y, EPSILON, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z,
-  NOT_BEIGE, PLANK_THICKNESS, TILE_PLUS_GLUE,
-};
+use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z, NOT_BEIGE, PLANK_THICKNESS, TILE_PLUS_GLUE};
 use bevy::asset::AssetContainer;
 use bevy::math::vec3;
 use std::f32::consts::{FRAC_PI_2, PI};
@@ -62,7 +59,6 @@ fn setup_bathroom_common(mut commands: Commands, mut materials: ResMut<Assets<St
 
 const LEFT_DOOR_WALL_LENGTH: f32 = 9.3;
 const RIGHT_DOOR_WALL_LENGTH: f32 = 6.5;
-const DOOR_WIDTH: f32 = 9.2;
 const BATHROOM_DEPTH: f32 = BATHROOM_X - BATHROOM_WALL_THICKNESS;
 const BATHROOM_WIDTH: f32 = BATHROOM_Z - 2. * BATHROOM_WALL_THICKNESS;
 const VENT_DEPTH: f32 = 4. + TILE_PLUS_GLUE;

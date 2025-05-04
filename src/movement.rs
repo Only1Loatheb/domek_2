@@ -31,7 +31,7 @@ pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera: 
     movement += right;
   }
 
-  // movement.y = 0.0;
+  movement.y = 0.0;
   movement = camara_movement.speed * timer.delta_secs() * movement.normalize_or_zero();
   if input.pressed(KeyCode::ShiftLeft) {
     movement *= 2.;

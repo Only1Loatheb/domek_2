@@ -385,30 +385,13 @@ fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<Standa
   }
 }
 
-fn spawn_fridge(mut commands: Commands, asset_server: Res<AssetServer>, common: Res<KitchenCommon>) {
-  let transform = Transform {
-    translation: vec3(VENT_WIDTH, 0., VENT_WIDTH), //+ 0.5 * vec3(3. + 6., 0., 6.),
-    rotation: Quat::from_rotation_x(-PI / 2.0)
-      .normalize()
-      .mul_quat(Quat::from_rotation_z(-PI / 2.0))
-      .normalize(),
-    scale: Vec3::splat(0.01),
-  };
-  commands
-    .spawn((
-      Mesh3d(asset_server.load("stl/szafa_przedpokoj.stl")),
-      MeshMaterial3d(common.cabinets_colour.clone()),
-      transform,
-    ))
-    .set_parent(common.parent);
-}
 pub(crate) struct KitchenPlugin;
 
 impl Plugin for KitchenPlugin {
   fn build(&self, app: &mut App) {
     app
       .add_systems(Startup, setup_kitchen_common)
-      .add_systems(Startup, (setup_kitchen, spawn_walls, spawn_fridge).after(setup_kitchen_common))
+      .add_systems(Startup, (setup_kitchen, spawn_walls).after(setup_kitchen_common))
       .add_systems(Startup, spawn_hall_closet);
   }
 }
