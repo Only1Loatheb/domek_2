@@ -81,7 +81,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
       .spawn((
         Mesh3d(meshes.add(left_door_wall)),
         MeshMaterial3d(common.massa_tail[0].clone()),
-        Transform::from_translation(translation + vec3(0., 0., -TILE_PLUS_GLUE)),
+        Transform::from_translation(translation + vec3(EPSILON, 0., -TILE_PLUS_GLUE)),
         Bathroom,
         BathroomWall,
       ))
@@ -98,7 +98,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
   }
   {
     let right_door_wall_size = vec3(
-      RIGHT_DOOR_WALL_LENGTH + BATHROOM_WALL_THICKNESS,
+      RIGHT_DOOR_WALL_LENGTH + BATHROOM_WALL_THICKNESS - EPSILON,
       FLAT_HEIGHT,
       BATHROOM_WALL_THICKNESS,
     );
@@ -196,8 +196,8 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
       .set_parent(common.parent);
   }
   {
-    let back_wall = Cuboid::new(RIGHT_WALL_X, FLAT_HEIGHT, BATHROOM_WALL_THICKNESS);
-    let translation = back_wall.half_size + vec3(0., 0., -BATHROOM_DEPTH - BATHROOM_WALL_THICKNESS + TILE_PLUS_GLUE);
+    let back_wall = Cuboid::new(RIGHT_WALL_X - 2. * EPSILON, FLAT_HEIGHT, BATHROOM_WALL_THICKNESS);
+    let translation = back_wall.half_size + vec3(EPSILON, 0., -BATHROOM_DEPTH - BATHROOM_WALL_THICKNESS + TILE_PLUS_GLUE);
     commands
       .spawn((
         Mesh3d(meshes.add(back_wall)),

@@ -157,4 +157,3 @@ module szafa_przedpokoj() {
 //line([0, 0, 0], [5, 23, 42]);
 
 szafa_przedpokoj();
-

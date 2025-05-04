@@ -10,7 +10,7 @@ use std::f32::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_4, FRAC_PI_8, PI};
 use std::ops::Add;
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
-use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, TILE_PLUS_GLUE};
+use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, TILE_PLUS_GLUE};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look, CameraSensitivity};
@@ -20,6 +20,7 @@ use bevy::{
   math::vec3,
   pbr::VolumetricLight,
 };
+use bevy::color::palettes::basic::WHITE;
 use bevy_basic_portals::PortalDestinationSource::CreateMirror;
 use bevy_basic_portals::PortalsPlugin;
 use bevy_stl::StlPlugin;
@@ -70,7 +71,7 @@ fn main() {
     })
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
-    .add_systems(Startup, setup_light)
+    .add_systems(Startup, (setup_light, spawn_bedroom_cabinet))
     .add_plugins((FloorPlugin, KitchenPlugin, BathroomPlugin))
     .add_systems(Update, tweak_scene)
     .add_systems(Update, (move_directional_light, move_point_light))
@@ -79,7 +80,6 @@ fn main() {
     .run();
 }
 
-/// Initializes the scene.
 fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_settings: Res<AppSettings>, mut meshes: ResMut<Assets<Mesh>>) {
   // Spawn the glTF scene.
   // commands.spawn(SceneRoot(asset_server.load(
@@ -315,4 +315,22 @@ fn adjust_app_settings(
   for mut text in text.iter_mut() {
     *text = create_text(&app_settings);
   }
+}
+
+
+fn spawn_bedroom_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, mut materials: ResMut<Assets<StandardMaterial>>) {
+  let transform = Transform {
+    translation: vec3(-BATHROOM_X, 0., LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + EPSILON),
+    rotation: Quat::from_rotation_x(-FRAC_PI_2)
+      .normalize()
+      .mul_quat(Quat::from_rotation_z(PI))
+      .normalize(),
+    scale: Vec3::ONE,
+  };
+  commands
+    .spawn((
+      Mesh3d(asset_server.load("stl/bedroom_cabinet.stl")),
+      MeshMaterial3d(materials.add(Color::hsl(0., 0., 1.))),
+      transform,
+    ));
 }

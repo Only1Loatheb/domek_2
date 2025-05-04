@@ -121,7 +121,7 @@ fn spawn_walls(
   {
     let kithen_wall_colour = materials.add(BEIGE);
     {
-      let living_room_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z);
+      let living_room_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z- EPSILON);
       let translation = living_room_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, -FLOOR_DEPTH, 0.);
       commands
         .spawn((
@@ -160,7 +160,12 @@ fn spawn_walls(
   {
     let bedroom_wall_colour = materials.add(Color::hsl(0., 0., 1.));
     let bedroom_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, BEDROOM_Z);
-    let translation = bedroom_wall.half_size + vec3(-LOAD_BEARING_WALL_THICKNESS, -FLOOR_DEPTH, LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z);
+    let translation = bedroom_wall.half_size
+      + vec3(
+        -LOAD_BEARING_WALL_THICKNESS,
+        -FLOOR_DEPTH,
+        LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + EPSILON,
+      );
     commands
       .spawn((
         Mesh3d(meshes.add(bedroom_wall)),
