@@ -222,7 +222,7 @@ const SHOES_DRAWER_TOP_Y: f32 = 5.0;
 const SHOES_DRAWER_MIDDLE_Y: f32 = 2.5;
 const HANGER_SPACE_W: f32 = CLOSET_WIDTH - 3. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH - DRAWERS_WIDTH;
 const BROOM_X: f32 = CLOSET_WIDTH - 2. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH;
-const MAX_DRAWER_Y: f32 = 16.;
+const MAX_DRAWER_Y: f32 = 11.;
 
 fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>, mut meshes: ResMut<Assets<Mesh>>) {
   let parent = commands
@@ -355,7 +355,7 @@ fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<Standa
     let drawer_spacing_y = 0.05;
     let drawer_spacing_x = 0.05;
     let drawer_x = HANGER_SPACE_W + PLANK_THICKNESS + drawer_spacing_x;
-    let start_y = SHOES_DRAWER_TOP_Y + PLANK_THICKNESS + drawer_spacing_y;
+    let start_y = 0.; //SHOES_DRAWER_TOP_Y + PLANK_THICKNESS + drawer_spacing_y;
     let num_drawers = 5;
     let drawer_height = (MAX_DRAWER_Y - start_y) / num_drawers as f32 - drawer_spacing_y;
     let drawer_depth = MIDDLE_PLANK_DEPTH;

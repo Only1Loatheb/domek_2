@@ -20,7 +20,7 @@ pub const BATHROOM_Z: f32 = 25. + 2. * BATHROOM_WALL_THICKNESS;
 
 pub const LIVING_ROOM_X: f32 = 52.55;
 pub const LIVING_ROOM_TO_BATHROOM_Z: f32 = 57.3;
-pub const LIVING_ROOM_TO_HALL_Z: f32 =  56.163;
+pub const LIVING_ROOM_TO_HALL_Z: f32 = 56.163;
 pub const LIVING_ROOM_X_HALL_OFFSET: f32 = BATHROOM_X;
 
 pub const BEDROOM_X: f32 = 30.;
@@ -30,6 +30,14 @@ pub const OFFICE_X: f32 = 30.3 + OFFICE_WALL_THICKNESS;
 pub const OFFICE_Z: f32 = 33.8 + OFFICE_WALL_THICKNESS;
 pub const OFFICE_Z_POS: f32 = LIVING_ROOM_TO_HALL_Z + HALL_Z;
 pub const OFFICE_X_POS: f32 = BATHROOM_X + HALL_X - OFFICE_X;
+pub const SMALL_WALL_W: f32 = 1.5;
+pub const OFFICE_DOOR_PLUS_SMALL_WALL: f32 = SMALL_WALL_W + DOOR_WIDTH;
+pub const OFFICE_WALL_LENGTH: f32 = OFFICE_X - OFFICE_DOOR_PLUS_SMALL_WALL;
+const _: () = if OFFICE_WALL_LENGTH == 20.399998 {
+  ()
+} else {
+  panic!("office wall near the entrance length")
+};
 
 pub const HALL_X: f32 = 41.9;
 pub const HALL_Z: f32 = 14.3;

@@ -10,7 +10,7 @@ use std::f32::consts::{FRAC_PI_2, PI};
 use std::ops::Add;
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
-use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, TILE_PLUS_GLUE};
+use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look, CameraSensitivity};
@@ -70,7 +70,7 @@ fn main() {
     })
     // .insert_resource(AmbientLight::NONE)
     .init_resource::<AppSettings>()
-    .add_systems(Startup, (setup_light, spawn_bedroom_cabinet))
+    .add_systems(Startup, (setup_light, spawn_bedroom_cabinet, spawn_office_cabinet))
     .add_plugins((FloorPlugin, KitchenPlugin, BathroomPlugin))
     .add_systems(Update, tweak_scene)
     .add_systems(Update, (move_directional_light, move_point_light))
@@ -163,8 +163,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   // ));
   let mirror_parent = commands
     .spawn((
-      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 2. * TILE_PLUS_GLUE,
-                                                         15.0, 17.))
+      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 2. * TILE_PLUS_GLUE, 15.0, 17.))
         .with_rotation(Quat::from_euler(EulerRot::YXZ, 3. * FRAC_PI_2, 0., FRAC_PI_2)),
       GlobalTransform::default(),
       InheritedVisibility::default(),
@@ -316,7 +315,6 @@ fn adjust_app_settings(
   }
 }
 
-
 fn spawn_bedroom_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, mut materials: ResMut<Assets<StandardMaterial>>) {
   let transform = Transform {
     translation: vec3(-BATHROOM_X, 0., LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + EPSILON),
@@ -326,10 +324,26 @@ fn spawn_bedroom_cabinet(mut commands: Commands, asset_server: Res<AssetServer>,
       .normalize(),
     scale: Vec3::ONE,
   };
-  commands
-    .spawn((
-      Mesh3d(asset_server.load("stl/bedroom_cabinet.stl")),
-      MeshMaterial3d(materials.add(Color::hsl(0., 0., 1.))),
-      transform,
-    ));
+  commands.spawn((
+    Mesh3d(asset_server.load("stl/bedroom_cabinet.stl")),
+    MeshMaterial3d(materials.add(Color::hsl(0., 0., 1.))),
+    transform,
+  ));
+}
+
+fn spawn_office_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, mut materials: ResMut<Assets<StandardMaterial>>) {
+  let transform = Transform {
+    translation: vec3(-OFFICE_X_POS - OFFICE_WALL_LENGTH - OFFICE_DOOR_PLUS_SMALL_WALL, 0., OFFICE_Z_POS + 
+      OFFICE_WALL_THICKNESS + EPSILON),
+    rotation: Quat::from_rotation_x(-FRAC_PI_2)
+      .normalize()
+      .mul_quat(Quat::from_rotation_z(PI))
+      .normalize(),
+    scale: Vec3::ONE,
+  };
+  commands.spawn((
+    Mesh3d(asset_server.load("stl/office_cabinet.stl")),
+    MeshMaterial3d(materials.add(Color::hsl(0., 0., 1.))),
+    transform,
+  ));
 }

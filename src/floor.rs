@@ -163,9 +163,8 @@ fn spawn_walls(
         .set_parent(common.parent);
     }
     {
-      let small_wall = 1.5;
       {
-        let office_wall_small = Cuboid::new(small_wall, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
+        let office_wall_small = Cuboid::new(SMALL_WALL_W, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
         let translation = office_wall_small.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
         commands
           .spawn((
@@ -176,10 +175,10 @@ fn spawn_walls(
           ))
           .set_parent(common.parent);
       }
-      {
-        let door_plus_small_wall = small_wall + DOOR_WIDTH;
-        let office_wall_entrance = Cuboid::new(OFFICE_X - door_plus_small_wall, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
-        let translation = office_wall_entrance.half_size + vec3(OFFICE_X_POS + door_plus_small_wall, 0., OFFICE_Z_POS);
+      { // office_wall_entrance
+        // Good old `comparing floats with eq`. Nothing beats that. S04E19
+        let office_wall_entrance = Cuboid::new(OFFICE_WALL_LENGTH, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
+        let translation = office_wall_entrance.half_size + vec3(OFFICE_X_POS + OFFICE_DOOR_PLUS_SMALL_WALL, 0., OFFICE_Z_POS);
         commands
           .spawn((
             Mesh3d(meshes.add(office_wall_entrance)),
@@ -191,7 +190,7 @@ fn spawn_walls(
       }
       {
         let office_wall_over_the_door = Cuboid::new(DOOR_WIDTH, FLAT_HEIGHT - DOOR_Y, OFFICE_WALL_THICKNESS);
-        let translation = office_wall_over_the_door.half_size + vec3(OFFICE_X_POS + small_wall, DOOR_Y, OFFICE_Z_POS);
+        let translation = office_wall_over_the_door.half_size + vec3(OFFICE_X_POS + SMALL_WALL_W, DOOR_Y, OFFICE_Z_POS);
         commands
           .spawn((
             Mesh3d(meshes.add(office_wall_over_the_door)),
