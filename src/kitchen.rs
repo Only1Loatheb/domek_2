@@ -1,7 +1,7 @@
 use crate::common::*;
 use bevy::math::vec3;
 use bevy::prelude::*;
-use std::f32::consts::{FRAC_PI_2, PI};
+use std::f32::consts::FRAC_PI_2;
 use std::ops::Add;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 

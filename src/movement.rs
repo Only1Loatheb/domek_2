@@ -1,5 +1,3 @@
-use crate::look::CameraSensitivity;
-use crate::DIRECTIONAL_LIGHT_MOVEMENT_SPEED;
 use bevy::prelude::*;
 
 #[derive(Component)]

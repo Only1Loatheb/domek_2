@@ -6,7 +6,7 @@ mod look;
 mod movement;
 
 use bevy::prelude::*;
-use std::f32::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_4, FRAC_PI_8, PI};
+use std::f32::consts::{FRAC_PI_2, PI};
 use std::ops::Add;
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
@@ -20,7 +20,6 @@ use bevy::{
   math::vec3,
   pbr::VolumetricLight,
 };
-use bevy::color::palettes::basic::WHITE;
 use bevy_basic_portals::PortalDestinationSource::CreateMirror;
 use bevy_basic_portals::PortalsPlugin;
 use bevy_stl::StlPlugin;

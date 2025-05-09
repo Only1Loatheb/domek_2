@@ -2,8 +2,6 @@ use bevy::prelude::*;
 
 use crate::common::*;
 use bevy::math::vec3;
-use bevy::transform;
-use std::f32::consts::PI;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]

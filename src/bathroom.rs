@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
 use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z, NOT_BEIGE, PLANK_THICKNESS, TILE_PLUS_GLUE};
-use bevy::asset::AssetContainer;
 use bevy::math::vec3;
 use std::f32::consts::{FRAC_PI_2, PI};
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
@@ -314,7 +313,7 @@ const SINK_DEPTH: f32 = 4.8;
 const SINK_MODEL_WIDTH: f32 = 74.5;
 const SINK_WIDTH: f32 = 8.;
 
-fn spawn_sink(mut commands: Commands, asset_server: Res<AssetServer>, common: Res<BathroomCommon>, mut meshes: ResMut<Assets<Mesh>>) {
+fn spawn_sink(mut commands: Commands, asset_server: Res<AssetServer>, common: Res<BathroomCommon>) {
   let sink_transform = Transform {
     translation: vec3(SHELF_X + SHELF_DEPTH + 0.5 * SINK_WIDTH + 0.15, 0., -BATHROOM_DEPTH),
     rotation: Quat::from_rotation_x(-PI / 2.0),
