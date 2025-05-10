@@ -65,7 +65,7 @@ fn main() {
     })))
     .insert_resource(AmbientLight {
       color: Color::WHITE,
-      brightness: 600.,
+      brightness: 1300.,
       affects_lightmapped_meshes: true,
     })
     // .insert_resource(AmbientLight::NONE)
