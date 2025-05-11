@@ -326,7 +326,7 @@ fn spawn_bedroom_cabinet(mut commands: Commands, asset_server: Res<AssetServer>,
   };
   commands.spawn((
     Mesh3d(asset_server.load("stl/bedroom_cabinet.stl")),
-    MeshMaterial3d(materials.add(Color::hsl(0., 0., 1.))),
+    MeshMaterial3d(materials.add(Color::hsl(0., 0., 0.69))),
     transform,
   ));
 }
@@ -343,7 +343,7 @@ fn spawn_office_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, 
   };
   commands.spawn((
     Mesh3d(asset_server.load("stl/office_cabinet.stl")),
-    MeshMaterial3d(materials.add(Color::hsl(0., 0., 1.))),
+    MeshMaterial3d(materials.add(Color::hsl(0., 0., 0.69))),
     transform,
   ));
 }

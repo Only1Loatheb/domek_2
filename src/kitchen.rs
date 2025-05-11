@@ -1,6 +1,7 @@
 use crate::common::*;
 use bevy::math::vec3;
 use bevy::prelude::*;
+use bevy::transform;
 use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 use std::ops::{Add, Not};
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
@@ -226,170 +227,13 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
   }
 }
 
-const CLOSET_HEIGHT: f32 = FLAT_HEIGHT;
-const CLOSED_DEPTH: f32 = 6.8;
-const CLOSET_WIDTH: f32 = VENT_DEPTH + KITCHEN_WALL_LENGTH;
-const BROOM_COMPARTMENT_WIDTH: f32 = 1.5;
-const DRAWERS_WIDTH: f32 = 5.;
-const SLIDING_DOORS_DEPTH: f32 = 1.;
-const MIDDLE_PLANK_DEPTH: f32 = CLOSED_DEPTH - SLIDING_DOORS_DEPTH;
-const MIDDLE_VERTICAL_PLANK_HEIGHT: f32 = CLOSET_HEIGHT - PLANK_THICKNESS;
-const MIDDLE_HORIZONTAL_PLANK_Y: f32 = 20.0;
-const TOP_HORIZONTAL_DIVIDER_PLANK_Y: f32 = MIDDLE_HORIZONTAL_PLANK_Y + 0.5 * (CLOSET_HEIGHT - MIDDLE_HORIZONTAL_PLANK_Y);
-const HANGER_ROD_Y: f32 = 19.0;
-const SHOES_DRAWER_TOP_Y: f32 = 5.0;
-const SHOES_DRAWER_MIDDLE_Y: f32 = 2.5;
-const HANGER_SPACE_W: f32 = CLOSET_WIDTH - 3. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH - DRAWERS_WIDTH;
-const BROOM_X: f32 = CLOSET_WIDTH - 2. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH;
-const MAX_DRAWER_Y: f32 = 11.;
-
-fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>, mut meshes: ResMut<Assets<Mesh>>) {
-  let parent = commands
-    .spawn((
-      Transform::from_translation(KITCHEN_ORIGIN + vec3(EPSILON, 0., VENT_WIDTH + EPSILON)),
-      GlobalTransform::default(),
-      InheritedVisibility::default(),
-    ))
-    .id();
-
-  let closet_colour = materials.add(NOT_BEIGE);
-  {
-    {
-      let top_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, CLOSED_DEPTH);
-      let just_under_the_ceiling = top_plank.half_size + vec3(PLANK_THICKNESS, MIDDLE_VERTICAL_PLANK_HEIGHT, 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(top_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(just_under_the_ceiling),
-        ChildOf(parent),
-      ));
-    }
-    {
-      {
-        let middle_horizontal_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-        let over_the_hanger_rod = middle_horizontal_plank.half_size + vec3(PLANK_THICKNESS, MIDDLE_HORIZONTAL_PLANK_Y, 0.);
-        commands.spawn((
-          Mesh3d(meshes.add(middle_horizontal_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(over_the_hanger_rod),
-          ChildOf(parent),
-        ));
-      }
-      {
-        let top_horizontal_divider_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-        let half_way_there = top_horizontal_divider_plank.half_size + vec3(PLANK_THICKNESS, TOP_HORIZONTAL_DIVIDER_PLANK_Y, 0.);
-        commands.spawn((
-          Mesh3d(meshes.add(top_horizontal_divider_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(half_way_there),
-          ChildOf(parent),
-        ));
-      }
-    }
-    {
-      let hanger_rod = Cuboid::new(HANGER_SPACE_W, PLANK_THICKNESS, PLANK_THICKNESS);
-      let like_in_our_closet = hanger_rod.half_size + vec3(PLANK_THICKNESS, HANGER_ROD_Y, 0.5 * CLOSED_DEPTH);
-      commands.spawn((
-        Mesh3d(meshes.add(hanger_rod)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(like_in_our_closet),
-        ChildOf(parent),
-      ));
-    }
-    {
-      let shoes_drawer_top_plank = Cuboid::new(BROOM_X, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-      let like_in_our_hall_drawer = shoes_drawer_top_plank.half_size + vec3(PLANK_THICKNESS, SHOES_DRAWER_TOP_Y, 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(shoes_drawer_top_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(like_in_our_hall_drawer),
-        ChildOf(parent),
-      ));
-    }
-    {
-      let shoes_drawer_top_plank = Cuboid::new(BROOM_X, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-      let like_in_our_hall_drawer = shoes_drawer_top_plank.half_size + vec3(PLANK_THICKNESS, SHOES_DRAWER_MIDDLE_Y, 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(shoes_drawer_top_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(like_in_our_hall_drawer),
-        ChildOf(parent),
-      ));
-    }
-  }
-  {
-    let side_plank = Cuboid::new(PLANK_THICKNESS, CLOSET_HEIGHT, CLOSED_DEPTH);
-    {
-      let entrance_side_plank = side_plank.half_size + vec3(0., 0., 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(side_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(entrance_side_plank),
-        ChildOf(parent),
-      ));
-    }
-    {
-      let bathroom_side_plank = side_plank.half_size + vec3(CLOSET_WIDTH - PLANK_THICKNESS, 0., 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(side_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(bathroom_side_plank),
-        ChildOf(parent),
-      ));
-    }
-  }
-  {
-    {
-      let broom_compartment_and_drawers_divider_plank = Cuboid::new(PLANK_THICKNESS, MIDDLE_HORIZONTAL_PLANK_Y, MIDDLE_PLANK_DEPTH);
-      let broom_compartment_and_drawers_divider = broom_compartment_and_drawers_divider_plank.half_size + vec3(BROOM_X, 0., 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(broom_compartment_and_drawers_divider_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(broom_compartment_and_drawers_divider),
-        ChildOf(parent),
-      ));
-    }
-    {
-      let drawers_and_hanging_space_divider_plank = Cuboid::new(PLANK_THICKNESS, MIDDLE_VERTICAL_PLANK_HEIGHT, MIDDLE_PLANK_DEPTH);
-      let drawers_and_hanging_space_divider = drawers_and_hanging_space_divider_plank.half_size + vec3(HANGER_SPACE_W, 0., 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(drawers_and_hanging_space_divider_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(drawers_and_hanging_space_divider),
-        ChildOf(parent),
-      ));
-    }
-  }
-  {
-    let drawer_spacing_y = 0.05;
-    let drawer_spacing_x = 0.05;
-    let drawer_x = HANGER_SPACE_W + PLANK_THICKNESS + drawer_spacing_x;
-    let start_y = 0.; //SHOES_DRAWER_TOP_Y + PLANK_THICKNESS + drawer_spacing_y;
-    let num_drawers = 5;
-    let drawer_height = (MAX_DRAWER_Y - start_y) / num_drawers as f32 - drawer_spacing_y;
-    let drawer_depth = MIDDLE_PLANK_DEPTH;
-
-    let drawer = Cuboid::new(DRAWERS_WIDTH - 2. * drawer_spacing_x, drawer_height, drawer_depth);
-    for i in 0..num_drawers {
-      let y = start_y + i as f32 * (drawer_height + drawer_spacing_y);
-      commands.spawn((
-        Mesh3d(meshes.add(drawer)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(drawer.half_size + Vec3::new(drawer_x, y, 0.0)),
-        ChildOf(parent),
-      ));
-    }
-    if MAX_DRAWER_Y + PLANK_THICKNESS < MIDDLE_HORIZONTAL_PLANK_Y {
-      let shoes_drawer_top_plank = Cuboid::new(DRAWERS_WIDTH, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-      let like_in_our_hall_drawer = shoes_drawer_top_plank.half_size + vec3(HANGER_SPACE_W + PLANK_THICKNESS, MAX_DRAWER_Y, 0.);
-      commands.spawn((
-        Mesh3d(meshes.add(shoes_drawer_top_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(like_in_our_hall_drawer),
-        ChildOf(parent),
-      ));
-    }
-  }
+fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>, asset_server: Res<AssetServer>) {
+  let transform = Transform::from_translation(KITCHEN_ORIGIN + vec3(EPSILON, 0., VENT_WIDTH + EPSILON));
+  commands.spawn((
+    Mesh3d(asset_server.load("stl/hall_cabinet.stl")),
+    MeshMaterial3d(materials.add(Color::hsl(0., 0., 0.69))),
+    transform,
+  ));
 }
 
 pub(crate) struct KitchenPlugin;

@@ -438,7 +438,7 @@ fn spawn_washing_machine(
   mut commands: Commands,
   asset_server: Res<AssetServer>,
   common: Res<BathroomCommon>,
-  mut meshes: ResMut<Assets<Mesh>>,
+  mut materials: ResMut<Assets<StandardMaterial>>
 ) {
   let model_handle = asset_server.load("bathroom/washing_machine.glb#Scene0");
   let transform = Transform::from_scale(Vec3::splat(10.0)).with_rotation(Quat::from_rotation_y(-FRAC_PI_2));
@@ -464,49 +464,11 @@ fn spawn_washing_machine(
     ))
     .set_parent(common.parent);
 
-  {
-    let washing_machine_width = 2. * WASHING_MACHINE_HALF_WIDTH;
-    let washing_machine_cabinet_depth = RIGHT_WALL_X - washing_machine_width;
-    {
-      let plank_cube = Cuboid::new(washing_machine_width, BATHROOM_Z, PLANK_THICKNESS);
-      let plank = meshes.add(plank_cube);
-      commands
-        .spawn((
-          Mesh3d(plank.clone()),
-          MeshMaterial3d(common.beige.clone()),
-          Transform::from_translation(
-            plank_cube.half_size + vec3(washing_machine_cabinet_depth, 0., -washing_machine_width - 2. * a - TILE_PLUS_GLUE),
-          ),
-          Bathroom,
-        ))
-        .set_parent(common.parent);
-
-      commands
-        .spawn((
-          Mesh3d(plank),
-          MeshMaterial3d(common.beige.clone()),
-          Transform::from_translation(plank_cube.half_size + vec3(washing_machine_cabinet_depth, 0., -PLANK_THICKNESS - TILE_PLUS_GLUE)),
-          Bathroom,
-        ))
-        .set_parent(common.parent);
-    }
-
-    {
-      let h = 2. * WASHING_MACHINE_HEIGHT + 2. * PLANK_THICKNESS;
-      let plank_cube = Cuboid::new(PLANK_THICKNESS, BATHROOM_Z - h, washing_machine_width + 2. * a);
-      let plank = meshes.add(plank_cube);
-      commands
-        .spawn((
-          Mesh3d(plank),
-          MeshMaterial3d(common.beige.clone()),
-          Transform::from_translation(
-            plank_cube.half_size + vec3(washing_machine_cabinet_depth, h, -washing_machine_width - 2. * a - TILE_PLUS_GLUE),
-          ),
-          Bathroom,
-        ))
-        .set_parent(common.parent);
-    }
-  }
+  commands.spawn((
+    Mesh3d(asset_server.load("stl/washing_machine_cabinet.stl")),
+    MeshMaterial3d(materials.add(Color::hsl(0., 0., 0.69))),
+    Transform::from_translation(vec3(RIGHT_WALL_X - 6. - TILE_PLUS_GLUE, 0., 0.)),
+  )).set_parent(common.parent);
 }
 
 const CLOSET_HEIGHT: f32 = FLAT_HEIGHT;

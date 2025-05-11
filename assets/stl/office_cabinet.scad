@@ -81,11 +81,12 @@ module szafa_biuro() {
                 cube([grubosc_plyty, inner_d, szafa_h]);
             }
         }
-        translate([szafa_w - grubosc_plyty, szafa_d, 0]) {
-            rotate([0, 0, 10]) {
-                cube([grubosc_plyty, inner_d, szafa_h]);
-            }
-        }
+// without doors for a walkway
+//        translate([szafa_w - grubosc_plyty, szafa_d, 0]) {
+//            rotate([0, 0, 10]) {
+//                cube([grubosc_plyty, inner_d, szafa_h]);
+//            }
+//        }
 //        translate([7 * szafa_w / 8, 1.2 * szafa_d, szafa_h/2]) {
 //            rotate([0, 90, 0]) {
 //                scale([0.1, 0.1, 0.1]) {
