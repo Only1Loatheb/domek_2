@@ -1,7 +1,7 @@
 use crate::common::*;
 use bevy::math::vec3;
 use bevy::prelude::*;
-use std::f32::consts::FRAC_PI_2;
+use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 use std::ops::Add;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
@@ -59,43 +59,66 @@ fn setup_kitchen(
   common: Res<KitchenCommon>,
   mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-  let bottom_cabinets = [
-    Cuboid::new(CABINET_WIDTH / 2.0, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH / 2.0, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
-  ];
-
   {
+    let cabinet_handle: Handle<Mesh> = asset_server.load("stl/kitchen_handle.stl");
+    let cabinet_handle_material = MeshMaterial3d(repeat_texture(
+      "brushed_copper/Radaway_BrushedCopper_COL_4K_METALNESS.jpg",
+      &mut materials,
+      &asset_server,
+      Vec2 { x: 10., y: 10. },
+      Vec2 { x: 0.1, y: 0.1 },
+    ));
+    let bottom_cabinets = [
+      Cuboid::new(CABINET_WIDTH / 2.0, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH / 2.0, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH),
+    ];
     let mut x_acc: f32 = 0.0;
     for bottom_cabinet in bottom_cabinets.into_iter() {
       let translation = bottom_cabinet.half_size + vec3(x_acc, BOTTOM_CABINET_Y, 0.);
-      commands
+      let id = commands
         .spawn((
           Mesh3d(meshes.add(bottom_cabinet)),
           MeshMaterial3d(common.cabinets_colour.clone()),
           Transform::from_translation(translation),
           KitchenCabinet,
         ))
-        .set_parent(common.parent);
+        .set_parent(common.parent)
+        .id();
+      fn cabinet_handle_transform(bottom_cabinet: Cuboid) -> Transform {
+        Transform::from_translation(bottom_cabinet.half_size)
+          .with_scale(Vec3::splat(0.02))
+          .with_rotation(Quat::from_euler(EulerRot::XYZ, 0., -FRAC_PI_2, 0.))
+      }
+      commands.spawn((
+        Mesh3d(cabinet_handle.clone()),
+        cabinet_handle_material.clone(),
+        cabinet_handle_transform(bottom_cabinet),
+        ChildOf(id),
+      ));
+      commands.spawn((
+        Mesh3d(cabinet_handle.clone()),
+        cabinet_handle_material.clone(),
+        cabinet_handle_transform(bottom_cabinet).with_translation(bottom_cabinet.half_size.with_y(0.)),
+        ChildOf(id),
+      ));
       x_acc += bottom_cabinet.size().x;
     }
   }
-
-  let middle_cabinets = [
-    Cuboid::new(CABINET_WIDTH / 2.0, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH / 2.0, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
-  ];
-
   {
+    let middle_cabinets = [
+      Cuboid::new(CABINET_WIDTH / 2.0, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH / 2.0, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH),
+    ];
     let middle_cabinet_material = repeat_texture(
       "kitchen/dab_vicenza.jpg",
       &mut materials,
@@ -117,44 +140,44 @@ fn setup_kitchen(
       x_acc += middle_cabinet.size().x;
     }
   }
+  {
+    let top_cabinets = [
+      Cuboid::new(CABINET_WIDTH / 2.0, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
+      Cuboid::new(CABINET_WIDTH / 2.0, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
+    ];
 
-  let top_cabinets = [
-    Cuboid::new(CABINET_WIDTH / 2.0, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
-    Cuboid::new(CABINET_WIDTH / 2.0, TOP_CABINET_HEIGHT, TOP_CABINET_DEPTH),
-  ];
-
-  let mut x_acc: f32 = 0.0;
-  for top_cabinet in top_cabinets.into_iter() {
-    let translation = top_cabinet.half_size + vec3(x_acc, TOP_CABINET_Y, 0.);
+    let mut x_acc: f32 = 0.0;
+    for top_cabinet in top_cabinets.into_iter() {
+      let translation = top_cabinet.half_size + vec3(x_acc, TOP_CABINET_Y, 0.);
+      commands
+        .spawn((
+          Mesh3d(meshes.add(top_cabinet)),
+          MeshMaterial3d(common.cabinets_colour.clone()),
+          Transform::from_translation(translation),
+          KitchenCabinet,
+        ))
+        .set_parent(common.parent);
+      x_acc += top_cabinet.size().x;
+    }
+    let owen_and_stuff = Cuboid::new(CABINET_WIDTH, FLAT_HEIGHT - BOTTOM_CABINET_Y, BOTTOM_CABINET_DEPTH);
+    let translation = owen_and_stuff.half_size + vec3(x_acc, BOTTOM_CABINET_Y, 0.);
     commands
       .spawn((
-        Mesh3d(meshes.add(top_cabinet)),
+        Mesh3d(meshes.add(owen_and_stuff)),
         MeshMaterial3d(common.cabinets_colour.clone()),
         Transform::from_translation(translation),
         KitchenCabinet,
       ))
       .set_parent(common.parent);
-    x_acc += top_cabinet.size().x;
   }
-  let owen_and_stuff = Cuboid::new(CABINET_WIDTH, FLAT_HEIGHT - BOTTOM_CABINET_Y, BOTTOM_CABINET_DEPTH);
-  let translation = owen_and_stuff.half_size + vec3(x_acc, BOTTOM_CABINET_Y, 0.);
-  commands
-    .spawn((
-      Mesh3d(meshes.add(owen_and_stuff)),
-      MeshMaterial3d(common.cabinets_colour.clone()),
-      Transform::from_translation(translation),
-      KitchenCabinet,
-    ))
-    .set_parent(common.parent);
-
   {
     let counter_top_width = 36.;
-    let counter_top_depth = 6.;
+    let counter_top_depth = 5.6;
     let countertop = Cuboid::new(counter_top_width, 0.2, counter_top_depth);
     let translation = countertop.half_size + vec3(0.0, COUNTERTOP_Y, 0.);
     let material_handle = repeat_texture(

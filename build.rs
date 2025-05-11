@@ -32,7 +32,7 @@ fn main() {
       panic!("Failed to read directory {:?}: {}", scad_dir, err);
     }
   };
-
+  
   for scad_path in scad_files {
     let stl_path = scad_path.with_extension("stl");
 
