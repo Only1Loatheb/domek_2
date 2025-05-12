@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z, NOT_BEIGE, PLANK_THICKNESS, TILE_PLUS_GLUE};
+use crate::common::{
+  repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, CLOSET_COLOUR, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT,
+  LIVING_ROOM_TO_BATHROOM_Z, PLANK_THICKNESS, TILE_PLUS_GLUE,
+};
 use bevy::math::vec3;
 use std::f32::consts::{FRAC_PI_2, PI};
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
@@ -438,18 +441,18 @@ fn spawn_washing_machine(
   mut commands: Commands,
   asset_server: Res<AssetServer>,
   common: Res<BathroomCommon>,
-  mut materials: ResMut<Assets<StandardMaterial>>
+  mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
   let model_handle = asset_server.load("bathroom/washing_machine.glb#Scene0");
   let transform = Transform::from_scale(Vec3::splat(10.0)).with_rotation(Quat::from_rotation_y(-FRAC_PI_2));
-  let a = 3. * PLANK_THICKNESS;
+  let three_planks_thicknesses = 3. * PLANK_THICKNESS;
   commands
     .spawn((
       SceneRoot(model_handle.clone()),
       transform.with_translation(vec3(
         RIGHT_WALL_X - WASHING_MACHINE_HALF_WIDTH,
         WASHING_MACHINE_HEIGHT / 2.0,
-        -WASHING_MACHINE_HALF_WIDTH - a - TILE_PLUS_GLUE,
+        -WASHING_MACHINE_HALF_WIDTH - three_planks_thicknesses - TILE_PLUS_GLUE,
       )),
     ))
     .set_parent(common.parent);
@@ -459,142 +462,41 @@ fn spawn_washing_machine(
       transform.with_translation(vec3(
         RIGHT_WALL_X - WASHING_MACHINE_HALF_WIDTH,
         1.5 * WASHING_MACHINE_HEIGHT,
-        -WASHING_MACHINE_HALF_WIDTH - a - TILE_PLUS_GLUE,
+        -WASHING_MACHINE_HALF_WIDTH - three_planks_thicknesses - TILE_PLUS_GLUE,
       )),
     ))
     .set_parent(common.parent);
 
-  commands.spawn((
-    Mesh3d(asset_server.load("stl/washing_machine_cabinet.stl")),
-    MeshMaterial3d(materials.add(Color::hsl(0., 0., 0.69))),
-    Transform::from_translation(vec3(RIGHT_WALL_X - 6. - TILE_PLUS_GLUE, 0., 0.)),
-  )).set_parent(common.parent);
+  commands
+    .spawn((
+      Mesh3d(asset_server.load("stl/washing_machine_cabinet.stl")),
+      MeshMaterial3d(materials.add(CLOSET_COLOUR)),
+      Transform::from_translation(vec3(RIGHT_WALL_X - 6. - TILE_PLUS_GLUE, 0., 0.)),
+    ))
+    .set_parent(common.parent);
 }
 
-const CLOSET_HEIGHT: f32 = FLAT_HEIGHT;
-const CLOSED_DEPTH: f32 = 4.;
-const CLOSET_WIDTH: f32 = 6. - PLANK_THICKNESS;
-const MIDDLE_PLANK_DEPTH: f32 = CLOSED_DEPTH;
-const MIDDLE_VERTICAL_PLANK_HEIGHT: f32 = CLOSET_HEIGHT - PLANK_THICKNESS;
-const MIDDLE_HORIZONTAL_PLANK_Y: f32 = 20.0;
-const TOP_HORIZONTAL_DIVIDER_PLANK_Y: f32 = MIDDLE_HORIZONTAL_PLANK_Y + 0.5 * (CLOSET_HEIGHT - MIDDLE_HORIZONTAL_PLANK_Y);
-const LAUNDRY_BASKET_TOP_Y: f32 = 6.0;
-const VERTICAL_MIDDLE_PLANK_X: f32 = 0.5 * (CLOSET_WIDTH);
-const HORIZONTAL_MIDDLE_PLANK_X: f32 = 12.0;
-
-fn spawn_closet(mut commands: Commands, mut materials: ResMut<Assets<StandardMaterial>>, mut meshes: ResMut<Assets<Mesh>>) {
-  let parent = commands
+fn spawn_closet(
+  mut commands: Commands,
+  mut materials: ResMut<Assets<StandardMaterial>>,
+  asset_server: Res<AssetServer>,
+  common: Res<BathroomCommon>,
+) {
+  commands
     .spawn((
-      Transform::from_translation(BATHROOM_ORIGIN + vec3(TILE_PLUS_GLUE, 0., BATHROOM_WALL_THICKNESS)),
-      GlobalTransform::default(),
-      InheritedVisibility::default(),
+      Mesh3d(asset_server.load("stl/bathroom_cabinet.stl")),
+      MeshMaterial3d(materials.add(CLOSET_COLOUR)),
+      Transform::from_translation(vec3(BATHROOM_WALL_THICKNESS + TILE_PLUS_GLUE, 0.,-TILE_PLUS_GLUE)).with_rotation
+      (Quat::from_rotation_y(FRAC_PI_2)),
     ))
-    .id();
-
-  let closet_colour = materials.add(NOT_BEIGE);
-  {
-    {
-      let top_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, CLOSED_DEPTH);
-      let just_under_the_ceiling = top_plank.half_size + vec3(PLANK_THICKNESS, MIDDLE_VERTICAL_PLANK_HEIGHT, 0.);
-      commands
-        .spawn((
-          Mesh3d(meshes.add(top_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(just_under_the_ceiling),
-        ))
-        .set_parent(parent);
-    }
-    {
-      {
-        let top_horizontal_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-        let over_the_hanger_rod = top_horizontal_plank.half_size + vec3(PLANK_THICKNESS, MIDDLE_HORIZONTAL_PLANK_Y, 0.);
-        commands
-          .spawn((
-            Mesh3d(meshes.add(top_horizontal_plank)),
-            MeshMaterial3d(closet_colour.clone()),
-            Transform::from_translation(over_the_hanger_rod),
-          ))
-          .set_parent(parent);
-      }
-      {
-        let top_horizontal_divider_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-        let half_way_there = top_horizontal_divider_plank.half_size + vec3(PLANK_THICKNESS, TOP_HORIZONTAL_DIVIDER_PLANK_Y, 0.);
-        commands
-          .spawn((
-            Mesh3d(meshes.add(top_horizontal_divider_plank)),
-            MeshMaterial3d(closet_colour.clone()),
-            Transform::from_translation(half_way_there),
-          ))
-          .set_parent(parent);
-      }
-    }
-    {
-      let laundry_basket_top_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-      let like_in_our_hall_drawer = laundry_basket_top_plank.half_size + vec3(PLANK_THICKNESS, LAUNDRY_BASKET_TOP_Y, 0.);
-      commands
-        .spawn((
-          Mesh3d(meshes.add(laundry_basket_top_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(like_in_our_hall_drawer),
-        ))
-        .set_parent(parent);
-    }
-  }
-  {
-    let middle_horizontal_plank = Cuboid::new(CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH);
-    let like_in_our_hall_drawer = middle_horizontal_plank.half_size + vec3(PLANK_THICKNESS, HORIZONTAL_MIDDLE_PLANK_X, 0.);
-    commands
-      .spawn((
-        Mesh3d(meshes.add(middle_horizontal_plank)),
-        MeshMaterial3d(closet_colour.clone()),
-        Transform::from_translation(like_in_our_hall_drawer),
-      ))
-      .set_parent(parent);
-  }
-  {
-    let side_plank = Cuboid::new(PLANK_THICKNESS, CLOSET_HEIGHT, CLOSED_DEPTH);
-    {
-      let entrance_side_plank = side_plank.half_size + vec3(0., 0., 0.);
-      commands
-        .spawn((
-          Mesh3d(meshes.add(side_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(entrance_side_plank),
-        ))
-        .set_parent(parent);
-    }
-    {
-      let shower_side_plank = side_plank.half_size + vec3(CLOSET_WIDTH - PLANK_THICKNESS, 0., 0.);
-      commands
-        .spawn((
-          Mesh3d(meshes.add(side_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(shower_side_plank),
-        ))
-        .set_parent(parent);
-    }
-  }
-  {
-    {
-      let broom_compartment_and_drawers_divider_plank = Cuboid::new(PLANK_THICKNESS, MIDDLE_HORIZONTAL_PLANK_Y, MIDDLE_PLANK_DEPTH);
-      let broom_compartment_and_drawers_divider =
-        broom_compartment_and_drawers_divider_plank.half_size + vec3(VERTICAL_MIDDLE_PLANK_X, 0., 0.);
-      commands
-        .spawn((
-          Mesh3d(meshes.add(broom_compartment_and_drawers_divider_plank)),
-          MeshMaterial3d(closet_colour.clone()),
-          Transform::from_translation(broom_compartment_and_drawers_divider),
-        ))
-        .set_parent(parent);
-    }
-  }
+    .set_parent(common.parent);
 }
 
 pub(crate) struct BathroomPlugin;
 
 impl Plugin for BathroomPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(Startup, (setup_bathroom_common, spawn_closet)).add_systems(
+    app.add_systems(Startup, setup_bathroom_common).add_systems(
       Startup,
       (
         spawn_walls,
@@ -603,6 +505,7 @@ impl Plugin for BathroomPlugin {
         spawn_toilet,
         spawn_sink,
         spawn_shower_shelf,
+        spawn_closet,
       )
         .after(setup_bathroom_common),
     );

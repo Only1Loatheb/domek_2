@@ -231,7 +231,7 @@ fn spawn_hall_closet(mut commands: Commands, mut materials: ResMut<Assets<Standa
   let transform = Transform::from_translation(KITCHEN_ORIGIN + vec3(EPSILON, 0., VENT_WIDTH + EPSILON));
   commands.spawn((
     Mesh3d(asset_server.load("stl/hall_cabinet.stl")),
-    MeshMaterial3d(materials.add(Color::hsl(0., 0., 0.69))),
+    MeshMaterial3d(materials.add(CLOSET_COLOUR)),
     transform,
   ));
 }

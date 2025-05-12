@@ -10,7 +10,7 @@ use std::f32::consts::{FRAC_PI_2, PI};
 use std::ops::Add;
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
-use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE};
+use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, CLOSET_COLOUR, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look, CameraSensitivity};
@@ -326,7 +326,7 @@ fn spawn_bedroom_cabinet(mut commands: Commands, asset_server: Res<AssetServer>,
   };
   commands.spawn((
     Mesh3d(asset_server.load("stl/bedroom_cabinet.stl")),
-    MeshMaterial3d(materials.add(Color::hsl(0., 0., 0.69))),
+    MeshMaterial3d(materials.add(CLOSET_COLOUR)),
     transform,
   ));
 }
@@ -343,7 +343,7 @@ fn spawn_office_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, 
   };
   commands.spawn((
     Mesh3d(asset_server.load("stl/office_cabinet.stl")),
-    MeshMaterial3d(materials.add(Color::hsl(0., 0., 0.69))),
+    MeshMaterial3d(materials.add(CLOSET_COLOUR)),
     transform,
   ));
 }
