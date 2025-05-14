@@ -436,6 +436,7 @@ fn spawn_toilet(mut commands: Commands, asset_server: Res<AssetServer>, mut mesh
 
 const WASHING_MACHINE_HALF_WIDTH: f32 = 3.;
 const WASHING_MACHINE_HEIGHT: f32 = 8.5;
+const WASHING_MACHINE_CABINET_WIDTH: f32 = 2. * WASHING_MACHINE_HALF_WIDTH + 6. * PLANK_THICKNESS;
 
 fn spawn_washing_machine(
   mut commands: Commands,
@@ -471,7 +472,12 @@ fn spawn_washing_machine(
     .spawn((
       Mesh3d(asset_server.load("stl/washing_machine_cabinet.stl")),
       MeshMaterial3d(materials.add(CLOSET_COLOUR)),
-      Transform::from_translation(vec3(RIGHT_WALL_X - 6. - TILE_PLUS_GLUE, 0., 0.)),
+      Transform::from_translation(vec3(
+        RIGHT_WALL_X,
+        0.,
+        -WASHING_MACHINE_CABINET_WIDTH - TILE_PLUS_GLUE,
+      ))
+      .with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
     ))
     .set_parent(common.parent);
 }
@@ -486,8 +492,8 @@ fn spawn_closet(
     .spawn((
       Mesh3d(asset_server.load("stl/bathroom_cabinet.stl")),
       MeshMaterial3d(materials.add(CLOSET_COLOUR)),
-      Transform::from_translation(vec3(BATHROOM_WALL_THICKNESS + TILE_PLUS_GLUE, 0.,-TILE_PLUS_GLUE)).with_rotation
-      (Quat::from_rotation_y(FRAC_PI_2)),
+      Transform::from_translation(vec3(BATHROOM_WALL_THICKNESS + TILE_PLUS_GLUE, 0., -TILE_PLUS_GLUE))
+        .with_rotation(Quat::from_rotation_y(FRAC_PI_2)),
     ))
     .set_parent(common.parent);
 }
