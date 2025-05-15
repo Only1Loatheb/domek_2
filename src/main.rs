@@ -92,7 +92,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
       Camera { hdr: true, ..default() },
       Transform::from_xyz(-BATHROOM_X- HALL_X, 17.5, LIVING_ROOM_TO_BATHROOM_Z + 0.5 * HALL_Z)
         .looking_at(vec3(- 10., 17.5, 0.), Vec3::Y),
-      Tonemapping::TonyMcMapface,
+      Tonemapping::None,
       Bloom::default(),
       CameraSensitivity::default(),
       CameraMovement::default(),
