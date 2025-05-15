@@ -27,10 +27,15 @@ module bathroom_cabinet() {
     translate([PLANK_THICKNESS, LAUNDRY_BASKET_TOP_Y, 0.]) {
         cube([CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
     }
+        // pułeczka trochę wyżej
+    translate([PLANK_THICKNESS, (HORIZONTAL_MIDDLE_PLANK_Y + LAUNDRY_BASKET_TOP_Y)/2, 0.]) {
+        cube([CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
+    }
     // middle_horizontal_plank
     translate([PLANK_THICKNESS, HORIZONTAL_MIDDLE_PLANK_Y, 0.]) {
         cube([CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
     }
+    // pułeczka trochę wyżej
     translate([PLANK_THICKNESS, (MIDDLE_HORIZONTAL_PLANK_Y + HORIZONTAL_MIDDLE_PLANK_Y)/2, 0.]) {
         cube([CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
     }

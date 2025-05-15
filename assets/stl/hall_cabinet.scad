@@ -42,6 +42,28 @@ module hall_cabinet() {
     translate([PLANK_THICKNESS, SHOES_DRAWER_MIDDLE_Y, 0.]) {
         cube([BROOM_X, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
     }
+    // szuflady
+    translate([PLANK_THICKNESS, 0.3, 2.0]) {
+        cube([HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
+    }
+    // szuflady
+    translate([HANGER_SPACE_W + PLANK_THICKNESS, 0.3, 2.0]) {
+        cube([BROOM_X - HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
+    }
+    // szuflady
+    translate([PLANK_THICKNESS, SHOES_DRAWER_MIDDLE_Y + 0.3, 2.0]) {
+        cube([HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
+    }
+    // szuflady
+    translate([HANGER_SPACE_W + PLANK_THICKNESS, SHOES_DRAWER_MIDDLE_Y + 0.3, 2.0]) {
+        cube([BROOM_X - HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
+    }
+    // pułki
+    for (i = [3 : 6]) {
+        translate([HANGER_SPACE_W + PLANK_THICKNESS, i * SHOES_DRAWER_MIDDLE_Y, 0]) {
+            cube([BROOM_X - HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
+        }
+    }
     // left side plank
     translate([0., 0., 0.]) {
         cube([PLANK_THICKNESS, CLOSET_HEIGHT, CLOSED_DEPTH]);
@@ -60,4 +82,3 @@ module hall_cabinet() {
     }
 }
 hall_cabinet();
-

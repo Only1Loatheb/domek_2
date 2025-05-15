@@ -127,7 +127,7 @@ fn setup_kitchen(
       &mut materials,
       &asset_server,
       Vec2 { x: 1., y: 1. },
-      Vec2 { x: 0.5, y: 0.77 },
+      Vec2 { x: 0.5, y: 0.5 },
     );
     let mut x_acc: f32 = 0.0;
     for middle_cabinet in middle_cabinets.into_iter() {
@@ -197,6 +197,17 @@ fn setup_kitchen(
       KitchenCabinet,
       ChildOf(common.parent),
     ));
+  }
+
+  {
+    let tap = asset_server.load("kitchen/table.glb#Scene0");
+    commands
+      .spawn((
+        SceneRoot(tap),
+        Transform::from_translation(vec3(30., 0., 25.)),
+        KitchenCabinet,
+        ChildOf(common.parent),
+      ));
   }
 }
 

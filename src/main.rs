@@ -188,6 +188,11 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
       ))
       .set_parent(mirror_parent);
   }
+    // commands.spawn((
+    //   Mesh3d(meshes.add(Capsule2d::new(9., 5.))),
+    //   MeshMaterial3d(common.wall_colour.clone()),
+    //   Transform::from_translation(vec3(1., 0., 0.)),
+    // ));
 }
 
 fn create_text(app_settings: &AppSettings) -> Text {
