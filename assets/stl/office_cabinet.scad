@@ -83,10 +83,22 @@ module szafa_biuro() {
         }
         door_h = 20.;
         bonus_size = [9.2 + .69, szafa_d, szafa_h - door_h];
-        translate([szafa_w, 0., door_h] + bonus_size / 2) {
-            difference() {
-                cube(bonus_size, center = true);
-                cube(bonus_size - 2 * grubosc_plyty * [1, -1, 1], center = true);
+        translate([szafa_w, 0., door_h]) {
+            translate(bonus_size / 2) {
+                difference() {
+                    cube(bonus_size, center = true);
+                    cube(bonus_size - 2 * grubosc_plyty * [1, -1, 1], center = true);
+                }
+            }
+            translate([grubosc_plyty, bonus_size.y, 0]) {
+                rotate([0, 0, 70]) {
+                    cube([bonus_size.x / 2, grubosc_plyty, bonus_size.z]);
+                }
+                translate([bonus_size.x - grubosc_plyty, 0, 0]) {
+                    rotate([0, 0, 110]) {
+                        cube([bonus_size.x / 2, grubosc_plyty, bonus_size.z]);
+                    }
+                }
             }
         }
         // without doors for a walkway

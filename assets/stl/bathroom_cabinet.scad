@@ -31,6 +31,9 @@ module bathroom_cabinet() {
     translate([PLANK_THICKNESS, HORIZONTAL_MIDDLE_PLANK_Y, 0.]) {
         cube([CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
     }
+    translate([PLANK_THICKNESS, (MIDDLE_HORIZONTAL_PLANK_Y + HORIZONTAL_MIDDLE_PLANK_Y)/2, 0.]) {
+        cube([CLOSET_WIDTH - 2. * PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
+    }
     side_plank = [PLANK_THICKNESS, CLOSET_HEIGHT, CLOSED_DEPTH];
     // entrance_side_plank
     translate([0, 0, 0]) {
