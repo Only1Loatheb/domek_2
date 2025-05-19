@@ -380,15 +380,33 @@ fn spawn_shower_stall(
   {
     // just to be sure that measurements are right
     let material = materials.add(Color::WHITE);
-    let shower_tray = Cuboid::new(SHOWER_DEPTH, 0.1, SHOWER_WIDTH);
-    commands
+    let shower_tray_cube = Cuboid::new(SHOWER_DEPTH, 0.1, SHOWER_WIDTH);
+    let tray_transform = Transform::from_translation(shower_tray_cube.half_size + translation);
+    let aa = commands
       .spawn((
-        Mesh3d(meshes.add(shower_tray)),
+        Mesh3d(meshes.add(shower_tray_cube)),
         MeshMaterial3d(material),
-        Transform::from_translation(shower_tray.half_size + translation),
+        tray_transform,
         Bathroom,
       ))
-      .set_parent(common.parent);
+      .set_parent(common.parent)
+      .id();
+    {
+      commands.spawn((
+        Transform::from_translation((shower_tray_cube.half_size + translation).with_y(FLAT_HEIGHT)).looking_at(tray_transform.translation,
+                                                                                       Vec3::Y),
+        // MeshMaterial3d(common.massa_tail[1].clone()),
+        // Mesh3d(meshes.add(shower_tray_cube)),
+        PointLight {
+          intensity: 2_000_000.0,
+          range: 2. * FLAT_HEIGHT,
+          color: Color::WHITE,
+          shadows_enabled: true,
+          ..default()
+        },
+        ChildOf(common.parent),
+      ));
+    }
   }
   {
     let tap = asset_server
@@ -396,7 +414,7 @@ fn spawn_shower_stall(
     commands
       .spawn((
         SceneRoot(tap),
-        Transform::from_translation(translation + vec3(4.5, 9.5, 0. + TILE_PLUS_GLUE)),
+        Transform::from_translation(translation + vec3(4.5, 9.5, TILE_PLUS_GLUE)),
         Bathroom,
       ))
       .set_parent(common.parent);
@@ -472,12 +490,8 @@ fn spawn_washing_machine(
     .spawn((
       Mesh3d(asset_server.load("stl/washing_machine_cabinet.stl")),
       MeshMaterial3d(materials.add(CLOSET_COLOUR)),
-      Transform::from_translation(vec3(
-        RIGHT_WALL_X,
-        0.,
-        -WASHING_MACHINE_CABINET_WIDTH - TILE_PLUS_GLUE,
-      ))
-      .with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
+      Transform::from_translation(vec3(RIGHT_WALL_X, 0., -WASHING_MACHINE_CABINET_WIDTH - TILE_PLUS_GLUE))
+        .with_rotation(Quat::from_rotation_y(-FRAC_PI_2)),
     ))
     .set_parent(common.parent);
 }
