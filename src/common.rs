@@ -52,7 +52,7 @@ pub const PLANK_THICKNESS: f32 = 0.18;
 // NCS S 1505-y40R
 // https://www.w3schools.com/colors/colors_converter.asp?color=ncs(1505-y40R)
 // pub const BEIGE: Color = Color::hsl(30.0, 0.29, 0.85);
-pub const BEIGE: Color = Color::linear_rgb(255.0 /255., 242./255., 207./255.);
+pub const BEIGE: Color = Color::linear_rgb(255.0 / 255., 242. / 255., 207. / 255.);
 pub const CLOSET_COLOUR: Color = Color::hsl(0., 0., 0.69);
 
 pub fn repeat_texture<'a>(
