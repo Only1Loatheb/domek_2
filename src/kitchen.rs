@@ -75,8 +75,8 @@ fn setup_kitchen(
     let cabinet_handle: Handle<Mesh> = asset_server.load("stl/kitchen_handle.stl");
     let mut x_acc: f32 = 0.0;
     for bottom_cabinet_width in CABINET_WIDTHS.into_iter() {
-      let bottom_cabinet = Cuboid::new(bottom_cabinet_width, BOTTOM_CABINET_HEIGHT, BOTTOM_CABINET_DEPTH);
-      let translation = bottom_cabinet.half_size + vec3(x_acc, BOTTOM_CABINET_Y, 0.);
+      let bottom_cabinet = Cuboid::new(bottom_cabinet_width, BOTTOM_CABINET_HEIGHT, EPSILON);
+      let translation = bottom_cabinet.half_size + vec3(x_acc, BOTTOM_CABINET_Y, BOTTOM_CABINET_DEPTH - EPSILON);
       let id = commands
         .spawn((
           Mesh3d(meshes.add(bottom_cabinet)),
@@ -156,27 +156,85 @@ fn setup_kitchen(
     ));
   }
   {
-    let counter_top_width = CABINET_WIDTHS.iter().sum();
+    let sink_cabinet_index = 1;
+    let sink_width = 5.0;
+    let sink_side_margin: f32 = 0.5 * (CABINET_WIDTH - sink_width);
+    let counter_top_left_width = CABINET_WIDTHS.iter().take(sink_cabinet_index).sum::<f32>() + sink_side_margin;
+    let counter_top_right_width = CABINET_WIDTHS.iter().sum::<f32>() - sink_width + sink_side_margin - counter_top_left_width;
     let counter_top_depth = 5.6;
-    let countertop = Cuboid::new(counter_top_width, COUNTERTOP_HEIGHT, counter_top_depth);
-    let translation = countertop.half_size + vec3(0.0, COUNTERTOP_Y, 0.);
-    let material_handle = repeat_texture(
-      "kitchen/ambient_light.jpg",
-      &mut materials,
-      &asset_server,
-      Vec2 {
-        x: counter_top_width,
-        y: counter_top_depth,
-      },
-      Vec2 { x: 0.05, y: 0.1 },
-    );
-    commands.spawn((
-      Mesh3d(meshes.add(countertop)),
-      MeshMaterial3d(material_handle),
-      Transform::from_translation(translation),
-      KitchenCabinet,
-      ChildOf(common.parent),
-    ));
+    {
+      let left_countertop = Cuboid::new(counter_top_left_width, COUNTERTOP_HEIGHT, counter_top_depth);
+      let left_material = repeat_texture(
+        "kitchen/ambient_light.jpg",
+        &mut materials,
+        &asset_server,
+        Vec2 {
+          x: counter_top_left_width,
+          y: counter_top_depth,
+        },
+        Vec2 { x: 0.05, y: 0.1 },
+      );
+      commands.spawn((
+        Mesh3d(meshes.add(left_countertop)),
+        MeshMaterial3d(left_material),
+        Transform::from_translation(left_countertop.half_size + vec3(0.0, COUNTERTOP_Y, 0.)),
+        KitchenCabinet,
+        ChildOf(common.parent),
+      ));
+    }
+    {
+      let depth = 0.5 * (counter_top_depth - 4.0);
+      let front_countertop = Cuboid::new(sink_width, COUNTERTOP_HEIGHT, depth);
+      let front_material = repeat_texture(
+        "kitchen/ambient_light.jpg",
+        &mut materials,
+        &asset_server,
+        Vec2 { x: sink_width, y: depth },
+        Vec2 { x: 0.05, y: 0.1 },
+      );
+      commands.spawn((
+        Mesh3d(meshes.add(front_countertop)),
+        MeshMaterial3d(front_material.clone()),
+        Transform::from_translation(front_countertop.half_size + vec3(counter_top_left_width, COUNTERTOP_Y, 0.)),
+        KitchenCabinet,
+        ChildOf(common.parent),
+      ));
+      commands.spawn((
+        Mesh3d(meshes.add(front_countertop)),
+        MeshMaterial3d(front_material),
+        Transform::from_translation(front_countertop.half_size + vec3(counter_top_left_width, COUNTERTOP_Y, counter_top_depth - depth)),
+        KitchenCabinet,
+        ChildOf(common.parent),
+      ));
+      let table = asset_server.load("kitchen/kitchen_sink.glb#Scene0");
+      commands.spawn((
+        SceneRoot(table),
+        Transform::from_translation(vec3(counter_top_left_width + 0.5 * sink_width + 0.5, COUNTERTOP_Y + 0.1, 5.2))
+          .with_scale(vec3(7.0, 10.0, 10.0)),
+        KitchenCabinet,
+        ChildOf(common.parent),
+      ));
+    }
+    {
+      let right_countertop = Cuboid::new(counter_top_right_width, COUNTERTOP_HEIGHT, counter_top_depth);
+      let right_material = repeat_texture(
+        "kitchen/ambient_light.jpg",
+        &mut materials,
+        &asset_server,
+        Vec2 {
+          x: counter_top_right_width,
+          y: counter_top_depth,
+        },
+        Vec2 { x: 0.05, y: 0.1 },
+      );
+      commands.spawn((
+        Mesh3d(meshes.add(right_countertop)),
+        MeshMaterial3d(right_material),
+        Transform::from_translation(right_countertop.half_size + vec3(counter_top_left_width + sink_width, COUNTERTOP_Y, 0.)),
+        KitchenCabinet,
+        ChildOf(common.parent),
+      ));
+    }
   }
 
   {
