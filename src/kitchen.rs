@@ -95,20 +95,20 @@ fn setup_kitchen(
           .with_scale(vec3(0.02, 0.02, 0.01))
           .with_rotation(Quat::from_euler(EulerRot::XYZ, 0., -FRAC_PI_2, 0.))
       }
-      commands.spawn((
-        Mesh3d(cabinet_handle.clone()),
-        cabinet_handle_material.clone(),
-        cabinet_handle_transform(bottom_cabinet),
-        ChildOf(id),
-      ));
-      if [0, 6].contains(&idx).not() {
-        commands.spawn((
-          Mesh3d(cabinet_handle.clone()),
-          cabinet_handle_material.clone(),
-          cabinet_handle_transform(bottom_cabinet).with_translation(Vec3::ZERO.with_z(bottom_cabinet.half_size.z)),
-          ChildOf(id),
-        ));
-      }
+      // commands.spawn((
+      //   Mesh3d(cabinet_handle.clone()),
+      //   cabinet_handle_material.clone(),
+      //   cabinet_handle_transform(bottom_cabinet),
+      //   ChildOf(id),
+      // ));
+      // if [0, 6].contains(&idx).not() {
+      //   commands.spawn((
+      //     Mesh3d(cabinet_handle.clone()),
+      //     cabinet_handle_material.clone(),
+      //     cabinet_handle_transform(bottom_cabinet).with_translation(Vec3::ZERO.with_z(bottom_cabinet.half_size.z)),
+      //     ChildOf(id),
+      //   ));
+      // }
       x_acc += bottom_cabinet.size().x;
     }
   }
@@ -201,13 +201,12 @@ fn setup_kitchen(
 
   {
     let tap = asset_server.load("kitchen/table.glb#Scene0");
-    commands
-      .spawn((
-        SceneRoot(tap),
-        Transform::from_translation(vec3(30., 0., 25.)),
-        KitchenCabinet,
-        ChildOf(common.parent),
-      ));
+    commands.spawn((
+      SceneRoot(tap),
+      Transform::from_translation(vec3(30., 0., 25.)),
+      KitchenCabinet,
+      ChildOf(common.parent),
+    ));
   }
 }
 

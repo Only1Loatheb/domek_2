@@ -2,7 +2,7 @@ module bathroom_cabinet() {
     PLANK_THICKNESS = 0.18;
     CLOSET_HEIGHT = 26.8;
     CLOSED_DEPTH = 4.;
-    CLOSET_WIDTH = 6. - PLANK_THICKNESS; // this is to make it like 2 x 30mm cabinets
+    CLOSET_WIDTH = 5.2; // just allow me to clean the shower window
     MIDDLE_PLANK_DEPTH = CLOSED_DEPTH;
     MIDDLE_VERTICAL_PLANK_HEIGHT = CLOSET_HEIGHT - PLANK_THICKNESS;
     MIDDLE_HORIZONTAL_PLANK_Y = 20.0;
