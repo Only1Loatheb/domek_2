@@ -1,10 +1,10 @@
 $fn = 200;
-// Parameters
+
 eps = 0.1;
 the_r = 17;
-handle_width = 300;      // Width of handle
-face_height = 30;         // Vertical height from cabinet surface
-lip_radius = 6;           // Radius of the grip lip
+handle_width = 300;
+face_height = 30;
+lip_radius = 6;
 thicckness = 0.3;
 
 negative_r = 50;
@@ -67,4 +67,5 @@ module folded_sheet_handle() {
     }
 }
 
-folded_sheet_handle();
+//folded_sheet_handle();
+cube([10, 10, 600], center = true);
