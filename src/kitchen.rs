@@ -156,6 +156,16 @@ fn setup_kitchen(
     ));
   }
   {
+    let coffee_machine = asset_server.load("kitchen/coffee_machine.glb#Scene0");
+    commands.spawn((
+      SceneRoot(coffee_machine),
+      Transform::from_translation(vec3(1.5, COUNTERTOP_Y + COUNTERTOP_HEIGHT, 1.8))
+        .with_scale(vec3(10.0, 10.0, 10.0)),
+      KitchenCabinet,
+      ChildOf(common.parent),
+    ));
+  }
+  {
     let sink_cabinet_index = 1;
     let sink_width = 5.0;
     let sink_side_margin: f32 = 0.5 * (CABINET_WIDTH - sink_width);
@@ -206,9 +216,9 @@ fn setup_kitchen(
         KitchenCabinet,
         ChildOf(common.parent),
       ));
-      let table = asset_server.load("kitchen/kitchen_sink.glb#Scene0");
+      let kitchen_sink = asset_server.load("kitchen/kitchen_sink.glb#Scene0");
       commands.spawn((
-        SceneRoot(table),
+        SceneRoot(kitchen_sink),
         Transform::from_translation(vec3(counter_top_left_width + 0.5 * sink_width + 0.5, COUNTERTOP_Y + 0.1, 5.2))
           .with_scale(vec3(7.0, 10.0, 10.0)),
         KitchenCabinet,
@@ -255,10 +265,11 @@ fn setup_kitchen(
     commands.spawn((
       Mesh3d(meshes.add(induction_cube)),
       MeshMaterial3d(induction_texture),
-      Transform::from_translation(
-        (vec3(CABINET_WIDTHS.iter().take(5).sum(), 0.0, BOTTOM_CABINET_DEPTH) - induction_cube.half_size)
-          .with_y(COUNTERTOP_Y + COUNTERTOP_HEIGHT),
-      ),
+      Transform::from_translation(vec3(
+        CABINET_WIDTHS.iter().take(4).sum::<f32>() + 0.5 * CABINET_WIDTHS[4],
+        COUNTERTOP_Y + COUNTERTOP_HEIGHT,
+        BOTTOM_CABINET_DEPTH - induction_cube.half_size.z,
+      )),
       KitchenCabinet,
       ChildOf(common.parent),
     ));

@@ -34,5 +34,6 @@ pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera: 
   if input.pressed(KeyCode::ShiftLeft) {
     movement *= 2.;
   }
+  println!("here: {}", transform.translation);
   transform.translation += movement;
 }

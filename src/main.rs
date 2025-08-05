@@ -10,7 +10,10 @@ use std::f32::consts::{FRAC_PI_2, PI};
 use std::ops::Add;
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
-use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, CLOSET_COLOUR, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE};
+use crate::common::{
+  BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, CLOSET_COLOUR, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z,
+  OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE,
+};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look, CameraSensitivity};
@@ -161,38 +164,49 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
   //     ..default()
   //   },
   // ));
-  let mirror_parent = commands
-    .spawn((
-      Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 2. * TILE_PLUS_GLUE, 15.0, 17.))
-        .with_rotation(Quat::from_euler(EulerRot::YXZ, 3. * FRAC_PI_2, 0., FRAC_PI_2)),
-      GlobalTransform::default(),
-      InheritedVisibility::default(),
-    ))
-    .id();
+  {
+    let mirror_parent = commands
+      .spawn((
+        Transform::from_translation(BATHROOM_ORIGIN + vec3(BATHROOM_X - BATHROOM_WALL_THICKNESS - 2. * TILE_PLUS_GLUE, 15.0, 17.))
+          .with_rotation(Quat::from_euler(EulerRot::YXZ, 3. * FRAC_PI_2, 0., FRAC_PI_2)),
+        GlobalTransform::default(),
+        InheritedVisibility::default(),
+      ))
+      .id();
+    use bevy_basic_portals::*;
+    let bathroom_mirror_mesh = meshes.add(CircularSegment::new(4.5, 2.4));
+    commands.spawn((
+      CreatePortal {
+        main_camera: Some(camera),
+        destination: CreateMirror,
+        debug: None,
+        // Uncomment the following two lines to have a double-sided mirror
+        //cull_mode: None,
+        //portal_mode: PortalMode::MaskedImageHalfSpaceFrustum((None, true)),
+        ..default()
+      },
+      Mesh3d(bathroom_mirror_mesh),
+      Transform::from_translation(vec3(1., 0., 0.)),
+      ChildOf(mirror_parent),
+    ));
+  }
   {
     use bevy_basic_portals::*;
-    let mirror_mesh = meshes.add(CircularSegment::new(4.5, 2.4));
-    commands
-      .spawn((
-        CreatePortal {
-          main_camera: Some(camera),
-          destination: CreateMirror,
-          debug: None,
-          // Uncomment the following two lines to have a double-sided mirror
-          //cull_mode: None,
-          //portal_mode: PortalMode::MaskedImageHalfSpaceFrustum((None, true)),
-          ..default()
-        },
-        Mesh3d(mirror_mesh),
-        Transform::from_translation(vec3(1., 0., 0.)),
-      ))
-      .set_parent(mirror_parent);
+    let mirror_mesh = meshes.add(Rectangle::new(8., 23.));
+    commands.spawn((
+      CreatePortal {
+        main_camera: Some(camera),
+        destination: CreateMirror,
+        debug: None,
+        // Uncomment the following two lines to have a double-sided mirror
+        //cull_mode: None,
+        //portal_mode: PortalMode::MaskedImageHalfSpaceFrustum((None, true)),
+        ..default()
+      },
+      Mesh3d(mirror_mesh),
+      Transform::from_translation(vec3(-45.731934, 13.420427, 70.3)).with_rotation(Quat::from_euler(EulerRot::YXZ, PI, 0., 0.)),
+    ));
   }
-    // commands.spawn((
-    //   Mesh3d(meshes.add(Capsule2d::new(9., 5.))),
-    //   MeshMaterial3d(common.wall_colour.clone()),
-    //   Transform::from_translation(vec3(1., 0., 0.)),
-    // ));
 }
 
 fn create_text(app_settings: &AppSettings) -> Text {
@@ -338,8 +352,11 @@ fn spawn_bedroom_cabinet(mut commands: Commands, asset_server: Res<AssetServer>,
 
 fn spawn_office_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, mut materials: ResMut<Assets<StandardMaterial>>) {
   let transform = Transform {
-    translation: vec3(-OFFICE_X_POS - OFFICE_WALL_LENGTH - OFFICE_DOOR_PLUS_SMALL_WALL, 0., OFFICE_Z_POS + 
-      OFFICE_WALL_THICKNESS + EPSILON),
+    translation: vec3(
+      -OFFICE_X_POS - OFFICE_WALL_LENGTH - OFFICE_DOOR_PLUS_SMALL_WALL,
+      0.,
+      OFFICE_Z_POS + OFFICE_WALL_THICKNESS + EPSILON,
+    ),
     rotation: Quat::from_rotation_x(-FRAC_PI_2)
       .normalize()
       .mul_quat(Quat::from_rotation_z(PI))
