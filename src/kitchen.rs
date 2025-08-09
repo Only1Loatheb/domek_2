@@ -5,6 +5,7 @@ use bevy::prelude::*;
 use bevy::transform;
 use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 use std::ops::{Add, Not};
+use crate::control::*;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
@@ -163,8 +164,9 @@ fn setup_kitchen(
       Transform::from_translation(vec3(1.5, COUNTERTOP_Y + COUNTERTOP_HEIGHT, 1.8))
         .with_scale(vec3(10.0, 10.0, 10.0)),
       KitchenCabinet,
-      ChildOf(common.parent),
-    ));
+    ))
+    .observe(on_pressed_save)
+    .observe(on_released_clear);
   }
   {
     let sink_cabinet_index = 1;

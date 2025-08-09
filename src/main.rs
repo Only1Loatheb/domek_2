@@ -4,6 +4,7 @@ mod floor;
 mod kitchen;
 mod look;
 mod movement;
+mod control;
 
 use bevy::prelude::*;
 use std::f32::consts::{FRAC_PI_2, PI};
@@ -16,8 +17,8 @@ use crate::common::{
 };
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
-use crate::look::{look, CameraSensitivity};
-use crate::movement::{movement, CameraMovement};
+use crate::look::{look_around, CameraSensitivity};
+use crate::movement::*;
 use bevy::{
   core_pipeline::{bloom::Bloom, tonemapping::Tonemapping, Skybox},
   math::vec3,
@@ -26,6 +27,7 @@ use bevy::{
 use bevy_basic_portals::PortalDestinationSource::CreateMirror;
 use bevy_basic_portals::PortalsPlugin;
 use bevy_stl::StlPlugin;
+use crate::control::ControlPlugin;
 
 const DIRECTIONAL_LIGHT_MOVEMENT_SPEED: f32 = 0.02;
 
@@ -59,7 +61,7 @@ struct MoveBackAndForthHorizontally {
 
 fn main() {
   App::new()
-    .add_plugins((DefaultPlugins, PortalsPlugin::MINIMAL, StlPlugin))
+    .add_plugins((DefaultPlugins, PortalsPlugin::MINIMAL, StlPlugin, MeshPickingPlugin))
     .insert_resource(ClearColor(Color::Srgba(Srgba {
       red: 0.02,
       green: 0.02,
@@ -78,7 +80,8 @@ fn main() {
     .add_systems(Update, tweak_scene)
     .add_systems(Update, (move_directional_light, move_point_light))
     .add_systems(Update, adjust_app_settings)
-    .add_systems(Update, (movement, look))
+    .add_plugins((MovementPlugin, ControlPlugin))
+    .add_systems(Update, look_around)
     .run();
 }
 

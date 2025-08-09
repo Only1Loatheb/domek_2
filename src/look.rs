@@ -28,7 +28,7 @@ impl Default for CameraSensitivity {
 }
 
 
-pub fn look(
+pub fn look_around(
     accumulated_mouse_motion: Res<AccumulatedMouseMotion>,
     mut player: Query<(&mut Transform, &CameraSensitivity), With<Camera3d>>,
 ) {

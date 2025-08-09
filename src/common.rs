@@ -3,7 +3,7 @@ use bevy::color::Color;
 use bevy::image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor};
 use bevy::math::{Affine2, Vec2};
 use bevy::pbr::StandardMaterial;
-use bevy::prelude::{default, Res, ResMut};
+use bevy::prelude::*;
 
 pub const EPSILON: f32 = 0.0002;
 

@@ -11,9 +11,19 @@ impl Default for CameraMovement {
   }
 }
 
-pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera: Query<(&mut Transform, &CameraMovement)>) {
+#[derive(Event)]
+pub struct MoveEvent {
+  pub translation: Vec3,
+}
+
+fn get_movement(
+  input: Res<ButtonInput<KeyCode>>,
+  timer: Res<Time>,
+  camera: Query<(&Transform, &CameraMovement)>,
+  mut writer: EventWriter<MoveEvent>,
+) {
   let mut movement = Vec3::ZERO;
-  let (mut transform, camara_movement) = camera.single_mut().unwrap();
+  let (transform, camara_movement) = camera.single().unwrap();
   let forward = transform.forward().as_vec3();
   let right = transform.right().as_vec3();
   if input.pressed(KeyCode::KeyW) {
@@ -34,6 +44,21 @@ pub fn movement(input: Res<ButtonInput<KeyCode>>, timer: Res<Time>, mut camera: 
   if input.pressed(KeyCode::ShiftLeft) {
     movement *= 2.;
   }
-  println!("here: {}", transform.translation);
-  transform.translation += movement;
+  writer.write(MoveEvent { translation: movement });
 }
+
+fn move_camera(mut camera: Query<&mut Transform, With<CameraMovement>>, mut reader: EventReader<MoveEvent>) {
+  let mut transform = camera.single_mut().unwrap();
+  for e in reader.read() {
+    transform.translation += e.translation;
+  }
+}
+
+pub(crate) struct MovementPlugin;
+
+impl Plugin for MovementPlugin {
+  fn build(&self, app: &mut App) {
+    app.add_event::<MoveEvent>().add_systems(Update, (get_movement, move_camera));
+  }
+}
+
