@@ -1,4 +1,5 @@
 use crate::common::*;
+use bevy::dev_tools::picking_debug::{DebugPickingMode, DebugPickingPlugin};
 use bevy::math::vec3;
 use bevy::prelude::*;
 use bevy::transform;
