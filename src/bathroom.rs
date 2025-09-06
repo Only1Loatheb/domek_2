@@ -5,7 +5,8 @@ use crate::common::{
   LIVING_ROOM_TO_BATHROOM_Z, PLANK_THICKNESS, TILE_PLUS_GLUE,
 };
 use bevy::math::vec3;
-use std::f32::consts::{FRAC_PI_2, PI};
+use bevy::sprite::SpriteImageMode::Scale;
+use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
@@ -65,11 +66,12 @@ const BATHROOM_DEPTH: f32 = BATHROOM_X - BATHROOM_WALL_THICKNESS;
 const BATHROOM_WIDTH: f32 = BATHROOM_Z - 2. * BATHROOM_WALL_THICKNESS;
 const VENT_DEPTH: f32 = 4. + TILE_PLUS_GLUE;
 const VENT_WIDTH: f32 = 5.5 + TILE_PLUS_GLUE;
+const ROUND_CORNER_RADIUS: f32 = 1.5 + 0.18 * 2.0; // const + plank thickness * 2
 
 fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common: Res<BathroomCommon>) {
   {
     let left_door_wall_size = vec3(
-      BATHROOM_WALL_THICKNESS + LEFT_DOOR_WALL_LENGTH,
+      LEFT_DOOR_WALL_LENGTH - ROUND_CORNER_RADIUS + BATHROOM_WALL_THICKNESS,
       FLAT_HEIGHT,
       BATHROOM_WALL_THICKNESS,
     );
@@ -79,7 +81,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
       .spawn((
         Mesh3d(meshes.add(left_door_wall)),
         MeshMaterial3d(common.massa_tail[0].clone()),
-        Transform::from_translation(translation + vec3(EPSILON, 0., -TILE_PLUS_GLUE)),
+        Transform::from_translation(translation + vec3(ROUND_CORNER_RADIUS + EPSILON, 0., -TILE_PLUS_GLUE)),
         Bathroom,
         BathroomWall,
       ))
@@ -88,7 +90,21 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
       .spawn((
         Mesh3d(meshes.add(Cuboid::from_size(left_door_wall_size + vec3(4. * EPSILON, 0., 0.)))),
         MeshMaterial3d(common.beige.clone()),
-        Transform::from_translation(translation),
+        Transform::from_translation(translation + Vec3::ZERO.with_x(ROUND_CORNER_RADIUS)),
+        Bathroom,
+        BathroomWall,
+      ))
+      .set_parent(common.parent);
+    // the round corner
+    commands
+      .spawn((
+        Mesh3d(meshes.add(Extrusion::new(CircularSector::new(ROUND_CORNER_RADIUS, FRAC_PI_4), FLAT_HEIGHT))),
+        MeshMaterial3d(common.beige.clone()),
+        Transform::from_rotation(Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(FRAC_PI_2 + FRAC_PI_4)).with_translation(vec3(
+          ROUND_CORNER_RADIUS,
+          0.5 * FLAT_HEIGHT,
+          BATHROOM_WALL_THICKNESS - ROUND_CORNER_RADIUS,
+        )),
         Bathroom,
         BathroomWall,
       ))
@@ -150,8 +166,8 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     }
   }
   {
-    let left_wall = Cuboid::new(BATHROOM_WALL_THICKNESS, FLAT_HEIGHT, BATHROOM_X);
-    let translation = left_wall.half_size + vec3(0., 0., -BATHROOM_X);
+    let left_wall = Cuboid::new(BATHROOM_WALL_THICKNESS, FLAT_HEIGHT, BATHROOM_X - ROUND_CORNER_RADIUS);
+    let translation = left_wall.half_size + vec3(0., 0., -BATHROOM_X + BATHROOM_WALL_THICKNESS);
     commands
       .spawn((
         Mesh3d(meshes.add(left_wall)),
@@ -393,8 +409,8 @@ fn spawn_shower_stall(
       .id();
     {
       commands.spawn((
-        Transform::from_translation((shower_tray_cube.half_size + translation).with_y(FLAT_HEIGHT)).looking_at(tray_transform.translation,
-                                                                                       Vec3::Y),
+        Transform::from_translation((shower_tray_cube.half_size + translation).with_y(FLAT_HEIGHT))
+          .looking_at(tray_transform.translation, Vec3::Y),
         // MeshMaterial3d(common.massa_tail[1].clone()),
         // Mesh3d(meshes.add(shower_tray_cube)),
         PointLight {
