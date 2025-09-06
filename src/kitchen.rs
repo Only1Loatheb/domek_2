@@ -302,6 +302,7 @@ fn setup_kitchen(
 const VENT_DEPTH: f32 = 8.;
 const VENT_WIDTH: f32 = 7.;
 const KITCHEN_WALL_LENGTH: f32 = 9.; //6.; // if Emilka doesn't want extra kitchen storage space :(
+const FRIDGE_DIM: f32 = 6.;
 
 fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common: Res<KitchenCommon>) {
   {
@@ -319,6 +320,27 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     let translation = kitchen_hall_division_wall.half_size + vec3(-VENT_WIDTH, 0., VENT_DEPTH);
     commands.spawn((
       Mesh3d(meshes.add(kitchen_hall_division_wall)),
+      MeshMaterial3d(common.wall_colour.clone()),
+      Transform::from_translation(translation),
+      ChildOf(common.parent),
+    ));
+  }
+  {
+    let cargo_width = KITCHEN_WALL_LENGTH - FRIDGE_DIM;
+    let cargo = Cuboid::new(6.0, FLAT_HEIGHT, cargo_width);
+    let translation = cargo.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH + FRIDGE_DIM+ 0.1);
+    commands.spawn((
+      Mesh3d(meshes.add(cargo)),
+      MeshMaterial3d(common.wall_colour.clone()),
+      Transform::from_translation(translation),
+      ChildOf(common.parent),
+    ));
+  }
+  {
+    let fridge = Cuboid::new(6.0, FLAT_HEIGHT, FRIDGE_DIM);
+    let translation = fridge.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH+ 0.05);
+    commands.spawn((
+      Mesh3d(meshes.add(fridge)),
       MeshMaterial3d(common.wall_colour.clone()),
       Transform::from_translation(translation),
       ChildOf(common.parent),
