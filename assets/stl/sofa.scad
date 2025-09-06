@@ -1,14 +1,14 @@
 $fn = 180;
-SOFA_WIDTH = 35;
+SOFA_WIDTH = 30;
 
-SOFA_RADIUS = 35;
-SOFA_DEPTH = 12;
+SOFA_RADIUS = 40;
+SOFA_DEPTH = 8;
 
-SEAT_HEIGHT = 4;
-SEAT_DEPTH = 7;
+SEAT_HEIGHT = 4.2;
+SEAT_DEPTH = 5.5;
 
-REST_HEIGHT = 6;
-REST_TILT_DEPTH = 3;
+REST_HEIGHT = 3.8;
+REST_TILT_DEPTH = 2;
 
 HOLE_RADIUS = SOFA_RADIUS - SOFA_DEPTH;
 eps = 0.01;
@@ -38,13 +38,20 @@ module round_sofa() {
     }
 }
 
-intersection() {
-    translate([SOFA_RADIUS, 0, 0]) {
+A = 15;
+
+rotate([90, 0, 0]) {
+    translate([- 0.5 * SOFA_WIDTH, 0, -SOFA_RADIUS]) {
         rotate([0, -45, 0]) {
-            cube([2 * SOFA_RADIUS, SOFA_HEIGHT, 2 * SOFA_RADIUS]);
+            intersection() {
+                rotate([0, -45, 0]) {
+                    translate([SOFA_RADIUS, 0, 0]){
+
+                        #cube([2* SOFA_RADIUS, 2* SOFA_HEIGHT,  SOFA_WIDTH], center = true);
+                    }
+                }
+                round_sofa();
+            }
         }
-    }
-    translate([SOFA_RADIUS, 0, 0]) {
-        round_sofa();
     }
 }

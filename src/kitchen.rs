@@ -260,6 +260,26 @@ fn setup_kitchen(
     ));
   }
   {
+      let transform = Transform {
+    translation: vec3(
+      -15.,
+      0.,
+      32.,
+    ),
+    rotation: Quat::from_rotation_x(-FRAC_PI_2)
+      .normalize()
+      .mul_quat(Quat::from_rotation_z(PI))
+      .normalize(),
+    scale: Vec3::ONE,
+  };
+  commands.spawn((
+    Mesh3d(asset_server.load("stl/sofa.stl")),
+    MeshMaterial3d(materials.add(CLOSET_COLOUR)),
+    transform,
+    ChildOf(common.parent),
+  ));
+  }
+  {
     let induction_texture = materials.add(StandardMaterial {
       base_color_texture: Some(asset_server.load("kitchen/induction-ELECTROLUX-EIV63440BW-SLIM-FIT.jpg")),
       ..default()
