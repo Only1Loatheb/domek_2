@@ -139,7 +139,11 @@ fn spawn_walls(
         Vec2 { x: 20., y: 20. },
         Vec2 { x: 0.1, y: 0.1 },
       );
-      let kitchen_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, LIVING_ROOM_TO_HALL_Z - LOAD_BEARING_WALL_THICKNESS);
+      let kitchen_wall = Cuboid::new(
+        LOAD_BEARING_WALL_THICKNESS,
+        FLAT_HEIGHT,
+        LIVING_ROOM_TO_HALL_Z - LOAD_BEARING_WALL_THICKNESS,
+      );
       let translation = kitchen_wall.half_size + vec3(LIVING_ROOM_X, 0., 0.);
       commands
         .spawn((
@@ -164,24 +168,36 @@ fn spawn_walls(
     }
     {
       {
-        let office_wall_small = Cuboid::new(SMALL_WALL_W, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
-        let translation = office_wall_small.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
+        let bedroom_office_wall = Cuboid::new(OFFICE_WALL_THICKNESS, FLAT_HEIGHT, OFFICE_Z);
+        let translation = bedroom_office_wall.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
         commands
           .spawn((
-            Mesh3d(meshes.add(office_wall_small)),
+            Mesh3d(meshes.add(bedroom_office_wall)),
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,
           ))
           .set_parent(common.parent);
       }
-      { // office_wall_entrance
-        // Good old `comparing floats with eq`. Nothing beats that. S04E19
-        let office_wall_entrance = Cuboid::new(OFFICE_WALL_LENGTH, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
-        let translation = office_wall_entrance.half_size + vec3(OFFICE_X_POS + OFFICE_DOOR_PLUS_SMALL_WALL, 0., OFFICE_Z_POS);
+      {
+        let doors_to_the_office_smaller_wall = Cuboid::new(SMALL_WALL_W, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
+        let translation = doors_to_the_office_smaller_wall.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
         commands
           .spawn((
-            Mesh3d(meshes.add(office_wall_entrance)),
+            Mesh3d(meshes.add(doors_to_the_office_smaller_wall)),
+            MeshMaterial3d(kithen_wall_colour.clone()),
+            Transform::from_translation(translation),
+            LoadBearingWall,
+          ))
+          .set_parent(common.parent);
+      }
+      {
+        // Good old `comparing floats with eq`. Nothing beats that. S04E19
+        let office_wall_near_flat_entrance = Cuboid::new(OFFICE_WALL_LENGTH, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
+        let translation = office_wall_near_flat_entrance.half_size + vec3(OFFICE_X_POS + OFFICE_DOOR_PLUS_SMALL_WALL, 0., OFFICE_Z_POS);
+        commands
+          .spawn((
+            Mesh3d(meshes.add(office_wall_near_flat_entrance)),
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,
@@ -194,18 +210,6 @@ fn spawn_walls(
         commands
           .spawn((
             Mesh3d(meshes.add(office_wall_over_the_door)),
-            MeshMaterial3d(kithen_wall_colour.clone()),
-            Transform::from_translation(translation),
-            LoadBearingWall,
-          ))
-          .set_parent(common.parent);
-      }
-      {
-        let bedroom_office_wall = Cuboid::new(OFFICE_WALL_THICKNESS, FLAT_HEIGHT, OFFICE_Z);
-        let translation = bedroom_office_wall.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
-        commands
-          .spawn((
-            Mesh3d(meshes.add(bedroom_office_wall)),
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,

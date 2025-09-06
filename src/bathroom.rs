@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::{
-  repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, CLOSET_COLOUR, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT,
-  LIVING_ROOM_TO_BATHROOM_Z, PLANK_THICKNESS, TILE_PLUS_GLUE,
-};
+use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, CLOSET_COLOUR, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z, PLANK_THICKNESS, ROUND_CORNER_RADIUS, TILE_PLUS_GLUE};
 use bevy::math::vec3;
 use bevy::sprite::SpriteImageMode::Scale;
 use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
@@ -66,7 +63,6 @@ const BATHROOM_DEPTH: f32 = BATHROOM_X - BATHROOM_WALL_THICKNESS;
 const BATHROOM_WIDTH: f32 = BATHROOM_Z - 2. * BATHROOM_WALL_THICKNESS;
 const VENT_DEPTH: f32 = 4. + TILE_PLUS_GLUE;
 const VENT_WIDTH: f32 = 5.5 + TILE_PLUS_GLUE;
-const ROUND_CORNER_RADIUS: f32 = 1.5 + 0.18 * 2.0; // const + plank thickness * 2
 
 fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common: Res<BathroomCommon>) {
   {
