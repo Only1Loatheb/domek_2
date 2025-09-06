@@ -1,4 +1,4 @@
-$fn=90;
+$fn = 90;
 module hall_cabinet() {
     PLANK_THICKNESS = 0.18;
     CLOSET_HEIGHT = 26.8;
@@ -19,7 +19,8 @@ module hall_cabinet() {
     HANGER_SPACE_W = CLOSET_WIDTH - 3. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH - DRAWERS_WIDTH;
     BROOM_X = CLOSET_WIDTH - 2. * PLANK_THICKNESS - BROOM_COMPARTMENT_WIDTH;
     MAX_DRAWER_Y = 11.;
-    eps = 0.1;
+    eps = 0.01;
+    rounding_radius = BROOM_COMPARTMENT_WIDTH+ 2* PLANK_THICKNESS;
 
     difference() {
         union() {
@@ -51,23 +52,9 @@ module hall_cabinet() {
             translate([PLANK_THICKNESS, 0.3, 2.0]) {
                 cube([HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
             }
-//            // shoes drawer bottom right
-//            translate([HANGER_SPACE_W + PLANK_THICKNESS, 0.3, 2.0]) {
-//                cube([BROOM_X - HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
-//            }
             // shoes drawer top left
             translate([PLANK_THICKNESS, SHOES_DRAWER_MIDDLE_Y + 0.3, 2.0]) {
                 cube([HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
-            }
-//            // shoes drawer top right
-//            translate([HANGER_SPACE_W + PLANK_THICKNESS, SHOES_DRAWER_MIDDLE_Y + 0.3, 2.0]) {
-//                cube([BROOM_X - HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
-//            }
-            // pułki
-            for (i = [3 : 6]) {
-                translate([HANGER_SPACE_W + PLANK_THICKNESS, i * SHOES_DRAWER_MIDDLE_Y, 0]) {
-                    cube([BROOM_X - HANGER_SPACE_W - PLANK_THICKNESS, PLANK_THICKNESS, MIDDLE_PLANK_DEPTH]);
-                }
             }
             // left side plank
             translate([0., 0., 0.]) {
@@ -85,12 +72,27 @@ module hall_cabinet() {
             translate([HANGER_SPACE_W, 0., 0.]) {
                 cube([PLANK_THICKNESS, MIDDLE_VERTICAL_PLANK_HEIGHT, MIDDLE_PLANK_DEPTH]);
             }
+            translate([CLOSET_WIDTH - rounding_radius, 0., CLOSED_DEPTH - rounding_radius]) {
+                difference() {
+                    intersection() {
+                        cube([rounding_radius, CLOSET_HEIGHT, rounding_radius]);
+                        rotate([-90, 0, 0]) {
+                            cylinder(CLOSET_HEIGHT + 2 * eps, rounding_radius, rounding_radius);
+                        }
+                    }
+                    translate([0., -2 * eps, 0.]) {
+                        rotate([-90, 0, 0]) {
+                            cylinder(CLOSET_HEIGHT + eps, rounding_radius - PLANK_THICKNESS, rounding_radius - PLANK_THICKNESS);
+                        }
+                    }
+                }
+            }
         }
-        translate([CLOSET_WIDTH - CLOSED_DEPTH, -0.5 * eps, 0]) {
+        translate([CLOSET_WIDTH - rounding_radius, -0.5 * eps, CLOSED_DEPTH - rounding_radius]) {
             difference() {
-                cube([CLOSED_DEPTH +eps, CLOSET_HEIGHT + eps, CLOSED_DEPTH+ eps]);
+                cube([rounding_radius + eps, CLOSET_HEIGHT + eps, rounding_radius + eps]);
                 rotate([-90, 0, 0]) {
-                    cylinder(CLOSET_HEIGHT + eps, CLOSED_DEPTH + eps, CLOSED_DEPTH + eps);
+                    cylinder(CLOSET_HEIGHT + eps, rounding_radius + eps, rounding_radius + eps);
                 }
             }
         }
