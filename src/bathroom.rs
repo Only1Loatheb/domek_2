@@ -94,7 +94,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
     // the round corner
     commands
       .spawn((
-        Mesh3d(meshes.add(Extrusion::new(CircularSector::new(ROUND_CORNER_RADIUS, FRAC_PI_4), FLAT_HEIGHT))),
+        Mesh3d(meshes.add(Extrusion::new(CircularSegment::new(ROUND_CORNER_RADIUS, FRAC_PI_4), FLAT_HEIGHT))),
         MeshMaterial3d(common.beige.clone()),
         Transform::from_rotation(Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(FRAC_PI_2 + FRAC_PI_4)).with_translation(vec3(
           ROUND_CORNER_RADIUS,

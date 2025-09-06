@@ -48,7 +48,7 @@ pub const SMALL_HALL_X: f32 = 10.8;
 pub const SMALL_HALL_Z: f32 = 13.78;
 
 pub const PLANK_THICKNESS: f32 = 0.18;
-pub const ROUND_CORNER_RADIUS: f32 = 1.5 + PLANK_THICKNESS * 2.0;
+pub const ROUND_CORNER_RADIUS: f32 = 1.5;
 
 // NCS S 1505-y40R
 // https://www.w3schools.com/colors/colors_converter.asp?color=ncs(1505-y40R)

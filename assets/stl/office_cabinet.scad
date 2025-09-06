@@ -81,9 +81,10 @@ module szafa_biuro() {
                 cube([grubosc_plyty, inner_d, szafa_h]);
             }
         }
+        rounded_cornes_adjust = 0.5;
         door_h = 20.;
-        bonus_size = [9.2 + .69, szafa_d, szafa_h - door_h];
-        translate([szafa_w, 0., door_h]) {
+        bonus_size = [9.2 + .69, szafa_d - rounded_cornes_adjust, szafa_h - door_h];
+        translate([szafa_w, rounded_cornes_adjust, door_h]) {
             translate(bonus_size / 2) {
                 difference() {
                     cube(bonus_size, center = true);

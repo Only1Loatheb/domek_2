@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use std::f32::consts::{FRAC_PI_2, FRAC_PI_4};
 
 use crate::common::*;
 use bevy::math::vec3;
@@ -167,12 +168,21 @@ fn spawn_walls(
         .set_parent(common.parent);
     }
     {
+      // the round corner
+      commands
+        .spawn((
+          Mesh3d(meshes.add(Extrusion::new(CircularSegment::new(ROUND_CORNER_RADIUS, FRAC_PI_4), FLAT_HEIGHT))),
+          MeshMaterial3d(kithen_wall_colour.clone()),
+          Transform::from_rotation(Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z( FRAC_PI_4))
+            .with_translation(vec3(OFFICE_X_POS + ROUND_CORNER_RADIUS, 0.5 * FLAT_HEIGHT, OFFICE_Z_POS + ROUND_CORNER_RADIUS)),
+        ))
+        .set_parent(common.parent);
       {
-        let bedroom_office_wall = Cuboid::new(OFFICE_WALL_THICKNESS, FLAT_HEIGHT, OFFICE_Z);
-        let translation = bedroom_office_wall.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
+        let doors_to_the_office_smaller_wall = Cuboid::new(EPSILON, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
+        let translation = doors_to_the_office_smaller_wall.half_size + vec3(OFFICE_X_POS + SMALL_WALL_W, 0., OFFICE_Z_POS);
         commands
           .spawn((
-            Mesh3d(meshes.add(bedroom_office_wall)),
+            Mesh3d(meshes.add(doors_to_the_office_smaller_wall)),
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,
@@ -180,11 +190,11 @@ fn spawn_walls(
           .set_parent(common.parent);
       }
       {
-        let doors_to_the_office_smaller_wall = Cuboid::new(SMALL_WALL_W, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
-        let translation = doors_to_the_office_smaller_wall.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
+        let bedroom_office_wall = Cuboid::new(OFFICE_WALL_THICKNESS, FLAT_HEIGHT, OFFICE_Z - ROUND_CORNER_RADIUS);
+        let translation = bedroom_office_wall.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS + ROUND_CORNER_RADIUS);
         commands
           .spawn((
-            Mesh3d(meshes.add(doors_to_the_office_smaller_wall)),
+            Mesh3d(meshes.add(bedroom_office_wall)),
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,
