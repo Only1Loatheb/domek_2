@@ -38,15 +38,12 @@ module round_sofa() {
     }
 }
 
-A = 15;
-
 rotate([90, 0, 0]) {
     translate([- 0.5 * SOFA_WIDTH, 0, -SOFA_RADIUS]) {
         rotate([0, -45, 0]) {
             intersection() {
                 rotate([0, -45, 0]) {
                     translate([SOFA_RADIUS, 0, 0]){
-
                         #cube([2* SOFA_RADIUS, 2* SOFA_HEIGHT,  SOFA_WIDTH], center = true);
                     }
                 }
