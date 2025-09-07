@@ -33,6 +33,7 @@ fn main() {
     }
   };
 
+
   for scad_path in scad_files {
     let stl_path = scad_path.with_extension("stl");
 

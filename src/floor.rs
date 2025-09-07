@@ -198,19 +198,38 @@ fn spawn_walls(
         ));
       }
       {
-        let bedroom_office_wall = Cuboid::new(
-          OFFICE_WALL_THICKNESS,
-          FLAT_HEIGHT,
-          OFFICE_Z - ROUND_CORNER_RADIUS + (BEDROOM_POS_Z - OFFICE_Z_POS),
-        );
-        let translation = bedroom_office_wall.half_size + vec3(OFFICE_X_POS, 0., OFFICE_Z_POS + ROUND_CORNER_RADIUS);
-        commands.spawn((
-          Mesh3d(meshes.add(bedroom_office_wall)),
-          MeshMaterial3d(kithen_wall_colour.clone()),
-          Transform::from_translation(translation),
-          LoadBearingWall,
-          ChildOf(common.parent),
-        ));
+        let office_origin = vec3(OFFICE_X_POS, 0., OFFICE_Z_POS);
+        {
+          let bedroom_office_wall = Cuboid::new(
+            OFFICE_WALL_THICKNESS,
+            FLAT_HEIGHT,
+            OFFICE_Z - ROUND_CORNER_RADIUS + (BEDROOM_POS_Z - OFFICE_Z_POS),
+          );
+          let translation = bedroom_office_wall.half_size + office_origin + vec3(0., 0., ROUND_CORNER_RADIUS);
+          commands.spawn((
+            Mesh3d(meshes.add(bedroom_office_wall)),
+            MeshMaterial3d(kithen_wall_colour.clone()),
+            Transform::from_translation(translation),
+            LoadBearingWall,
+            ChildOf(common.parent),
+          ));
+        }
+        {
+          let transform = Transform {
+            translation: office_origin + vec3(LOAD_BEARING_WALL_THICKNESS, 0., OFFICE_Z),
+            rotation: Quat::from_rotation_x(-FRAC_PI_2)
+              .normalize()
+              .mul_quat(Quat::from_rotation_z(PI))
+              .normalize(),
+            scale: Vec3::ONE,
+          };
+          commands.spawn((
+            Mesh3d(asset_server.load("stl/office_wall.stl")),
+            MeshMaterial3d(kithen_wall_colour.clone()),
+            transform,
+            ChildOf(common.parent),
+          ));
+        }
       }
       {
         // Good old `comparing floats with eq`. Nothing beats that. S04E19
