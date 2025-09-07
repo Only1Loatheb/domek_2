@@ -420,14 +420,13 @@ fn spawn_shower_stall(
       .id();
     {
       commands.spawn((
-        Transform::from_translation((shower_tray_cube.half_size + translation).with_y(FLAT_HEIGHT))
+        Transform::from_translation(tray_transform.translation.with_y(FLAT_HEIGHT))
           .looking_at(tray_transform.translation, Vec3::Y),
         PointLight {
           intensity: 4_000_000.0,
           range: 2. * FLAT_HEIGHT,
           color: Color::WHITE,
           shadows_enabled: true,
-          soft_shadows_enabled: true,
           ..default()
         },
         ChildOf(common.parent),

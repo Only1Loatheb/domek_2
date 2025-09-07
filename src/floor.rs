@@ -69,6 +69,18 @@ fn spawn_floors(
       Floor,
       ChildOf(common.parent),
     ));
+
+    commands.spawn((
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      PointLight {
+        intensity: 4_000_000.0,
+        range: 2. * FLAT_HEIGHT,
+        color: Color::WHITE,
+        shadows_enabled: true,
+        ..default()
+      },
+      ChildOf(common.parent),
+    ));
   }
   {
     let office_floor = Cuboid::new(OFFICE_X, FLOOR_DEPTH, OFFICE_Z);

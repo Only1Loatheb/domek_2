@@ -36,7 +36,7 @@ rustflags = [
 
 [dependencies]
 # Disabling bevy/dynamic_linking may improve Mold's performance.
-bevy = { version = "0.16.1", features = ["dynamic_linking", "jpeg", "wayland", "bevy_dev_tools", "experimental_pbr_pcss"] }
+bevy = { version = "0.16.1", features = ["dynamic_linking", "jpeg", "wayland", "bevy_dev_tools"] }
 #bevy = { version = "0.16.0", features = ["jpeg"] } # windows cargo build --target=x86_64-pc-windows-gnu --release
 bevy_basic_portals = "0.8"
 bevy_stl = "0.16.0"

@@ -130,6 +130,22 @@ fn setup_kitchen(
         KitchenCabinet,
         ChildOf(common.parent),
       ));
+      commands.spawn((
+        Transform::from_translation(vec3(
+          x_acc + middle_cabinet.half_size.x,
+          MIDDLE_CABINET_Y - 0.3,
+          middle_cabinet.half_size.z,
+        ))
+        .looking_at(translation.with_y(0.), Vec3::Y),
+        PointLight {
+          intensity: 100_000.0,
+          range: MIDDLE_CABINET_HEIGHT,
+          color: Color::WHITE,
+          shadows_enabled: true,
+          ..default()
+        },
+        ChildOf(common.parent),
+      ));
       x_acc += middle_cabinet.size().x;
     }
   }
@@ -271,7 +287,6 @@ fn setup_kitchen(
           range: 4. * FLAT_HEIGHT,
           color: Color::WHITE,
           shadows_enabled: true,
-          soft_shadows_enabled: true,
           ..default()
         },
         ChildOf(common.parent),
