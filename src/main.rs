@@ -11,10 +11,7 @@ use std::f32::consts::{FRAC_PI_2, PI};
 use std::ops::Add;
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
-use crate::common::{
-  BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, CLOSET_COLOUR, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z,
-  OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE,
-};
+use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEDROOM_POS_Z, CLOSET_COLOUR, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE};
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look_around, CameraSensitivity};
@@ -339,7 +336,7 @@ fn adjust_app_settings(
 
 fn spawn_bedroom_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, mut materials: ResMut<Assets<StandardMaterial>>) {
   let transform = Transform {
-    translation: vec3(-BATHROOM_X, 0., LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + EPSILON),
+    translation: vec3(-BATHROOM_X, 0., BEDROOM_POS_Z + EPSILON),
     rotation: Quat::from_rotation_x(-FRAC_PI_2)
       .normalize()
       .mul_quat(Quat::from_rotation_z(PI))
