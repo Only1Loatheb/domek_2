@@ -36,40 +36,40 @@ fn spawn_floors(
   mut materials: ResMut<Assets<StandardMaterial>>,
   common: Res<FloorCommon>,
 ) {
-  let floor_material: Handle<StandardMaterial> = materials.add(Color::hsl(0., 0., 1.));
-  {
-    let living_room_floor = Cuboid::new(LIVING_ROOM_X, FLOOR_DEPTH, LIVING_ROOM_TO_BATHROOM_Z);
-    let translation = living_room_floor.half_size + Vec3::ZERO.with_y(-FLOOR_DEPTH);
+    {
+    let floor_material: Handle<StandardMaterial> = materials.add(Color::hsl(0., 0., 1.));
+    let bedroom_floor = Cuboid::new(
+      LIVING_ROOM_X + HALL_X,
+      FLOOR_DEPTH,
+      LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + OFFICE_Z,
+    );
+    let translation = bedroom_floor.half_size + vec3(0., -FLOOR_DEPTH, 0.);
     commands.spawn((
-      Mesh3d(meshes.add(living_room_floor)),
+      Mesh3d(meshes.add(bedroom_floor)),
       MeshMaterial3d(floor_material.clone()),
       Transform::from_translation(translation),
       Floor,
       ChildOf(common.parent),
     ));
   }
+  // {
+  //   let hall_floor = vec3(HALL_X, FLOOR_DEPTH, HALL_Z);
+  //   let translation = 0.5 * hall_floor + vec3(LIVING_ROOM_X_HALL_OFFSET, -FLOOR_DEPTH, LIVING_ROOM_TO_HALL_Z);
+  //   commands.spawn((
+  //     Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+  //     PointLight {
+  //       intensity: 4_000_000.0,
+  //       range: 2. * FLAT_HEIGHT,
+  //       color: Color::WHITE,
+  //       shadows_enabled: true,
+  //       ..default()
+  //     },
+  //     ChildOf(common.parent),
+  //   ));
+  // }
   {
-    let hall_floor = Cuboid::new(HALL_X, FLOOR_DEPTH, HALL_Z);
-    let translation = hall_floor.half_size + vec3(LIVING_ROOM_X_HALL_OFFSET, -FLOOR_DEPTH, LIVING_ROOM_TO_HALL_Z);
-    commands.spawn((
-      Mesh3d(meshes.add(hall_floor)),
-      MeshMaterial3d(floor_material.clone()),
-      Transform::from_translation(translation),
-      Floor,
-      ChildOf(common.parent),
-    ));
-  }
-  {
-    let bathroom_floor = Cuboid::new(BATHROOM_X, FLOOR_DEPTH, BATHROOM_Z);
-    let translation = bathroom_floor.half_size + vec3(0., -FLOOR_DEPTH, LIVING_ROOM_TO_BATHROOM_Z);
-    commands.spawn((
-      Mesh3d(meshes.add(bathroom_floor)),
-      MeshMaterial3d(floor_material.clone()),
-      Transform::from_translation(translation),
-      Floor,
-      ChildOf(common.parent),
-    ));
-
+    let bathroom_floor = vec3(BATHROOM_X, FLOOR_DEPTH, BATHROOM_Z);
+    let translation = 0.5 * bathroom_floor + vec3(0., -FLOOR_DEPTH, LIVING_ROOM_TO_BATHROOM_Z);
     commands.spawn((
       Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
       PointLight {
@@ -83,35 +83,47 @@ fn spawn_floors(
     ));
   }
   {
-    let office_floor = Cuboid::new(OFFICE_X, FLOOR_DEPTH, OFFICE_Z);
-    let translation = office_floor.half_size + vec3(BATHROOM_X + SMALL_HALL_X, -FLOOR_DEPTH, OFFICE_Z_POS);
+    let office_floor = vec3(OFFICE_X, FLOOR_DEPTH, OFFICE_Z);
+    let translation = 0.5 * office_floor + vec3(BATHROOM_X + SMALL_HALL_X, -FLOOR_DEPTH, OFFICE_Z_POS);
     commands.spawn((
-      Mesh3d(meshes.add(office_floor)),
-      MeshMaterial3d(floor_material.clone()),
-      Transform::from_translation(translation),
-      Floor,
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      PointLight {
+        intensity: 4_000_000.0,
+        range: 2. * FLAT_HEIGHT,
+        color: Color::WHITE,
+        shadows_enabled: true,
+        ..default()
+      },
       ChildOf(common.parent),
     ));
   }
   {
-    let small_hall_floor = Cuboid::new(SMALL_HALL_X, FLOOR_DEPTH, SMALL_HALL_Z);
-    let translation = small_hall_floor.half_size + vec3(BATHROOM_X, -FLOOR_DEPTH, OFFICE_Z_POS);
+    let small_hall_floor = vec3(SMALL_HALL_X, FLOOR_DEPTH, SMALL_HALL_Z);
+    let translation = 0.5 * small_hall_floor + vec3(BATHROOM_X, -FLOOR_DEPTH, OFFICE_Z_POS);
     commands.spawn((
-      Mesh3d(meshes.add(small_hall_floor)),
-      MeshMaterial3d(floor_material.clone()),
-      Transform::from_translation(translation),
-      Floor,
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      PointLight {
+        intensity: 4_000_000.0,
+        range: 2. * FLAT_HEIGHT,
+        color: Color::WHITE,
+        shadows_enabled: true,
+        ..default()
+      },
       ChildOf(common.parent),
     ));
   }
   {
-    let bedroom_floor = Cuboid::new(BEDROOM_X, FLOOR_DEPTH, BEDROOM_Z);
-    let translation = bedroom_floor.half_size + vec3(0., -FLOOR_DEPTH, BEDROOM_POS_Z);
+    let bedroom_floor = vec3(BEDROOM_X, FLOOR_DEPTH, BEDROOM_Z);
+    let translation = 0.5 * bedroom_floor + vec3(0., -FLOOR_DEPTH, BEDROOM_POS_Z);
     commands.spawn((
-      Mesh3d(meshes.add(bedroom_floor)),
-      MeshMaterial3d(floor_material.clone()),
-      Transform::from_translation(translation),
-      Floor,
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      PointLight {
+        intensity: 4_000_000.0,
+        range: 2. * FLAT_HEIGHT,
+        color: Color::WHITE,
+        shadows_enabled: true,
+        ..default()
+      },
       ChildOf(common.parent),
     ));
   }
