@@ -427,6 +427,7 @@ fn spawn_shower_stall(
           range: 2. * FLAT_HEIGHT,
           color: Color::WHITE,
           shadows_enabled: true,
+          soft_shadows_enabled: true,
           ..default()
         },
         ChildOf(common.parent),

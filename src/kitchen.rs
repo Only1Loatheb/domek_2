@@ -271,6 +271,7 @@ fn setup_kitchen(
           range: 4. * FLAT_HEIGHT,
           color: Color::WHITE,
           shadows_enabled: true,
+          soft_shadows_enabled: true,
           ..default()
         },
         ChildOf(common.parent),
