@@ -46,8 +46,8 @@ fn spawn_floors(
         MeshMaterial3d(floor_material.clone()),
         Transform::from_translation(translation),
         Floor,
-      ))
-      .set_parent(common.parent);
+        ChildOf(common.parent),
+      ));
   }
   {
     let hall_floor = Cuboid::new(HALL_X, FLOOR_DEPTH, HALL_Z);
@@ -58,8 +58,8 @@ fn spawn_floors(
         MeshMaterial3d(floor_material.clone()),
         Transform::from_translation(translation),
         Floor,
-      ))
-      .set_parent(common.parent);
+        ChildOf(common.parent),
+      ));
   }
   {
     let bathroom_floor = Cuboid::new(BATHROOM_X, FLOOR_DEPTH, BATHROOM_Z);
@@ -70,8 +70,8 @@ fn spawn_floors(
         MeshMaterial3d(floor_material.clone()),
         Transform::from_translation(translation),
         Floor,
-      ))
-      .set_parent(common.parent);
+        ChildOf(common.parent),
+      ));
   }
   {
     let office_floor = Cuboid::new(OFFICE_X, FLOOR_DEPTH, OFFICE_Z);
@@ -82,8 +82,8 @@ fn spawn_floors(
         MeshMaterial3d(floor_material.clone()),
         Transform::from_translation(translation),
         Floor,
-      ))
-      .set_parent(common.parent);
+        ChildOf(common.parent),
+      ));
   }
   {
     let small_hall_floor = Cuboid::new(SMALL_HALL_X, FLOOR_DEPTH, SMALL_HALL_Z);
@@ -94,8 +94,8 @@ fn spawn_floors(
         MeshMaterial3d(floor_material.clone()),
         Transform::from_translation(translation),
         Floor,
-      ))
-      .set_parent(common.parent);
+        ChildOf(common.parent),
+      ));
   }
   {
     let bedroom_floor = Cuboid::new(BEDROOM_X, FLOOR_DEPTH, BEDROOM_Z);
@@ -106,8 +106,8 @@ fn spawn_floors(
         MeshMaterial3d(floor_material.clone()),
         Transform::from_translation(translation),
         Floor,
-      ))
-      .set_parent(common.parent);
+        ChildOf(common.parent),
+      ));
   }
 }
 
@@ -129,8 +129,8 @@ fn spawn_walls(
           MeshMaterial3d(kithen_wall_colour.clone()),
           Transform::from_translation(translation),
           LoadBearingWall,
-        ))
-        .set_parent(common.parent);
+          ChildOf(common.parent),
+        ));
     }
     {
       let transform = Transform {
@@ -168,8 +168,8 @@ fn spawn_walls(
           MeshMaterial3d(massa),
           Transform::from_translation(translation),
           LoadBearingWall,
-        ))
-        .set_parent(common.parent);
+          ChildOf(common.parent),
+        ));
     }
     {
       let hall_wall = Cuboid::new(TM_WALL_X, FLAT_HEIGHT, LOAD_BEARING_WALL_THICKNESS);
@@ -180,8 +180,8 @@ fn spawn_walls(
           MeshMaterial3d(kithen_wall_colour.clone()),
           Transform::from_translation(translation),
           LoadBearingWall,
-        ))
-        .set_parent(common.parent);
+          ChildOf(common.parent),
+        ));
     }
     {
       // the round corner
@@ -194,8 +194,8 @@ fn spawn_walls(
             0.5 * FLAT_HEIGHT,
             OFFICE_Z_POS + ROUND_CORNER_RADIUS,
           )),
-        ))
-        .set_parent(common.parent);
+          ChildOf(common.parent),
+        ));
       {
         let doors_to_the_office_smaller_wall = Cuboid::new(EPSILON, FLAT_HEIGHT, OFFICE_WALL_THICKNESS);
         let translation = doors_to_the_office_smaller_wall.half_size + vec3(OFFICE_X_POS + SMALL_WALL_W, 0., OFFICE_Z_POS);
@@ -205,8 +205,8 @@ fn spawn_walls(
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,
-          ))
-          .set_parent(common.parent);
+            ChildOf(common.parent),
+          ));
       }
       {
         let bedroom_office_wall = Cuboid::new(OFFICE_WALL_THICKNESS, FLAT_HEIGHT, OFFICE_Z - ROUND_CORNER_RADIUS);
@@ -217,8 +217,8 @@ fn spawn_walls(
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,
-          ))
-          .set_parent(common.parent);
+            ChildOf(common.parent),
+          ));
       }
       {
         // Good old `comparing floats with eq`. Nothing beats that. S04E19
@@ -230,8 +230,8 @@ fn spawn_walls(
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,
-          ))
-          .set_parent(common.parent);
+            ChildOf(common.parent),
+          ));
       }
       {
         let office_wall_over_the_door = Cuboid::new(DOOR_WIDTH, FLAT_HEIGHT - DOOR_Y, OFFICE_WALL_THICKNESS);
@@ -242,8 +242,8 @@ fn spawn_walls(
             MeshMaterial3d(kithen_wall_colour.clone()),
             Transform::from_translation(translation),
             LoadBearingWall,
-          ))
-          .set_parent(common.parent);
+            ChildOf(common.parent),
+          ));
       }
     }
   }
@@ -257,8 +257,8 @@ fn spawn_walls(
         MeshMaterial3d(bedroom_wall_colour.clone()),
         Transform::from_translation(translation),
         LoadBearingWall,
-      ))
-      .set_parent(common.parent);
+        ChildOf(common.parent),
+      ));
   }
 }
 
