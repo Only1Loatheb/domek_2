@@ -4,7 +4,10 @@ use crate::common::{
   repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, CLOSET_COLOUR, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT,
   LIVING_ROOM_TO_BATHROOM_Z, PLANK_THICKNESS, ROUND_CORNER_RADIUS, TILE_PLUS_GLUE,
 };
+use bevy::ecs::error::CommandWithEntity;
 use bevy::math::vec3;
+use bevy::pbr::NotShadowCaster;
+use bevy::scene::InstanceId;
 use bevy::sprite::SpriteImageMode::Scale;
 use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
@@ -368,6 +371,11 @@ fn spawn_sink(mut commands: Commands, asset_server: Res<AssetServer>, common: Re
 const SHOWER_DEPTH: f32 = 9.;
 const SHOWER_WIDTH: f32 = 12.;
 
+#[derive(Resource)]
+struct ShowerStall {
+  stall_scene_instance_id: InstanceId,
+}
+
 // kabina https://www.radaway.pl/kategoria/furo-brushed-copper-kdj/#
 // albo https://www.radaway.pl/kategoria/furo-sl-brushed-copper-kdd/
 fn spawn_shower_stall(
@@ -376,22 +384,26 @@ fn spawn_shower_stall(
   mut meshes: ResMut<Assets<Mesh>>,
   common: Res<BathroomCommon>,
   mut materials: ResMut<Assets<StandardMaterial>>,
+  mut spawner: ResMut<SceneSpawner>,
 ) {
-  // let model_handle = asset_server.load("bathroom/Furo-KDJ-Stabilizacja-krzyzowa.glb#Scene0");
-  let model_handle = asset_server.load("bathroom/furo-sl-kdd__blend.glb#Scene0");
   let translation = vec3(BATHROOM_WALL_THICKNESS + TILE_PLUS_GLUE, 0., -BATHROOM_DEPTH);
-  commands
-    .spawn((
-      SceneRoot(model_handle),
-      Transform {
-        // translation: translation.with_z(translation.z + SHELF_WIDTH),
-        translation: translation.with_z(translation.z + SHELF_WIDTH) + vec3(-0.4, -0.4, -0.4),
-        rotation: Quat::from_rotation_y(PI / 2.0),
-        // scale: Vec3::new(-10.0 * (SHOWER_WIDTH - SHELF_WIDTH) / SHOWER_WIDTH, 10., 10. * SHOWER_DEPTH / 8.),
-        scale: Vec3::new(-9.25, 10., 9.25),
-      },
-    ))
-    .set_parent(common.parent);
+  {
+    let shower_stall_parent_entity = commands
+      .spawn((
+        Transform {
+          // translation: translation.with_z(translation.z + SHELF_WIDTH),
+          translation: translation.with_z(translation.z + SHELF_WIDTH) + vec3(-0.4, -0.4, -0.4),
+          rotation: Quat::from_rotation_y(PI / 2.0),
+          // scale: Vec3::new(-10.0 * (SHOWER_WIDTH - SHELF_WIDTH) / SHOWER_WIDTH, 10., 10. * SHOWER_DEPTH / 8.),
+          scale: Vec3::new(-9.25, 10., 9.25),
+        },
+        ChildOf(common.parent),
+      ))
+      .id();
+    let model_handle = asset_server.load("bathroom/furo-sl-kdd__blend.glb#Scene0");
+    let stall_scene_instance_id: InstanceId = spawner.spawn_as_child(model_handle, shower_stall_parent_entity);
+    commands.insert_resource(ShowerStall { stall_scene_instance_id });
+  }
   {
     // just to be sure that measurements are right
     let material = materials.add(Color::WHITE);
@@ -431,6 +443,20 @@ fn spawn_shower_stall(
         Bathroom,
       ))
       .set_parent(common.parent);
+  }
+}
+
+fn update_shower_stall_scene_on_spawn(
+  spawner: Res<SceneSpawner>,
+  shower_stall: Res<ShowerStall>,
+  mut commands: Commands,
+  mut done: Local<bool>,
+) {
+  if !*done && spawner.instance_is_ready(shower_stall.stall_scene_instance_id) {
+    *done = true;
+    for e in spawner.iter_instance_entities(shower_stall.stall_scene_instance_id) {
+      commands.entity(e).insert(NotShadowCaster);
+    }
   }
 }
 
@@ -529,18 +555,21 @@ pub(crate) struct BathroomPlugin;
 
 impl Plugin for BathroomPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(Startup, setup_bathroom_common).add_systems(
-      Startup,
-      (
-        spawn_walls,
-        spawn_washing_machine,
-        spawn_shower_stall,
-        spawn_toilet,
-        spawn_sink,
-        spawn_shower_shelf,
-        spawn_closet,
+    app
+      .add_systems(Startup, setup_bathroom_common)
+      .add_systems(
+        Startup,
+        (
+          spawn_walls,
+          spawn_washing_machine,
+          spawn_shower_stall,
+          spawn_toilet,
+          spawn_sink,
+          spawn_shower_shelf,
+          spawn_closet,
+        )
+          .after(setup_bathroom_common),
       )
-        .after(setup_bathroom_common),
-    );
+      .add_systems(Update, update_shower_stall_scene_on_spawn);
   }
 }
