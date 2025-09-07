@@ -1,11 +1,11 @@
 use crate::common::*;
+use crate::control::*;
 use bevy::dev_tools::picking_debug::{DebugPickingMode, DebugPickingPlugin};
 use bevy::math::vec3;
 use bevy::prelude::*;
 use bevy::transform;
 use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 use std::ops::{Add, Not};
-use crate::control::*;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
 
 #[derive(Component)]
@@ -24,7 +24,7 @@ const MIDDLE_CABINET_Y: f32 = COUNTERTOP_Y + COUNTERTOP_HEIGHT + GAP_BETWEEN_CAB
 const MIDDLE_CABINET_DEPTH: f32 = 3.20; // guesstimate
 const MIDDLE_CABINET_HEIGHT: f32 = BOTTOM_CABINET_HEIGHT + TOP_CABINET_HEIGHT;
 
-const TOP_CABINET_Y: f32 = 0.;// MIDDLE_CABINET_Y + MIDDLE_CABINET_HEIGHT;
+const TOP_CABINET_Y: f32 = 0.; // MIDDLE_CABINET_Y + MIDDLE_CABINET_HEIGHT;
 const TOP_CABINET_DEPTH: f32 = BOTTOM_CABINET_DEPTH;
 const TOP_CABINET_HEIGHT: f32 = 5.74 + 0.18;
 const KITCHEN_WIDTH: f32 = 42.35;
@@ -159,21 +159,23 @@ fn setup_kitchen(
   }
   {
     let coffee_machine = asset_server.load("kitchen/coffee_machine.glb#Scene0");
-    commands.spawn((
-      SceneRoot(coffee_machine),
-      Transform::from_translation(vec3(1.5, COUNTERTOP_Y + COUNTERTOP_HEIGHT, 1.8))
-        .with_scale(vec3(10.0, 10.0, 10.0)),
-      KitchenCabinet,
-    ))
-    .observe(on_pressed_save)
-    .observe(on_released_clear);
+    commands
+      .spawn((
+        SceneRoot(coffee_machine),
+        Transform::from_translation(vec3(1.5, COUNTERTOP_Y + COUNTERTOP_HEIGHT, 1.8)).with_scale(vec3(10.0, 10.0, 10.0)),
+        KitchenCabinet,
+        ChildOf(common.parent),
+      ))
+      .observe(on_pressed_save)
+      .observe(on_released_clear);
   }
+  let countertop_width = CABINET_WIDTHS.iter().sum::<f32>();
   {
     let sink_cabinet_index = 1;
     let sink_width = 5.0;
     let sink_side_margin: f32 = 0.5 * (CABINET_WIDTH - sink_width);
     let counter_top_left_width = CABINET_WIDTHS.iter().take(sink_cabinet_index).sum::<f32>() + sink_side_margin;
-    let counter_top_right_width = CABINET_WIDTHS.iter().sum::<f32>() - sink_width + sink_side_margin - counter_top_left_width;
+    let counter_top_right_width = countertop_width - sink_width + 0.5 * sink_side_margin - counter_top_left_width;
     let counter_top_depth = 5.6;
     {
       let left_countertop = Cuboid::new(counter_top_left_width, COUNTERTOP_HEIGHT, counter_top_depth);
@@ -260,24 +262,20 @@ fn setup_kitchen(
     ));
   }
   {
-      let transform = Transform {
-    translation: vec3(
-      -15.,
-      0.,
-      32.,
-    ),
-    rotation: Quat::from_rotation_x(-FRAC_PI_2)
-      .normalize()
-      .mul_quat(Quat::from_rotation_z(PI))
-      .normalize(),
-    scale: Vec3::ONE,
-  };
-  commands.spawn((
-    Mesh3d(asset_server.load("stl/sofa.stl")),
-    MeshMaterial3d(materials.add(CLOSET_COLOUR)),
-    transform,
-    ChildOf(common.parent),
-  ));
+    let transform = Transform {
+      translation: vec3(-15., 0., 32.),
+      rotation: Quat::from_rotation_x(-FRAC_PI_2)
+        .normalize()
+        .mul_quat(Quat::from_rotation_z(PI))
+        .normalize(),
+      scale: Vec3::ONE,
+    };
+    commands.spawn((
+      Mesh3d(asset_server.load("stl/sofa.stl")),
+      MeshMaterial3d(materials.add(CLOSET_COLOUR)),
+      transform,
+      ChildOf(common.parent),
+    ));
   }
   {
     let induction_texture = materials.add(StandardMaterial {
@@ -291,8 +289,37 @@ fn setup_kitchen(
       Transform::from_translation(vec3(
         CABINET_WIDTHS.iter().take(4).sum::<f32>() + 0.5 * CABINET_WIDTHS[4],
         COUNTERTOP_Y + COUNTERTOP_HEIGHT,
-        BOTTOM_CABINET_DEPTH - induction_cube.half_size.z,
+        BOTTOM_CABINET_DEPTH - induction_cube.half_size.z - EPSILON,
       )),
+      KitchenCabinet,
+      ChildOf(common.parent),
+    ));
+  }
+  let oven_y = COUNTERTOP_Y - 2.0;
+  {
+    let oven_texture = materials.add(StandardMaterial {
+      base_color_texture: Some(asset_server.load("kitchen/oven-WHIRLPOOL-WOI5S8PM2SEA-front.jpg")),
+      ..default()
+    });
+    let oven_cube = Cuboid::new(5.95, 5.97, 5.64);
+    commands.spawn((
+      Mesh3d(meshes.add(oven_cube)),
+      MeshMaterial3d(oven_texture),
+      Transform::from_translation(oven_cube.half_size + vec3(countertop_width + EPSILON, oven_y, 0.)),
+      KitchenCabinet,
+      ChildOf(common.parent),
+    ));
+  }
+  {
+    let microwave_oven_texture = materials.add(StandardMaterial {
+      base_color_texture: Some(asset_server.load("kitchen/microwave-oven-WHIRLPOOL-WMD54MBG-front.jpg")),
+      ..default()
+    });
+    let microwave_oven_cube = Cuboid::new(5.95, 3.83, 5.64);
+    commands.spawn((
+      Mesh3d(meshes.add(microwave_oven_cube)),
+      MeshMaterial3d(microwave_oven_texture),
+      Transform::from_translation(microwave_oven_cube.half_size + vec3(countertop_width + EPSILON, oven_y + 6.0, 0.)),
       KitchenCabinet,
       ChildOf(common.parent),
     ));
@@ -304,7 +331,7 @@ const VENT_WIDTH: f32 = 7.;
 const KITCHEN_WALL_LENGTH: f32 = 9.; //6.; // if Emilka doesn't want extra kitchen storage space :(
 const FRIDGE_DIM: f32 = 6.;
 
-fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common: Res<KitchenCommon>) {
+fn spawn_walls_and_fridge(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common: Res<KitchenCommon>) {
   {
     let kitchen_vent = Cuboid::new(VENT_WIDTH, FLAT_HEIGHT, VENT_DEPTH);
     let translation = kitchen_vent.half_size + vec3(-VENT_WIDTH, 0., 0.);
@@ -328,7 +355,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
   {
     let cargo_width = KITCHEN_WALL_LENGTH - FRIDGE_DIM;
     let cargo = Cuboid::new(6.0, FLAT_HEIGHT, cargo_width);
-    let translation = cargo.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH + FRIDGE_DIM+ 0.1);
+    let translation = cargo.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH + FRIDGE_DIM + 0.1);
     commands.spawn((
       Mesh3d(meshes.add(cargo)),
       MeshMaterial3d(common.wall_colour.clone()),
@@ -338,7 +365,7 @@ fn spawn_walls(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, common:
   }
   {
     let fridge = Cuboid::new(6.0, FLAT_HEIGHT, FRIDGE_DIM);
-    let translation = fridge.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH+ 0.05);
+    let translation = fridge.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH + 0.05);
     commands.spawn((
       Mesh3d(meshes.add(fridge)),
       MeshMaterial3d(common.wall_colour.clone()),
@@ -363,7 +390,7 @@ impl Plugin for KitchenPlugin {
   fn build(&self, app: &mut App) {
     app
       .add_systems(Startup, setup_kitchen_common)
-      .add_systems(Startup, (setup_kitchen, spawn_walls).after(setup_kitchen_common))
+      .add_systems(Startup, (setup_kitchen, spawn_walls_and_fridge).after(setup_kitchen_common))
       .add_systems(Startup, spawn_hall_closet);
   }
 }
