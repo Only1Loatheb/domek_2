@@ -283,11 +283,12 @@ fn setup_kitchen(
       ..default()
     });
     let induction_cube = Cuboid::new(5.2, 0.2, 5.3);
+    let induction_cabinet_index = 4;
     commands.spawn((
       Mesh3d(meshes.add(induction_cube)),
       MeshMaterial3d(induction_texture),
       Transform::from_translation(vec3(
-        CABINET_WIDTHS.iter().take(4).sum::<f32>() + 0.5 * CABINET_WIDTHS[4],
+        CABINET_WIDTHS.iter().take(induction_cabinet_index).sum::<f32>() + 0.5 * CABINET_WIDTHS[induction_cabinet_index],
         COUNTERTOP_Y + COUNTERTOP_HEIGHT,
         BOTTOM_CABINET_DEPTH - induction_cube.half_size.z - EPSILON,
       )),

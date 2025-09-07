@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use std::f32::consts::{FRAC_PI_2, FRAC_PI_4};
+use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 
 use crate::common::*;
 use bevy::math::vec3;
@@ -133,6 +133,22 @@ fn spawn_walls(
         .set_parent(common.parent);
     }
     {
+      let transform = Transform {
+        translation: Vec3::ZERO, //vec3(-15., 0., 32.),
+        rotation: Quat::from_rotation_x(-FRAC_PI_2)
+          .normalize()
+          .mul_quat(Quat::from_rotation_z(PI))
+          .normalize(),
+        scale: Vec3::ONE,
+      };
+      commands.spawn((
+        Mesh3d(asset_server.load("stl/patio_wall.stl")),
+        MeshMaterial3d(kithen_wall_colour.clone()),
+        transform,
+        ChildOf(common.parent),
+      ));
+    }
+    {
       let massa = repeat_texture(
         "massa/PP-Massa-1198x2398-1.jpg",
         &mut materials,
@@ -173,8 +189,11 @@ fn spawn_walls(
         .spawn((
           Mesh3d(meshes.add(Extrusion::new(CircularSegment::new(ROUND_CORNER_RADIUS, FRAC_PI_4), FLAT_HEIGHT))),
           MeshMaterial3d(kithen_wall_colour.clone()),
-          Transform::from_rotation(Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z( FRAC_PI_4))
-            .with_translation(vec3(OFFICE_X_POS + ROUND_CORNER_RADIUS, 0.5 * FLAT_HEIGHT, OFFICE_Z_POS + ROUND_CORNER_RADIUS)),
+          Transform::from_rotation(Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(FRAC_PI_4)).with_translation(vec3(
+            OFFICE_X_POS + ROUND_CORNER_RADIUS,
+            0.5 * FLAT_HEIGHT,
+            OFFICE_Z_POS + ROUND_CORNER_RADIUS,
+          )),
         ))
         .set_parent(common.parent);
       {
