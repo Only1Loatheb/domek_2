@@ -256,7 +256,7 @@ fn setup_kitchen(
     let table = asset_server.load("kitchen/table.glb#Scene0");
     commands.spawn((
       SceneRoot(table),
-      Transform::from_translation(vec3(30., 0., 25.)),
+      Transform::from_translation(vec3(22., 0., 26.)),
       KitchenCabinet,
       ChildOf(common.parent),
     ));
