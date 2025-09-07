@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::common::{repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, CLOSET_COLOUR, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z, PLANK_THICKNESS, ROUND_CORNER_RADIUS, TILE_PLUS_GLUE};
+use crate::common::{
+  repeat_texture, BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEIGE, CLOSET_COLOUR, DOOR_WIDTH, DOOR_Y, EPSILON, FLAT_HEIGHT,
+  LIVING_ROOM_TO_BATHROOM_Z, PLANK_THICKNESS, ROUND_CORNER_RADIUS, TILE_PLUS_GLUE,
+};
 use bevy::math::vec3;
 use bevy::sprite::SpriteImageMode::Scale;
 use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
@@ -408,7 +411,7 @@ fn spawn_shower_stall(
         Transform::from_translation((shower_tray_cube.half_size + translation).with_y(FLAT_HEIGHT))
           .looking_at(tray_transform.translation, Vec3::Y),
         PointLight {
-          intensity: 2_000_000.0,
+          intensity: 4_000_000.0,
           range: 2. * FLAT_HEIGHT,
           color: Color::WHITE,
           shadows_enabled: true,

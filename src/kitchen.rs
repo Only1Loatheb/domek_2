@@ -253,13 +253,29 @@ fn setup_kitchen(
   }
 
   {
-    let table = asset_server.load("kitchen/table.glb#Scene0");
-    commands.spawn((
-      SceneRoot(table),
-      Transform::from_translation(vec3(22., 0., 26.)),
-      KitchenCabinet,
-      ChildOf(common.parent),
-    ));
+    let table_pos = vec3(22., 0., 26.);
+    {
+      let table = asset_server.load("kitchen/table.glb#Scene0");
+      commands.spawn((
+        SceneRoot(table),
+        Transform::from_translation(table_pos),
+        KitchenCabinet,
+        ChildOf(common.parent),
+      ));
+    }
+    {
+      commands.spawn((
+        Transform::from_translation(table_pos.with_y(FLAT_HEIGHT)).looking_at(table_pos, Vec3::Y),
+        PointLight {
+          intensity: 4_000_000.0,
+          range: 4. * FLAT_HEIGHT,
+          color: Color::WHITE,
+          shadows_enabled: true,
+          ..default()
+        },
+        ChildOf(common.parent),
+      ));
+    }
   }
   {
     let transform = Transform {

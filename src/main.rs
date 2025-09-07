@@ -67,7 +67,7 @@ fn main() {
     })))
     .insert_resource(AmbientLight {
       color: Color::WHITE,
-      brightness: 600.,
+      brightness: 10.,
       affects_lightmapped_meshes: true,
     })
     // .insert_resource(AmbientLight::NONE)
@@ -109,7 +109,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     ))
     .insert(Skybox {
       image: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
-      brightness: 1500.0,
+      brightness: 100.0,
       ..default()
     }).id()
     // .insert(VolumetricFog {
