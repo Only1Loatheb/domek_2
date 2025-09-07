@@ -407,8 +407,6 @@ fn spawn_shower_stall(
       commands.spawn((
         Transform::from_translation((shower_tray_cube.half_size + translation).with_y(FLAT_HEIGHT))
           .looking_at(tray_transform.translation, Vec3::Y),
-        // MeshMaterial3d(common.massa_tail[1].clone()),
-        // Mesh3d(meshes.add(shower_tray_cube)),
         PointLight {
           intensity: 2_000_000.0,
           range: 2. * FLAT_HEIGHT,
