@@ -52,21 +52,21 @@ fn spawn_floors(
       ChildOf(common.parent),
     ));
   }
-  // {
-  //   let hall_floor = vec3(HALL_X, FLOOR_DEPTH, HALL_Z);
-  //   let translation = 0.5 * hall_floor + vec3(LIVING_ROOM_X_HALL_OFFSET, -FLOOR_DEPTH, LIVING_ROOM_TO_HALL_Z);
-  //   commands.spawn((
-  //     Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
-  //     PointLight {
-  //       intensity: 4_000_000.0,
-  //       range: 2. * FLAT_HEIGHT,
-  //       color: Color::WHITE,
-  //       shadows_enabled: true,
-  //       ..default()
-  //     },
-  //     ChildOf(common.parent),
-  //   ));
-  // }
+  {
+    let hall_floor = vec3(HALL_X, FLOOR_DEPTH, HALL_Z);
+    let translation = 0.5 * hall_floor + vec3(LIVING_ROOM_X_HALL_OFFSET, -FLOOR_DEPTH, LIVING_ROOM_TO_HALL_Z);
+    commands.spawn((
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      PointLight {
+        intensity: 4_000_000.0,
+        range: 2. * FLAT_HEIGHT,
+        color: Color::WHITE,
+        shadows_enabled: true,
+        ..default()
+      },
+      ChildOf(common.parent),
+    ));
+  }
   {
     let bathroom_floor = vec3(BATHROOM_X, FLOOR_DEPTH, BATHROOM_Z);
     let translation = 0.5 * bathroom_floor + vec3(0., -FLOOR_DEPTH, LIVING_ROOM_TO_BATHROOM_Z);
@@ -97,21 +97,21 @@ fn spawn_floors(
       ChildOf(common.parent),
     ));
   }
-  {
-    let small_hall_floor = vec3(SMALL_HALL_X, FLOOR_DEPTH, SMALL_HALL_Z);
-    let translation = 0.5 * small_hall_floor + vec3(BATHROOM_X, -FLOOR_DEPTH, OFFICE_Z_POS);
-    commands.spawn((
-      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
-      PointLight {
-        intensity: 4_000_000.0,
-        range: 2. * FLAT_HEIGHT,
-        color: Color::WHITE,
-        shadows_enabled: true,
-        ..default()
-      },
-      ChildOf(common.parent),
-    ));
-  }
+  // {
+  //   let small_hall_floor = vec3(SMALL_HALL_X, FLOOR_DEPTH, SMALL_HALL_Z);
+  //   let translation = 0.5 * small_hall_floor + vec3(BATHROOM_X, -FLOOR_DEPTH, OFFICE_Z_POS);
+  //   commands.spawn((
+  //     Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+  //     PointLight {
+  //       intensity: 4_000_000.0,
+  //       range: 2. * FLAT_HEIGHT,
+  //       color: Color::WHITE,
+  //       shadows_enabled: true,
+  //       ..default()
+  //     },
+  //     ChildOf(common.parent),
+  //   ));
+  // }
   {
     let bedroom_floor = vec3(BEDROOM_X, FLOOR_DEPTH, BEDROOM_Z);
     let translation = 0.5 * bedroom_floor + vec3(0., -FLOOR_DEPTH, BEDROOM_POS_Z);
