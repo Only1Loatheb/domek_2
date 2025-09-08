@@ -120,7 +120,7 @@ fn setup_kitchen(
       Vec2 { x: 0.5, y: 0.5 },
     );
     let mut x_acc: f32 = 0.0;
-    for middle_cabinet_width in CABINET_WIDTHS.into_iter() {
+    for (i, middle_cabinet_width) in CABINET_WIDTHS.into_iter().enumerate() {
       let middle_cabinet = Cuboid::new(middle_cabinet_width, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH);
       let translation = middle_cabinet.half_size + vec3(x_acc, MIDDLE_CABINET_Y, 0.);
       commands.spawn((
@@ -130,6 +130,7 @@ fn setup_kitchen(
         KitchenCabinet,
         ChildOf(common.parent),
       ));
+      let shadows_enabled = (i == 0) || (i == (CABINET_WIDTHS.len() - 1));
       commands.spawn((
         Transform::from_translation(vec3(
           x_acc + middle_cabinet.half_size.x,
@@ -141,7 +142,7 @@ fn setup_kitchen(
           intensity: 100_000.0,
           range: MIDDLE_CABINET_HEIGHT,
           color: Color::WHITE,
-          shadows_enabled: true,
+          shadows_enabled: shadows_enabled,
           ..default()
         },
         ChildOf(common.parent),

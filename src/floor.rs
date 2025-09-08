@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use std::f32::consts::{FRAC_PI_2, FRAC_PI_4, PI};
-
+use bevy::asset::ErasedAssetLoader;
 use crate::common::*;
 use bevy::math::vec3;
 // https://bevyengine.org/examples/3d-rendering/3d-shapes/
@@ -39,7 +39,7 @@ fn spawn_floors(
     {
     let floor_material: Handle<StandardMaterial> = materials.add(Color::hsl(0., 0., 1.));
     let bedroom_floor = Cuboid::new(
-      LIVING_ROOM_X + HALL_X,
+      LIVING_ROOM_X + TM_WALL_X,
       FLOOR_DEPTH,
       LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + OFFICE_Z,
     );
