@@ -1,6 +1,6 @@
 $fn = 180;
 
-wall_width = 30.;
+wall_width = 29.85;
 wall_height = 26.8;
 wall_thickness = 1.;
 

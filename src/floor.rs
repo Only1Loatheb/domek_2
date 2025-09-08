@@ -262,7 +262,7 @@ fn spawn_walls(
         }
         {
           let bedroom_office_wall = Cuboid::new(LOAD_BEARING_WALL_THICKNESS, FLAT_HEIGHT, OFFICE_Z);
-          let translation = bedroom_office_wall.half_size + office_origin + vec3(OFFICE_X, 0., 0.);
+          let translation = bedroom_office_wall.half_size + office_origin + vec3(OFFICE_X + EPSILON, 0., 0.);
           commands.spawn((
             Mesh3d(meshes.add(bedroom_office_wall)),
             MeshMaterial3d(kithen_wall_colour.clone()),
