@@ -305,7 +305,7 @@ fn setup_kitchen(
     };
     commands.spawn((
       Mesh3d(asset_server.load("stl/sofa.stl")),
-      MeshMaterial3d(materials.add(CLOSET_COLOUR)),
+      MeshMaterial3d(materials.add(Color::hsl(32., 17. / 255., 223. / 255.))),
       transform,
       ChildOf(common.parent),
     ));
