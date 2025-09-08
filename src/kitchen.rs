@@ -77,7 +77,7 @@ fn setup_kitchen(
     let cabinet_handle: Handle<Mesh> = asset_server.load("stl/kitchen_handle.stl");
     let mut x_acc: f32 = 0.0;
     for bottom_cabinet_width in CABINET_WIDTHS.into_iter() {
-      let bottom_cabinet = Cuboid::new(bottom_cabinet_width, BOTTOM_CABINET_HEIGHT, EPSILON);
+      let bottom_cabinet = Cuboid::new(bottom_cabinet_width- 0.05, BOTTOM_CABINET_HEIGHT, EPSILON);
       let translation = bottom_cabinet.half_size + vec3(x_acc, BOTTOM_CABINET_Y, BOTTOM_CABINET_DEPTH - EPSILON);
       let id = commands
         .spawn((
@@ -108,7 +108,7 @@ fn setup_kitchen(
           ChildOf(id),
         ));
       }
-      x_acc += bottom_cabinet.size().x;
+      x_acc += bottom_cabinet_width;
     }
   }
   {
@@ -121,7 +121,7 @@ fn setup_kitchen(
     );
     let mut x_acc: f32 = 0.0;
     for (i, middle_cabinet_width) in CABINET_WIDTHS.into_iter().enumerate() {
-      let middle_cabinet = Cuboid::new(middle_cabinet_width, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH);
+      let middle_cabinet = Cuboid::new(middle_cabinet_width - 0.05, MIDDLE_CABINET_HEIGHT, MIDDLE_CABINET_DEPTH);
       let translation = middle_cabinet.half_size + vec3(x_acc, MIDDLE_CABINET_Y, 0.);
       commands.spawn((
         Mesh3d(meshes.add(middle_cabinet)),
@@ -147,7 +147,7 @@ fn setup_kitchen(
         },
         ChildOf(common.parent),
       ));
-      x_acc += middle_cabinet.size().x;
+      x_acc += middle_cabinet_width;
     }
   }
   {
@@ -388,8 +388,8 @@ fn spawn_walls_and_fridge(mut commands: Commands, mut meshes: ResMut<Assets<Mesh
   }
   {
     let cargo_width = KITCHEN_WALL_LENGTH - FRIDGE_DIM;
-    let cargo = Cuboid::new(6.0, FLAT_HEIGHT, cargo_width);
-    let translation = cargo.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH + FRIDGE_DIM + 0.1);
+    let cargo = Cuboid::new(6.0, FLAT_HEIGHT, cargo_width - 0.05);
+    let translation = cargo.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH + FRIDGE_DIM + 0.05);
     commands.spawn((
       Mesh3d(meshes.add(cargo)),
       MeshMaterial3d(common.wall_colour.clone()),
@@ -399,7 +399,7 @@ fn spawn_walls_and_fridge(mut commands: Commands, mut meshes: ResMut<Assets<Mesh
   }
   {
     let fridge = Cuboid::new(6.0, FLAT_HEIGHT, FRIDGE_DIM);
-    let translation = fridge.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH + 0.05);
+    let translation = fridge.half_size + vec3(-VENT_WIDTH + KITCHEN_WALL_THICKNESS, 0., VENT_DEPTH + 0.02);
     commands.spawn((
       Mesh3d(meshes.add(fridge)),
       MeshMaterial3d(common.wall_colour.clone()),
