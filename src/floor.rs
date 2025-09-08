@@ -151,7 +151,7 @@ fn spawn_walls(
     }
     {
       let transform = Transform {
-        translation: Vec3::ZERO, //vec3(-15., 0., 32.),
+        translation: Vec3::ZERO.with_z(-LOAD_BEARING_WALL_THICKNESS), //vec3(-15., 0., 32.),
         rotation: Quat::from_rotation_x(-FRAC_PI_2)
           .normalize()
           .mul_quat(Quat::from_rotation_z(PI))
@@ -161,6 +161,12 @@ fn spawn_walls(
       commands.spawn((
         Mesh3d(asset_server.load("stl/patio_wall.stl")),
         MeshMaterial3d(kithen_wall_colour.clone()),
+        transform,
+        ChildOf(common.parent),
+      ));
+      commands.spawn((
+        Mesh3d(asset_server.load("stl/patio_wall_valance.stl")),
+        MeshMaterial3d(materials.add(Color::WHITE)),
         transform,
         ChildOf(common.parent),
       ));
