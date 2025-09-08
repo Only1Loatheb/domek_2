@@ -280,29 +280,35 @@ fn setup_kitchen(
         ChildOf(common.parent),
       ));
     }
+    let lamp_distance = 10.;
     for a in (-1..=1).step_by(2) {
-      {
-        let lamp = asset_server.load("kitchen/Marcus_30_lamp.glb#Scene0");
-        let lamp_distance = 10.;
-        commands.spawn((
-          SceneRoot(lamp),
-          Transform::from_translation(table_pos + vec3(a as f32 * lamp_distance, FLAT_HEIGHT - 5., 0. )).with_scale(Vec3::splat(0.1)),
-          KitchenCabinet,
-          ChildOf(common.parent),
-        ));
-      }
-      {
-        commands.spawn((
-          Transform::from_translation(table_pos + vec3(a as f32 * 10., 15., 0.)).looking_at(table_pos, Vec3::Y),
-          PointLight {
-            intensity: 4_000_000.0,
-            range: 4. * FLAT_HEIGHT,
-            color: Color::WHITE,
-            shadows_enabled: true,
-            ..default()
-          },
-          ChildOf(common.parent),
-        ));
+      for b in (-1..=1).step_by(2) {
+        {
+          let lamp = asset_server.load("kitchen/Marcus_30_lamp.glb#Scene0");
+          commands.spawn((
+            SceneRoot(lamp),
+            Transform::from_translation(
+              table_pos + vec3(a as f32 * lamp_distance, FLAT_HEIGHT - 5., b as f32 * lamp_distance),
+            )
+            .with_scale(Vec3::splat(0.1)),
+            KitchenCabinet,
+            ChildOf(common.parent),
+          ));
+        }
+        {
+          commands.spawn((
+            Transform::from_translation(table_pos + vec3(a as f32 * lamp_distance, 15., b as f32 * lamp_distance))
+              .looking_at(table_pos, Vec3::Y),
+            PointLight {
+              intensity: 4_000_000.0,
+              range: 4. * FLAT_HEIGHT,
+              color: Color::WHITE,
+              shadows_enabled: true,
+              ..default()
+            },
+            ChildOf(common.parent),
+          ));
+        }
       }
     }
   }
