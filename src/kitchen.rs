@@ -280,9 +280,9 @@ fn setup_kitchen(
         ChildOf(common.parent),
       ));
     }
-    for (x, y) in [(30.,21.), (10.,21.), (0.,40.)] {
+    for (x, y, size) in [(25.,21., 30), (17.,21., 40), (0.,40., 30), (table_pos.x,table_pos.z, 60), (35.,40., 50)] {
         {
-          let lamp = asset_server.load("kitchen/Marcus_30_lamp.glb#Scene0");
+          let lamp = asset_server.load(format!("kitchen/Marcus_{}_lamp.glb#Scene0", size),);
           commands.spawn((
             SceneRoot(lamp),
             Transform::from_translation(
