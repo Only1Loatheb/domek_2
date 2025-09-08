@@ -6,7 +6,7 @@ module hall_cabinet() {
     VENT_DEPTH = 8.;
     KITCHEN_WALL_LENGTH = 9.;
     CLOSET_WIDTH = VENT_DEPTH + KITCHEN_WALL_LENGTH;
-    BROOM_COMPARTMENT_WIDTH = 1.5;
+    BROOM_COMPARTMENT_WIDTH = 2.;
     SEAT_WIDTH = 6.; // our has 10.
     SEAT_DEPTH = 4.;
     SEAT_TOP = 4.2;
