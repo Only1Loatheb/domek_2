@@ -18,16 +18,6 @@ SOFA_HEIGHT = SEAT_HEIGHT + REST_HEIGHT;
 
 
 module round_sofa() {
-//    difference() {
-//        rotate([-90, 0, 0]) {
-//            cylinder(SEAT_HEIGHT, SOFA_RADIUS, SOFA_RADIUS);
-//        }
-//        translate([0., -eps, 0.]) {
-//            rotate([-90, 0, 0]) {
-//                cylinder(SEAT_HEIGHT + 2 * eps, HOLE_RADIUS, HOLE_RADIUS);
-//            }
-//        }
-//    }
     // rest
     translate([0., SEAT_HEIGHT, 0]) {
         difference() {
@@ -54,10 +44,11 @@ rotate([90, 0, -90]) {
     }
 }
 
-module rounder_sofa(angle1, angle2, is_front) {
-    translate([-SOFA_WIDTH / 2, SOFA_RADIUS - rounding_r, 0]) {
+module rounder_sofa(angle1, angle2) {
+    translate([-SOFA_WIDTH / 2, SOFA_RADIUS + SEAT_DEPTH - rounding_r, 0]) {
         rotate([0, 0, 180 + 45 + angle1]) {
             rotate_extrude(angle = angle2, convexity = 10) {
+                // front
                 translate([SOFA_RADIUS - 2 * rounding_r, SEAT_HEIGHT - rounding_r, 0]) {
                     circle(rounding_r);
                 }
@@ -67,16 +58,23 @@ module rounder_sofa(angle1, angle2, is_front) {
                         square([2 * rounding_r, SEAT_HEIGHT - 2 * rounding_r], center = true) ;
                     }
                 }
-                if (is_front) {
-                    translate([SOFA_RADIUS - 2 * rounding_r, 0, 0]) {
-                        square([SEAT_DEPTH, SEAT_HEIGHT]) ;
+                // middle
+                translate([SOFA_RADIUS - 2 * rounding_r, 0, 0]) {
+                    square([SEAT_DEPTH, SEAT_HEIGHT]) ;
+                }
+                // back
+                translate([SOFA_RADIUS + SEAT_DEPTH - 2 * rounding_r, SEAT_HEIGHT + rounding_r, 0]) {
+                    circle(rounding_r);
+                }
+                translate([SOFA_RADIUS + SEAT_DEPTH - 2 * rounding_r, rounding_r, 0]) {
+                    circle(rounding_r);
+                    translate([-rounding_r, 0, 0]) {
+                        square([2 * rounding_r, SEAT_HEIGHT]) ;
                     }
                 }
             }
         }
     }
 }
-rounder_sofa(angle1 = 22.5, angle2 = 45, is_front = false);
-translate([0, SOFA_DEPTH - 2 * rounding_r, 0]) {
-    rounder_sofa(angle1 = 25.5, angle2 = 39, is_front = true);
-}
+
+rounder_sofa(angle1 = 25.5, angle2 = 39);
