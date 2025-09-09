@@ -16,35 +16,7 @@ HOLE_RADIUS = SOFA_RADIUS - SOFA_DEPTH;
 eps = 0.01;
 SOFA_HEIGHT = SEAT_HEIGHT + REST_HEIGHT;
 
-
-module round_sofa() {
-    // rest
-    translate([0., SEAT_HEIGHT, 0]) {
-        difference() {
-            rotate([-90, 0, 0]) {
-                cylinder(REST_HEIGHT, SOFA_RADIUS, SOFA_RADIUS);
-            }
-            translate([0., -eps, 0.]) {
-                rotate([-90, 0, 0]) {
-                    cylinder(REST_HEIGHT + 2 * eps, HOLE_RADIUS + SEAT_DEPTH, HOLE_RADIUS + SEAT_DEPTH + REST_TILT_DEPTH);
-                }
-            }
-        }
-    }
-}
-
-rotate([90, 0, -90]) {
-    translate([-SOFA_RADIUS - 0.4, 0, 0.5 * SOFA_WIDTH]) {
-        intersection() {
-            translate([SOFA_RADIUS, 0, 0]) {
-                cube([2 * SOFA_RADIUS, 2 * SOFA_HEIGHT, SOFA_WIDTH], center = true);
-            }
-            round_sofa();
-        }
-    }
-}
-
-module rounder_sofa(angle1, angle2) {
+module rounder_sofa_base(angle1, angle2) {
     translate([-SOFA_WIDTH / 2, SOFA_RADIUS + SEAT_DEPTH - rounding_r, 0]) {
         rotate([0, 0, 180 + 45 + angle1]) {
             rotate_extrude(angle = angle2, convexity = 10) {
@@ -77,4 +49,32 @@ module rounder_sofa(angle1, angle2) {
     }
 }
 
-rounder_sofa(angle1 = 25.5, angle2 = 39);
+module round_sofa_rest() {
+    rotate([90, 0, -90]) {
+        translate([-SOFA_RADIUS - 0.4, 0, 0.5 * SOFA_WIDTH]) {
+            // rest
+            translate([0., SEAT_HEIGHT, 0]) {
+                difference() {
+                    rotate([-90, 0, 0]) {
+                        cylinder(REST_HEIGHT, SOFA_RADIUS, SOFA_RADIUS);
+                    }
+                    translate([0., -eps, 0.]) {
+                        rotate([-90, 0, 0]) {
+                            cylinder(REST_HEIGHT + 2 * eps, HOLE_RADIUS + SEAT_DEPTH, HOLE_RADIUS + SEAT_DEPTH + REST_TILT_DEPTH);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+rounder_sofa_base(angle1 = 25.5, angle2 = 39);
+
+intersection() {
+    translate([0, 0, SEAT_HEIGHT]) {
+        rounder_sofa_base(angle1 = 25.5, angle2 = 39);
+    }
+    round_sofa_rest();
+}
