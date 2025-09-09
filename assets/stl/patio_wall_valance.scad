@@ -11,17 +11,21 @@ valance_d = 0.1;
 
 // Rotate to stand upright
 scale([1, -1, 1]) {
-    translate([-wall_width, 0, 0]) {
+    translate([-wall_width, wall_thickness, 0]) {
         rotate([90, 0, 0]) {
             intersection() {
                 translate([window_x, wall_height - valance_w, wall_thickness]) {
-
                     // rounded valance part
                     rotate([-90, 0, 0]) {
-                        difference() {
-                            cylinder(valance_w, valance_w, valance_w);
-                            translate([0, 0, -1]) {
-                                cylinder(valance_w + 2, valance_w - valance_d, valance_w - valance_d);
+                        intersection() {
+                            difference() {
+                                cylinder(valance_w, valance_w, valance_w);
+                                translate([0, 0, -1]) {
+                                    cylinder(valance_w + 2, valance_w - valance_d, valance_w - valance_d);
+                                }
+                            }
+                            translate([-valance_w, -valance_w, 0]) {
+                                cube([valance_w, valance_w, valance_w]);
                             }
                         }
                     }

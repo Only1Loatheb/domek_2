@@ -30,10 +30,8 @@ module wall_with_openings() {
 }
 
 // Rotate to stand upright
-scale([1, -1, 1]) {
-    translate([-wall_width, 0, 0]) {
-        rotate([90, 0, 0]) {
-            wall_with_openings();
-        }
+translate([-wall_width, wall_thickness, 0]) {
+    rotate([90, 0, 0]) {
+        wall_with_openings();
     }
 }
