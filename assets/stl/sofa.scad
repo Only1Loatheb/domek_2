@@ -34,7 +34,7 @@ module round_sofa() {
 }
 
 rotate([90, 0, -90]) {
-    translate([-SOFA_RADIUS, 0, 0.5 * SOFA_WIDTH]) {
+    translate([-SOFA_RADIUS - 0.4, 0, 0.5 * SOFA_WIDTH]) {
         intersection() {
             translate([SOFA_RADIUS, 0, 0]) {
                 cube([2 * SOFA_RADIUS, 2 * SOFA_HEIGHT, SOFA_WIDTH], center = true);
