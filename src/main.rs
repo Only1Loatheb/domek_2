@@ -109,7 +109,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     ))
     .insert(Skybox {
       image: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
-      brightness: 100.0,
+      brightness: 200.0,
       ..default()
     }).id()
     // .insert(VolumetricFog {

@@ -139,7 +139,7 @@ fn setup_kitchen(
         ))
         .looking_at(translation.with_y(0.), Vec3::Y),
         PointLight {
-          intensity: 100_000.0,
+          intensity: 1_000_000.0,
           range: MIDDLE_CABINET_HEIGHT,
           color: Color::WHITE,
           shadows_enabled: shadows_enabled,
