@@ -270,7 +270,7 @@ fn setup_kitchen(
   }
 
   {
-    let table_pos = vec3(22., 0., 26.);
+    let table_pos = vec3(26., 0., 26.);
     {
       let table = asset_server.load("kitchen/table.glb#Scene0");
       commands.spawn((
