@@ -280,41 +280,41 @@ fn setup_kitchen(
         ChildOf(common.parent),
       ));
     }
-    for (x, y, size) in [(25.,21., 30), (17.,21., 40), (0.,40., 30), (table_pos.x,table_pos.z, 60), (35.,40., 50)] {
-        {
-          let lamp = asset_server.load(format!("kitchen/Marcus_{}_lamp.glb#Scene0", size),);
-          commands.spawn((
-            SceneRoot(lamp),
-            Transform::from_translation(
-              vec3(x, FLAT_HEIGHT - 5., y),
-            )
-            .with_scale(Vec3::splat(0.1)),
-            KitchenCabinet,
-            ChildOf(common.parent),
-          ));
-        }
-        {
-          commands.spawn((
-            Transform::from_translation(vec3(x, 15., y)).looking_at(table_pos, Vec3::Y),
-            PointLight {
-              intensity: 4_000_000.0,
-              range: 4. * FLAT_HEIGHT,
-              color: Color::WHITE,
-              shadows_enabled: true,
-              ..default()
-            },
-            ChildOf(common.parent),
-          ));
-        }
+    for (x, y, size) in [
+      (25., 21., 30),
+      (17., 21., 40),
+      (0., 40., 30),
+      (table_pos.x, table_pos.z, 60),
+      (35., 40., 50),
+    ] {
+      {
+        let lamp = asset_server.load(format!("kitchen/Marcus_{}_lamp.glb#Scene0", size));
+        commands.spawn((
+          SceneRoot(lamp),
+          Transform::from_translation(vec3(x, FLAT_HEIGHT - 5., y)).with_scale(Vec3::splat(0.1)),
+          KitchenCabinet,
+          ChildOf(common.parent),
+        ));
+      }
+      {
+        commands.spawn((
+          Transform::from_translation(vec3(x, 15., y)).looking_at(table_pos, Vec3::Y),
+          PointLight {
+            intensity: 4_000_000.0,
+            range: 4. * FLAT_HEIGHT,
+            color: Color::WHITE,
+            shadows_enabled: true,
+            ..default()
+          },
+          ChildOf(common.parent),
+        ));
+      }
     }
   }
   {
     let transform = Transform {
       translation: vec3(-15., 0., 32.),
-      rotation: Quat::from_rotation_x(-FRAC_PI_2)
-        .normalize()
-        .mul_quat(Quat::from_rotation_z(PI))
-        .normalize(),
+      rotation: Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(PI),
       scale: Vec3::ONE,
     };
     commands.spawn((

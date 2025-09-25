@@ -1,17 +1,21 @@
 mod bathroom;
 mod common;
+mod control;
 mod floor;
 mod kitchen;
 mod look;
 mod movement;
-mod control;
 
 use bevy::prelude::*;
 use std::f32::consts::{FRAC_PI_2, PI};
 use std::ops::Add;
 // Demonstrates volumetric fog and lighting (light shafts or god rays).
 use crate::bathroom::{BathroomPlugin, BATHROOM_ORIGIN};
-use crate::common::{BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEDROOM_POS_Z, CLOSET_COLOUR, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z, OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE};
+use crate::common::{
+  BATHROOM_WALL_THICKNESS, BATHROOM_X, BATHROOM_Z, BEDROOM_POS_Z, CLOSET_COLOUR, EPSILON, HALL_X, HALL_Z, LIVING_ROOM_TO_BATHROOM_Z,
+  OFFICE_DOOR_PLUS_SMALL_WALL, OFFICE_WALL_LENGTH, OFFICE_WALL_THICKNESS, OFFICE_X_POS, OFFICE_Z_POS, TILE_PLUS_GLUE,
+};
+use crate::control::ControlPlugin;
 use crate::floor::FloorPlugin;
 use crate::kitchen::KitchenPlugin;
 use crate::look::{look_around, CameraSensitivity};
@@ -24,7 +28,6 @@ use bevy::{
 use bevy_basic_portals::PortalDestinationSource::CreateMirror;
 use bevy_basic_portals::PortalsPlugin;
 use bevy_stl::StlPlugin;
-use crate::control::ControlPlugin;
 
 const DIRECTIONAL_LIGHT_MOVEMENT_SPEED: f32 = 0.02;
 
@@ -337,10 +340,7 @@ fn adjust_app_settings(
 fn spawn_bedroom_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, mut materials: ResMut<Assets<StandardMaterial>>) {
   let transform = Transform {
     translation: vec3(-BATHROOM_X, 0., BEDROOM_POS_Z + EPSILON),
-    rotation: Quat::from_rotation_x(-FRAC_PI_2)
-      .normalize()
-      .mul_quat(Quat::from_rotation_z(PI))
-      .normalize(),
+    rotation: Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(PI),
     scale: Vec3::ONE,
   };
   commands.spawn((
@@ -357,10 +357,7 @@ fn spawn_office_cabinet(mut commands: Commands, asset_server: Res<AssetServer>, 
       0.,
       OFFICE_Z_POS + OFFICE_WALL_THICKNESS + EPSILON,
     ),
-    rotation: Quat::from_rotation_x(-FRAC_PI_2)
-      .normalize()
-      .mul_quat(Quat::from_rotation_z(PI))
-      .normalize(),
+    rotation: Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(PI),
     scale: Vec3::ONE,
   };
   commands.spawn((

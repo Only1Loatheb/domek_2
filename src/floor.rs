@@ -29,7 +29,7 @@ fn setup_floor_common(mut commands: Commands) {
   commands.insert_resource(FloorCommon { parent })
 }
 
-const FLOOR_DEPTH: f32 = 1.;
+const FLOOR_HEIGHT: f32 = 1.;
 fn spawn_floors(
   mut commands: Commands,
   mut meshes: ResMut<Assets<Mesh>>,
@@ -40,10 +40,10 @@ fn spawn_floors(
     let floor_material: Handle<StandardMaterial> = materials.add(Color::hsl(0., 0., 1.));
     let bedroom_floor = Cuboid::new(
       LIVING_ROOM_X + TM_WALL_X,
-      FLOOR_DEPTH,
+      FLOOR_HEIGHT,
       LIVING_ROOM_TO_BATHROOM_Z + BATHROOM_Z + OFFICE_Z,
     );
-    let floor_translation = bedroom_floor.half_size.with_y(-0.5 * FLOOR_DEPTH);
+    let floor_translation = bedroom_floor.half_size.with_y(-0.5 * FLOOR_HEIGHT);
     commands.spawn((
       Mesh3d(meshes.add(bedroom_floor)),
       MeshMaterial3d(floor_material.clone()),
@@ -51,7 +51,7 @@ fn spawn_floors(
       Floor,
       ChildOf(common.parent),
     ));
-    let ceiling_translation = bedroom_floor.half_size.with_y(FLAT_HEIGHT + 0.5 * FLOOR_DEPTH);
+    let ceiling_translation = bedroom_floor.half_size.with_y(FLAT_HEIGHT + 0.5 * FLOOR_HEIGHT);
     commands.spawn((
       Mesh3d(meshes.add(bedroom_floor)),
       MeshMaterial3d(floor_material.clone()),
@@ -61,8 +61,8 @@ fn spawn_floors(
     ));
   }
   {
-    let hall_floor = vec3(HALL_X, FLOOR_DEPTH, HALL_Z);
-    let translation = 0.5 * hall_floor + vec3(LIVING_ROOM_X_HALL_OFFSET, -FLOOR_DEPTH, LIVING_ROOM_TO_HALL_Z);
+    let hall_floor = vec3(HALL_X, FLOOR_HEIGHT, HALL_Z);
+    let translation = 0.5 * hall_floor + vec3(LIVING_ROOM_X_HALL_OFFSET, -FLOOR_HEIGHT, LIVING_ROOM_TO_HALL_Z);
     commands.spawn((
       Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
       PointLight {
@@ -76,8 +76,8 @@ fn spawn_floors(
     ));
   }
   {
-    let bathroom_floor = vec3(BATHROOM_X, FLOOR_DEPTH, BATHROOM_Z);
-    let translation = 0.5 * bathroom_floor + vec3(0., -FLOOR_DEPTH, LIVING_ROOM_TO_BATHROOM_Z);
+    let bathroom_floor = vec3(BATHROOM_X, FLOOR_HEIGHT, BATHROOM_Z);
+    let translation = 0.5 * bathroom_floor + vec3(0., -FLOOR_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z);
     commands.spawn((
       Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
       PointLight {
@@ -91,8 +91,8 @@ fn spawn_floors(
     ));
   }
   {
-    let office_floor = vec3(OFFICE_X, FLOOR_DEPTH, OFFICE_Z);
-    let translation = 0.5 * office_floor + vec3(BATHROOM_X + SMALL_HALL_X, -FLOOR_DEPTH, OFFICE_Z_POS);
+    let office_floor = vec3(OFFICE_X, FLOOR_HEIGHT, OFFICE_Z);
+    let translation = 0.5 * office_floor + vec3(BATHROOM_X + SMALL_HALL_X, -FLOOR_HEIGHT, OFFICE_Z_POS);
     commands.spawn((
       Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
       PointLight {
@@ -121,8 +121,8 @@ fn spawn_floors(
   //   ));
   // }
   {
-    let bedroom_floor = vec3(BEDROOM_X, FLOOR_DEPTH, BEDROOM_Z);
-    let translation = 0.5 * bedroom_floor + vec3(0., -FLOOR_DEPTH, BEDROOM_POS_Z);
+    let bedroom_floor = vec3(BEDROOM_X, FLOOR_HEIGHT, BEDROOM_Z);
+    let translation = 0.5 * bedroom_floor + vec3(0., -FLOOR_HEIGHT, BEDROOM_POS_Z);
     commands.spawn((
       Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
       PointLight {
@@ -160,10 +160,7 @@ fn spawn_walls(
     {
       let transform = Transform {
         translation: Vec3::ZERO.with_z(-LOAD_BEARING_WALL_THICKNESS), //vec3(-15., 0., 32.),
-        rotation: Quat::from_rotation_x(-FRAC_PI_2)
-          .normalize()
-          .mul_quat(Quat::from_rotation_z(PI))
-          .normalize(),
+        rotation: Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(PI),
         scale: Vec3::ONE,
       };
       commands.spawn((
@@ -255,10 +252,7 @@ fn spawn_walls(
         {
           let transform = Transform {
             translation: office_origin + vec3(LOAD_BEARING_WALL_THICKNESS, 0., OFFICE_Z),
-            rotation: Quat::from_rotation_x(-FRAC_PI_2)
-              .normalize()
-              .mul_quat(Quat::from_rotation_z(PI))
-              .normalize(),
+            rotation: Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(PI),
             scale: Vec3::ONE,
           };
           commands.spawn((
@@ -322,10 +316,7 @@ fn spawn_walls(
     {
       let transform = Transform {
         translation: bedroom_origin + vec3(LOAD_BEARING_WALL_THICKNESS, 0., BEDROOM_Z),
-        rotation: Quat::from_rotation_x(-FRAC_PI_2)
-          .normalize()
-          .mul_quat(Quat::from_rotation_z(PI))
-          .normalize(),
+        rotation: Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(PI),
         scale: Vec3::ONE,
       };
       commands.spawn((
