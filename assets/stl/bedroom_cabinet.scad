@@ -11,7 +11,7 @@ module szafa_przedpokoj() {
     grubosc_plyty = 0.18;
 
     szafa_w = 18.1 + 1.;
-    szafa_h = 26.8;
+    szafa_h = 26.8 - 1.01;
     szafa_d = 6.;
 
     plecowka_d = 0.05;

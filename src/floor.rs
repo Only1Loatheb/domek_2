@@ -64,7 +64,7 @@ fn spawn_floors(
     let hall_floor = vec3(HALL_X, FLOOR_HEIGHT, HALL_Z);
     let translation = 0.5 * hall_floor + vec3(LIVING_ROOM_X_HALL_OFFSET, -FLOOR_HEIGHT, LIVING_ROOM_TO_HALL_Z);
     commands.spawn((
-      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT - LOAD_BEARING_WALL_THICKNESS)).looking_at(translation, Vec3::Y),
       PointLight {
         intensity: 4_000_000.0,
         range: 2. * FLAT_HEIGHT,
@@ -79,7 +79,7 @@ fn spawn_floors(
     let bathroom_floor = vec3(BATHROOM_X, FLOOR_HEIGHT, BATHROOM_Z);
     let translation = 0.5 * bathroom_floor + vec3(0., -FLOOR_HEIGHT, LIVING_ROOM_TO_BATHROOM_Z);
     commands.spawn((
-      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT- LOAD_BEARING_WALL_THICKNESS)).looking_at(translation, Vec3::Y),
       PointLight {
         intensity: 4_000_000.0,
         range: 2. * FLAT_HEIGHT,
@@ -94,7 +94,7 @@ fn spawn_floors(
     let office_floor = vec3(OFFICE_X, FLOOR_HEIGHT, OFFICE_Z);
     let translation = 0.5 * office_floor + vec3(BATHROOM_X + SMALL_HALL_X, -FLOOR_HEIGHT, OFFICE_Z_POS);
     commands.spawn((
-      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT- LOAD_BEARING_WALL_THICKNESS)).looking_at(translation, Vec3::Y),
       PointLight {
         intensity: 4_000_000.0,
         range: 2. * FLAT_HEIGHT,
@@ -124,7 +124,7 @@ fn spawn_floors(
     let bedroom_floor = vec3(BEDROOM_X, FLOOR_HEIGHT, BEDROOM_Z);
     let translation = 0.5 * bedroom_floor + vec3(0., -FLOOR_HEIGHT, BEDROOM_POS_Z);
     commands.spawn((
-      Transform::from_translation(translation.with_y(FLAT_HEIGHT)).looking_at(translation, Vec3::Y),
+      Transform::from_translation(translation.with_y(FLAT_HEIGHT - LOAD_BEARING_WALL_THICKNESS)).looking_at(translation, Vec3::Y),
       PointLight {
         intensity: 4_000_000.0,
         range: 2. * FLAT_HEIGHT,
@@ -257,6 +257,19 @@ fn spawn_walls(
           };
           commands.spawn((
             Mesh3d(asset_server.load("stl/office_wall.stl")),
+            MeshMaterial3d(kitchen_wall_colour.clone()),
+            transform,
+            ChildOf(common.parent),
+          ));
+        }
+        {
+          let transform = Transform {
+            translation: office_origin + vec3(EPSILON, -0.1, OFFICE_Z_POS - 1.5 * OFFICE_Z -4.8),
+            rotation: Quat::from_rotation_x(-FRAC_PI_2) * Quat::from_rotation_z(PI),
+            scale: Vec3::ONE,
+          };
+          commands.spawn((
+            Mesh3d(asset_server.load("stl/bathroom_suspended_ceiling.stl")),
             MeshMaterial3d(kitchen_wall_colour.clone()),
             transform,
             ChildOf(common.parent),
