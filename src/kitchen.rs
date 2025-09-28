@@ -270,35 +270,29 @@ fn setup_kitchen(
   }
 
   {
-    let table_pos = vec3(20., 0., 26.);
+    let table_pos = vec3(30., 0., 18.);
     {
       let table = asset_server.load("kitchen/table.glb#Scene0");
       commands.spawn((
         SceneRoot(table),
-        Transform::from_translation(table_pos),
-        KitchenCabinet,
-        ChildOf(common.parent),
+        Transform::from_translation(table_pos.with_x(-table_pos.x)).with_rotation(Quat::from_rotation_y(FRAC_PI_2)),
       ));
     }
-    for (x, y, size) in [
-      (table_pos.x + 2., table_pos.z - 5., 30),
-      (table_pos.x - 3., table_pos.z - 5., 40),
-      (table_pos.x, table_pos.z, 60),
-      // (0., 40., 30),
-      // (35., 40., 50),
+    for (x, z, size) in [
+      (table_pos.x + 2., table_pos.z + 2.5, 30),
+      (table_pos.x - 3., table_pos.z + 2.5, 40),
+      (table_pos.x + 0., table_pos.z - 2.5, 60),
     ] {
       {
         let lamp = asset_server.load(format!("kitchen/Marcus_{}_lamp.glb#Scene0", size));
         commands.spawn((
           SceneRoot(lamp),
-          Transform::from_translation(vec3(x, FLAT_HEIGHT - 5., y)).with_scale(Vec3::splat(0.1)),
-          KitchenCabinet,
-          ChildOf(common.parent),
+          Transform::from_translation(vec3(-x, FLAT_HEIGHT - 5., z)).with_scale(Vec3::splat(0.1)),
         ));
       }
       {
         commands.spawn((
-          Transform::from_translation(vec3(x, 15., y)).looking_at(table_pos, Vec3::Y),
+          Transform::from_translation(vec3(-x, 15., z)).looking_at(table_pos, Vec3::Y),
           PointLight {
             intensity: 1_000_000.0,
             range: 4. * FLAT_HEIGHT,
@@ -306,7 +300,24 @@ fn setup_kitchen(
             shadows_enabled: true,
             ..default()
           },
-          ChildOf(common.parent),
+        ));
+      }
+    }
+  }
+  {
+    let light_height = 1.02;
+    for (x, z) in [
+      (12.1, 41.9),
+      (12.1, 12.4),
+      (40.0, 36.0),
+      (40.0, 12.4),
+    ] {
+      {
+        let translation = vec3(-x, FLAT_HEIGHT - 0.5  *light_height, z);
+        commands.spawn((
+          Mesh3d(meshes.add(Extrusion::new(Circle { radius: 0.51 }, light_height))),
+          MeshMaterial3d(materials.add(Color::hsl(32., 17. / 255., 223. / 255.))),
+          Transform::from_translation(translation).looking_at(translation.with_y(0.), Vec3::Y),
         ));
       }
     }
