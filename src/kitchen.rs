@@ -270,7 +270,7 @@ fn setup_kitchen(
   }
 
   {
-    let table_pos = vec3(26., 0., 26.);
+    let table_pos = vec3(20., 0., 26.);
     {
       let table = asset_server.load("kitchen/table.glb#Scene0");
       commands.spawn((
@@ -281,11 +281,11 @@ fn setup_kitchen(
       ));
     }
     for (x, y, size) in [
-      (25., 21., 30),
-      (17., 21., 40),
-      (0., 40., 30),
+      (table_pos.x + 2., table_pos.z - 5., 30),
+      (table_pos.x - 3., table_pos.z - 5., 40),
       (table_pos.x, table_pos.z, 60),
-      (35., 40., 50),
+      // (0., 40., 30),
+      // (35., 40., 50),
     ] {
       {
         let lamp = asset_server.load(format!("kitchen/Marcus_{}_lamp.glb#Scene0", size));
@@ -300,7 +300,7 @@ fn setup_kitchen(
         commands.spawn((
           Transform::from_translation(vec3(x, 15., y)).looking_at(table_pos, Vec3::Y),
           PointLight {
-            intensity: 4_000_000.0,
+            intensity: 1_000_000.0,
             range: 4. * FLAT_HEIGHT,
             color: Color::WHITE,
             shadows_enabled: true,

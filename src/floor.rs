@@ -51,14 +51,14 @@ fn spawn_floors(
       Floor,
       ChildOf(common.parent),
     ));
-    let ceiling_translation = bedroom_floor.half_size.with_y(FLAT_HEIGHT + 0.5 * FLOOR_HEIGHT);
-    commands.spawn((
-      Mesh3d(meshes.add(bedroom_floor)),
-      MeshMaterial3d(floor_material.clone()),
-      Transform::from_translation(ceiling_translation),
-      Floor,
-      ChildOf(common.parent),
-    ));
+    // let ceiling_translation = bedroom_floor.half_size.with_y(FLAT_HEIGHT + 0.5 * FLOOR_HEIGHT);
+    // commands.spawn((
+    //   Mesh3d(meshes.add(bedroom_floor)),
+    //   MeshMaterial3d(floor_material.clone()),
+    //   Transform::from_translation(ceiling_translation),
+    //   Floor,
+    //   ChildOf(common.parent),
+    // ));
   }
   {
     let hall_floor = vec3(HALL_X, FLOOR_HEIGHT, HALL_Z);

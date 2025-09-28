@@ -1,7 +1,7 @@
 $fn = 180;
 SOFA_WIDTH = 30;
 
-SOFA_RADIUS = 40;
+SOFA_RADIUS = 20;
 SOFA_DEPTH = 8;
 
 SEAT_HEIGHT = 4.2;
@@ -69,12 +69,13 @@ module round_sofa_rest() {
     }
 }
 
-
-rounder_sofa_base(angle1 = 25.5, angle2 = 39);
+angle1 = 7;
+angle2 = 76;
+rounder_sofa_base(angle1, angle2);
 
 intersection() {
     translate([0, 0, SEAT_HEIGHT]) {
-        rounder_sofa_base(angle1 = 25.5, angle2 = 39);
+        rounder_sofa_base(angle1, angle2);
     }
     round_sofa_rest();
 }

@@ -70,7 +70,7 @@ fn main() {
     })))
     .insert_resource(AmbientLight {
       color: Color::WHITE,
-      brightness: 100.,
+      brightness: 200.,
       affects_lightmapped_meshes: true,
     })
     // .insert_resource(AmbientLight::NONE)
@@ -96,8 +96,8 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
     .spawn((
       Camera3d::default(),
       Camera { hdr: true, ..default() },
-      Transform::from_xyz(-BATHROOM_X- HALL_X, 17.5, LIVING_ROOM_TO_BATHROOM_Z + 0.5 * HALL_Z)
-        .looking_at(vec3(- 10., 17.5, 0.), Vec3::Y),
+      Transform::from_xyz(0., 17.5, 0.)
+        .looking_at(vec3(0., 17.5, 10.), Vec3::Y),
       Tonemapping::None,
       Bloom::default(),
       CameraSensitivity::default(),
