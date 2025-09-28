@@ -270,7 +270,7 @@ fn setup_kitchen(
   }
 
   {
-    let table_pos = vec3(30., 0., 18.);
+    let table_pos = vec3(29., 0., 19.);
     {
       let table = asset_server.load("kitchen/table.glb#Scene0");
       commands.spawn((
@@ -278,16 +278,17 @@ fn setup_kitchen(
         Transform::from_translation(table_pos.with_x(-table_pos.x)).with_rotation(Quat::from_rotation_y(FRAC_PI_2)),
       ));
     }
-    for (x, z, size) in [
-      (table_pos.x + 2., table_pos.z + 2.5, 30),
-      (table_pos.x - 3., table_pos.z + 2.5, 40),
-      (table_pos.x + 0., table_pos.z - 2.5, 60),
+    for (x, y, z, size) in [
+      (table_pos.x + 3.5, 3., table_pos.z + 3.0, 50),
+      (table_pos.x - 3.0, 4., table_pos.z + 1.2, 40),
+      (table_pos.x + 0.0, 0., table_pos.z - 2.5, 60),
     ] {
+      println!("x: {} z:{}", x, z);
       {
         let lamp = asset_server.load(format!("kitchen/Marcus_{}_lamp.glb#Scene0", size));
         commands.spawn((
           SceneRoot(lamp),
-          Transform::from_translation(vec3(-x, FLAT_HEIGHT - 5., z)).with_scale(Vec3::splat(0.1)),
+          Transform::from_translation(vec3(-x, FLAT_HEIGHT - 5. + y, z)).with_scale(Vec3::splat(0.1)),
         ));
       }
       {
@@ -306,14 +307,9 @@ fn setup_kitchen(
   }
   {
     let light_height = 1.02;
-    for (x, z) in [
-      (12.1, 41.9),
-      (12.1, 12.4),
-      (40.0, 36.0),
-      (40.0, 12.4),
-    ] {
+    for (x, z) in [(12.1, 41.9), (12.1, 12.4), (40.0, 36.0), (40.0, 12.4)] {
       {
-        let translation = vec3(-x, FLAT_HEIGHT - 0.5  *light_height, z);
+        let translation = vec3(-x, FLAT_HEIGHT - 0.5 * light_height, z);
         commands.spawn((
           Mesh3d(meshes.add(Extrusion::new(Circle { radius: 0.51 }, light_height))),
           MeshMaterial3d(materials.add(Color::hsl(32., 17. / 255., 223. / 255.))),

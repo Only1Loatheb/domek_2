@@ -61,4 +61,3 @@ impl Plugin for MovementPlugin {
     app.add_event::<MoveEvent>().add_systems(Update, (get_movement, move_camera));
   }
 }
-

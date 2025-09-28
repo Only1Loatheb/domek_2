@@ -105,7 +105,7 @@ fn setup_light(mut commands: Commands, asset_server: Res<AssetServer>, app_setti
       // Projection::from(OrthographicProjection {
       //   // 6 world units per pixel of window height.
       //   scaling_mode: bevy::render::camera::ScalingMode::FixedVertical {
-      //     viewport_height: 20.0,     // more -> see more
+      //     viewport_height: 80.0,     // more -> see more
       //   },
       //   ..OrthographicProjection::default_3d()
       // }),
