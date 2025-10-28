@@ -55,14 +55,14 @@ fn setup_kitchen_common(mut commands: Commands, mut materials: ResMut<Assets<Sta
   });
 }
 
-const CABINET_WIDTHS: [f32; 7] = [
-  0.5 * CABINET_WIDTH,
+const CABINET_WIDTHS: [f32; 6] = [
+  1. * CABINET_WIDTH,
   CABINET_WIDTH,
   CABINET_WIDTH,
   CABINET_WIDTH,
   CABINET_WIDTH,
   CABINET_WIDTH,
-  0.5 * CABINET_WIDTH,
+  // 0.5 * CABINET_WIDTH,
 ];
 
 fn setup_kitchen(
