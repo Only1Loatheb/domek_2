@@ -272,11 +272,33 @@ fn setup_kitchen(
   {
     let table_pos = vec3(22.5, 0., 23.);
     {
+      let middle_cabinet_material = repeat_texture(
+        "kitchen/dab_sonoma.jpg",
+        &mut materials,
+        &asset_server,
+      Vec2 { x: 1., y: 1. },
+      Vec2 { x: 0.5, y: 0.5 },
+      );
       commands.spawn((
         Mesh3d(asset_server.load("stl/table.stl")),
-        MeshMaterial3d(materials.add(Color::WHITE)),
-        Transform { translation: table_pos, scale: Vec3::splat(0.1), rotation:
-        Quat::from_rotation_x(-FRAC_PI_2)},
+        MeshMaterial3d(middle_cabinet_material),
+        Transform {
+          translation: table_pos,
+          scale: Vec3::ONE,
+          rotation: Quat::from_rotation_x(-FRAC_PI_2),
+        },
+        ChildOf(common.parent),
+      ));
+    }
+    {
+      commands.spawn((
+        Mesh3d(asset_server.load("stl/upholstery_table.stl")),
+        MeshMaterial3d(materials.add(Color::linear_rgb(193_f32/255_f32,158_f32/255_f32,148_f32/255_f32))),
+        Transform {
+          translation: table_pos,
+          scale: Vec3::ONE,
+          rotation: Quat::from_rotation_x(-FRAC_PI_2),
+        },
         ChildOf(common.parent),
       ));
     }

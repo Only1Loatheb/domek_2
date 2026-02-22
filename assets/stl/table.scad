@@ -70,9 +70,10 @@ leg_table_top_contact_offset_from_table_center = 10;
 table_color = "BlanchedAlmond";
 
 // Render
-table_top();
-legs();
-
+scale([0.1, 0.1, 0.1]) {
+    table_top();
+    legs();
+}
 module table_top() {
     color(table_color) {
         translate([0, 0, table_height - top_thickness])
@@ -93,7 +94,7 @@ module leg_geometry() {
     translate([table_top_dia / 2, 0, 0]) {
         rotate([0, 0, 90]) {
             chair_base();
-            upholstery();
+//            upholstery();
         }
     }
     color(table_color) {
