@@ -270,18 +270,20 @@ fn setup_kitchen(
   }
 
   {
-    let table_pos = vec3(29., 0., 19.);
+    let table_pos = vec3(22.5, 0., 23.);
     {
-      let table = asset_server.load("kitchen/table.glb#Scene0");
       commands.spawn((
-        SceneRoot(table),
-        Transform::from_translation(table_pos.with_x(-table_pos.x)).with_rotation(Quat::from_rotation_y(FRAC_PI_2)),
+        Mesh3d(asset_server.load("stl/table.stl")),
+        MeshMaterial3d(materials.add(Color::WHITE)),
+        Transform { translation: table_pos, scale: Vec3::splat(0.1), rotation:
+        Quat::from_rotation_x(-FRAC_PI_2)},
+        ChildOf(common.parent),
       ));
     }
     for (x, y, z, size) in [
-      (table_pos.x + 3.5, 3., table_pos.z + 3.0, 50),
-      (table_pos.x - 3.0, 4., table_pos.z + 1.2, 40),
-      (table_pos.x + 0.0, 0., table_pos.z - 2.5, 60),
+      (table_pos.x + 10., 3., table_pos.z - 1.0, 50),
+      (table_pos.x + 3.5, 4., table_pos.z - 2.8, 40),
+      (table_pos.x + 6.5, 0., table_pos.z - 6.5, 60),
     ] {
       println!("x: {} z:{}", x, z);
       {
