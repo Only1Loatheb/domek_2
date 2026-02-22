@@ -12,7 +12,7 @@ leg_bot_size = 2.5;
 leg_spread = 2; // How much the legs flare out
 
 module chair_base() {
-    color("SaddleBrown") {
+    color("LemonChiffon") {
         // Wooden frame under seat
         translate([-seat_width / 2, -seat_depth / 2, seat_height_floor - seat_thickness - 4])
             cube([seat_width, seat_depth, 4]);
@@ -44,7 +44,7 @@ module tapered_leg(x_dir, y_dir) {
 }
 
 module upholstery() {
-    color("SlateGray") {
+    color("Pink") {
         // Seat Cushion
         translate([-seat_width / 2, -seat_depth / 2, seat_height_floor - seat_thickness])
             cube([seat_width, seat_depth, seat_thickness]);
@@ -67,14 +67,17 @@ leg_thickness = 4;
 
 leg_floor_contact_offset_from_table_center = 22;
 leg_table_top_contact_offset_from_table_center = 10;
+table_color = "BlanchedAlmond";
 
 // Render
 table_top();
 legs();
 
 module table_top() {
-    translate([0, 0, table_height - top_thickness])
-        cylinder(h = top_thickness, r1 = table_top_dia / 2 - 3, r2 = table_top_dia / 2, $fn = 500);
+    color(table_color) {
+        translate([0, 0, table_height - top_thickness])
+            cylinder(h = top_thickness, r1 = table_top_dia / 2 - 3, r2 = table_top_dia / 2, $fn = 500);
+    }
 }
 
 module legs() {
@@ -93,14 +96,16 @@ module leg_geometry() {
             upholstery();
         }
     }
-    translate([0.5, 0, 0])
-        cube([leg_floor_contact_offset_from_table_center, leg_width, leg_thickness]);
-    hull() {
-        // Floor contact
-        translate([leg_floor_contact_offset_from_table_center, 0, 0])
-            cube([leg_thickness, leg_width, 0.1]);
-        // Top contact
-        translate([leg_table_top_contact_offset_from_table_center, 0, table_height - top_thickness])
-            cube([leg_thickness, leg_width, 0.1]);
+    color(table_color) {
+        translate([0.5, 0, 0])
+            cube([leg_floor_contact_offset_from_table_center, leg_width, leg_thickness]);
+        hull() {
+            // Floor contact
+            translate([leg_floor_contact_offset_from_table_center, 0, 0])
+                cube([leg_thickness, leg_width, 0.1]);
+            // Top contact
+            translate([leg_table_top_contact_offset_from_table_center, 0, table_height - top_thickness])
+                cube([leg_thickness, leg_width, 0.1]);
+        }
     }
 }
