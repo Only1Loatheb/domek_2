@@ -165,7 +165,7 @@ fn spawn_walls(
         commands.spawn((
           Mesh3d(meshes.add(induction_cube)),
           MeshMaterial3d(tv_texture),
-          Transform::from_translation(translation + vec3(0., -2., 15.)).with_rotation(Quat::from_rotation_x
+          Transform::from_translation(translation + vec3(0., -2., 14.)).with_rotation(Quat::from_rotation_x
             (-FRAC_PI_2)),
           ChildOf(common.parent),
         ));
